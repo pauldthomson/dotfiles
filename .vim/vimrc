@@ -1,0 +1,104 @@
+filetype plugin indent on
+syntax on
+
+silent! color codedark
+silent! colorscheme codedark
+
+set laststatus=2
+
+" Disable old vi compatibility
+" :help compatible
+set nocompatible	
+
+" Always show line numbers
+set number
+
+" Show relative line numbers
+set relativenumber
+
+set encoding=utf-8
+set background=dark
+set spell spelllang=en_au
+
+" A tab is four spaces
+set tabstop=4
+
+" Number of spaces in a tab while editing
+set softtabstop=4
+
+" Allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+" Allow global searching with :find
+set path+=**
+
+" For tab completion with :find
+set wildmenu
+
+" Show matching parenthesis
+set showmatch
+
+" Highlight search terms
+set hlsearch
+
+" Show search matches as you type
+set incsearch
+
+" No beep
+set noerrorbells
+
+" No beep
+set visualbell
+
+" Use jk to exit insert mode 
+inoremap jk <ESC>
+
+" Toggle spelling visuals with <leader>s
+nnoremap <leader>s :set spell!
+
+" Easier navigating of vim splits
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" More  natural split opening
+set splitbelow
+set splitright
+
+if &term =~ '256color'
+	" disable Background Color Erase (BCE) so that color schemes
+	" render properly when inside 256-color tmux and GNU screen.
+	" see also http://snk.tuxfamily.org/log/vim-256color-bce.html
+	set t_ut=
+endif
+
+" To make gitgutter diff markers show faster
+set updatetime=250
+
+" Make ctags work in project subdirectories
+set tags=tags;/
+
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
+
+" bind \ (backward slash) to grep shortcut
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+
+" Open CtrlP in file mode
+let g:ctrlp_by_filename = 1
+
+" Prompt for a command to run
+map <Leader>vp :VimuxPromptCommand<CR>
+
+" Run last command executed by VimuxRunCommand
+map <Leader>vl :VimuxRunLastCommand<CR>
