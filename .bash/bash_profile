@@ -18,6 +18,7 @@ alias l='ls -CF'
 alias mci='mvn clean install'
 alias mcis='mvn clean install -DskipTests'
 alias mbr='mvn spring-boot:run'
+alias mbrr='register_cwd_artefact && mbrr'
 
 export EDITOR="vim"
 
@@ -32,6 +33,10 @@ parse_git_dirty() {
 # Initialise jenv
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+
+if [ -f ~/.bash_functions ]; then
+		. ~/.bash_functions
+fi
 
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
