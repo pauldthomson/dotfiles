@@ -18,7 +18,7 @@ alias l='ls -CF'
 alias mci='mvn clean install'
 alias mcis='mvn clean install -DskipTests'
 alias mbr='mvn spring-boot:run'
-alias mbrr='register_cwd_artefact && mbrr'
+alias mbrr='register_cwd_artefact && mbr'
 
 export EDITOR="vim"
 
