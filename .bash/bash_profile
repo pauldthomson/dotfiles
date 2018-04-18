@@ -22,22 +22,14 @@ alias mbrr='register_cwd_artefact && mbr'
 
 export EDITOR="vim"
 
-parse_git_branch() {
-	git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1$(parse_git_dirty))/"
-}
-
-parse_git_dirty() {
-	[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo "*"
-}
-
 # Initialise jenv
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
 if [ -f ~/.bash_functions ]; then
-		. ~/.bash_functions
+	. ~/.bash_functions
 fi
 
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
+	. $(brew --prefix)/etc/bash_completion
 fi
