@@ -12,7 +12,7 @@ alias fgrep='fgrep --colour=auto'
 alias egrep='egrep --colour=auto'
 
 # ALIASES
-alias ll='ls -l'
+alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
 alias mci='mvn clean install'
