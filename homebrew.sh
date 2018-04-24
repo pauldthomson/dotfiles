@@ -36,6 +36,7 @@ brew install rsync
 brew install unzip
 brew install vim --override-system-vi
 brew install jenv
-brew install eaven
+brew install maven
 brew install ant
 brew install telnet
+brwe install python2
