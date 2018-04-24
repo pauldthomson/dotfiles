@@ -39,4 +39,5 @@ brew install jenv
 brew install maven
 brew install ant
 brew install telnet
-brwe install python2
+brew install python2
+brew install bash-completion@2
