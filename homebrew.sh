@@ -41,3 +41,9 @@ brew install ant
 brew install telnet
 brew install python2
 brew install bash-completion@2
+
+# GUI Apps
+brew cask install google-chrome-beta
+brew cask install intellij-idea
+brew cask install docker
+brew cask install xquartz
