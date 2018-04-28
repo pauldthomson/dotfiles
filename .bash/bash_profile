@@ -33,3 +33,10 @@ fi
 if [ -f $(brew --prefix)/share/bash_completion ]; then
 	. $(brew --prefix)/share/bash_completion
 fi
+
+# NVM Setup
+export NVM_DIR="$HOME/.nvm"
+. "/usr/local/opt/nvm/nvm.sh"
+
+# Grep colours
+export GREP_COLORS="ms=01;31:mc=01;31:sl=48;5;2:cx=:fn=35:ln=32:bn=32:se=36"

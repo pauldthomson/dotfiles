@@ -41,6 +41,7 @@ brew install ant
 brew install telnet
 brew install python2
 brew install bash-completion@2
+brew install nvm
 
 # GUI Apps
 brew cask install google-chrome-beta
