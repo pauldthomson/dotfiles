@@ -39,4 +39,4 @@ export NVM_DIR="$HOME/.nvm"
 . $(brew --prefix nvm)/nvm.sh 
 
 # Grep colours
-export GREP_COLORS="ms=01;31:mc=01;31:sl=48;5;2:cx=:fn=35:ln=32:bn=32:se=36"
+export GREP_COLORS="ms=38;5;4:mc=:sl=48;5;118:cx=:fn=35:ln=32:bn=32:se=36"
