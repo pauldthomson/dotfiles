@@ -22,6 +22,9 @@ alias mbrr='register_cwd_artefact && mbr'
 
 export EDITOR="vim"
 
+# Source bash completion
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
 # Initialise jenv
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
@@ -30,13 +33,6 @@ if [ -f ~/.bash_functions ]; then
 	. ~/.bash_functions
 fi
 
-if [ -f $(brew --prefix)/share/bash_completion ]; then
-	. $(brew --prefix)/share/bash_completion
-fi
-
 # NVM Setup
 export NVM_DIR="$HOME/.nvm"
 . $(brew --prefix nvm)/nvm.sh 
-
-# Grep colours
-export GREP_COLORS="ms=38;5;4:mc=:sl=48;5;118:cx=:fn=35:ln=32:bn=32:se=36"
