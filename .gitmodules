@@ -7,3 +7,6 @@
 [submodule ".vim/pack/packages/opt/papercolor-theme"]
 	path = .vim/pack/packages/opt/papercolor-theme
 	url = https://github.com/NLKNguyen/papercolor-theme.git
+[submodule ".vim/pack/packages/start/vim-airline-themes"]
+	path = .vim/pack/packages/start/vim-airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes.git

@@ -102,5 +102,6 @@ map <Leader>vp :VimuxPromptCommand<CR>
 " Run last command executed by VimuxRunCommand
 map <Leader>vl :VimuxRunLastCommand<CR>
 
-" Show buffers in airline
+" Airline customisation
 let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme=angr
