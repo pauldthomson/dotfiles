@@ -1,8 +1,7 @@
 filetype plugin indent on
 syntax on
 
-silent! color codedark
-silent! colorscheme codedark
+colorscheme apprentice
 
 set laststatus=2
 
@@ -102,3 +101,6 @@ map <Leader>vp :VimuxPromptCommand<CR>
 
 " Run last command executed by VimuxRunCommand
 map <Leader>vl :VimuxRunLastCommand<CR>
+
+" Show buffers in airline
+let g:airline#extensions#tabline#enabled = 1
