@@ -25,6 +25,9 @@ set tabstop=4
 " Number of spaces in a tab while editing
 set softtabstop=4
 
+" Indent with 4 spaces
+set shiftwidth=4
+
 " Allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
