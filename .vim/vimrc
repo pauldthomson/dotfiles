@@ -109,3 +109,6 @@ map <Leader>vl :VimuxRunLastCommand<CR>
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme = 'angr'
 let g:airline_powerline_fonts = 1
+
+" Open fugitive diff in verticle splits
+set diffopt+=vertical
