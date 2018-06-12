@@ -10,3 +10,6 @@
 [submodule ".vim/pack/packages/start/vim-airline-themes"]
 	path = .vim/pack/packages/start/vim-airline-themes
 	url = https://github.com/vim-airline/vim-airline-themes.git
+[submodule ".vim/pack/packages/start/vim-test"]
+	path = .vim/pack/packages/start/vim-test
+	url = https://github.com/janko-m/vim-test.git
