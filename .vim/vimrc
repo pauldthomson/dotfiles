@@ -17,7 +17,6 @@ set relativenumber
 
 set encoding=utf-8
 set background=dark
-set spell spelllang=en_au
 
 " A tab is four spaces
 set tabstop=4

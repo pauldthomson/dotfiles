@@ -1,0 +1,20 @@
+[core]
+	excludesfile = /Users/pthomson/.gitignore_global
+[user]
+	email = thomsonp83@gmail.com
+	name = Paul Thomson
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=local --all
+	d = difftool
+	clone-submodules = submodule update --init --recursive
+	update-submodules = submodule update --recursive --remote
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[credential "https://git-codecommit.ap-southeast-2.amazonaws.com/"]
+	usehttppath = true
+	helper = !aws codecommit credential-helper $@
