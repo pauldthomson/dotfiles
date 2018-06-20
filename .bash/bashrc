@@ -36,12 +36,7 @@ if [ -f ~/.bash_functions ]; then
 	. ~/.bash_functions
 fi
 
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[ -f /Users/pthomson/code/applications/switchengine-application/node_modules/tabtab/.completions/serverless.bash ] && . /Users/pthomson/code/applications/switchengine-application/node_modules/tabtab/.completions/serverless.bash
-
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[ -f /Users/pthomson/code/applications/switchengine-application/node_modules/tabtab/.completions/sls.bash ] && . /Users/pthomson/code/applications/switchengine-application/node_modules/tabtab/.completions/sls.bash
 export NVM_DIR="/Users/pthomson/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+# This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use 
