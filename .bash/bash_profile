@@ -34,7 +34,3 @@ eval "$(jenv init -)"
 if [ -f ~/.bash_functions ]; then
 	. ~/.bash_functions
 fi
-
-# NVM Setup
-export NVM_DIR="$HOME/.nvm"
-. $(brew --prefix nvm)/nvm.sh 
