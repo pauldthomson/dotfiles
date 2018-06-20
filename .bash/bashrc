@@ -29,7 +29,8 @@ fi
 
 # Initialise jenv
 export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
+eval "$(jenv init --no-rehash -)"
+(jenv rehash &) 2> /dev/null
 
 if [ -f ~/.bash_functions ]; then
 	. ~/.bash_functions
