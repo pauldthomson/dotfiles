@@ -1,7 +1,10 @@
 filetype plugin indent on
 syntax on
 
-colorscheme apprentice
+colorscheme gruvbox
+let g:airline_theme='gruvbox'
+
+let g:gruvbox_italicize_comments='1'
 
 set laststatus=2
 
