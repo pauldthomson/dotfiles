@@ -124,3 +124,6 @@ nmap <silent> t<C-g> :TestVisit<CR>   " t Ctrl+g
 
 " Make test commands execute using vimux.vim
 let test#strategy = "vimux"
+
+" Fzf
+set rtp+=/usr/local/opt/fzf
