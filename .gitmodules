@@ -16,3 +16,6 @@
 [submodule ".vim/pack/packages/start/gruvbox"]
 	path = .vim/pack/packages/start/gruvbox
 	url = https://github.com/morhetz/gruvbox.git
+[submodule ".vim/pack/packages/start/fzf.vim"]
+	path = .vim/pack/packages/start/fzf.vim
+	url = https://github.com/junegunn/fzf.vim.git
