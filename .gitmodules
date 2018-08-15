@@ -22,3 +22,6 @@
 [submodule ".vim/pack/packages/opt/vim-solarized8"]
 	path = .vim/pack/packages/opt/vim-solarized8
 	url = https://github.com/lifepillar/vim-solarized8.git
+[submodule ".vim/pack/packages/start/vim-terraform"]
+	path = .vim/pack/packages/start/vim-terraform
+	url = https://github.com/hashivim/vim-terraform.git

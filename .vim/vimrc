@@ -128,3 +128,6 @@ let test#strategy = "vimux"
 
 " Fzf
 set rtp+=/usr/local/opt/fzf
+
+" Format terraform
+let g:terraform_fmt_on_save = 1
