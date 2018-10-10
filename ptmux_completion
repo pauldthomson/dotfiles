@@ -1,0 +1,19 @@
+#!/bin/bash
+
+_ptmux()
+{
+    local current_word previous_word suggestions code_directories_to_search
+    COMPREPLY=()
+    current_word="${COMP_WORDS[COMP_CWORD]}"
+    previous_word="${COMP_WORDS[COMP_CWORD-1]}"
+
+    [ -e ${HOME}/code ] && code_directories_to_search="${HOME}/code"
+
+    suggestions=$(find $code_directories_to_search -mindepth 2 -maxdepth 2 -type d | grep -o -E "[^/]*$")
+
+    if [ "${previous_word}" == "ptmux" ]
+    then
+        COMPREPLY=( $(compgen -W "${suggestions}" -- ${current_word}) )
+    fi
+}
+complete -F _ptmux ptmux
