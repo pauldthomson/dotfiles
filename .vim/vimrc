@@ -52,6 +52,12 @@ set hlsearch
 " Show search matches as you type
 set incsearch
 
+" Case insensitive searching
+set ignorecase
+
+" Search is case sensitive only if an uppercase character is used
+set smartcase
+
 " No beep
 set noerrorbells
 
