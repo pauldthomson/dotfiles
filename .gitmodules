@@ -25,3 +25,6 @@
 [submodule ".vim/pack/packages/start/vim-terraform"]
 	path = .vim/pack/packages/start/vim-terraform
 	url = https://github.com/hashivim/vim-terraform.git
+[submodule ".vim/pack/packages/start/vim-fugitive"]
+	path = .vim/pack/packages/start/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git
