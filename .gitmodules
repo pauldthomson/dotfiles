@@ -28,3 +28,6 @@
 [submodule ".vim/pack/packages/start/vim-fugitive"]
 	path = .vim/pack/packages/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive.git
+[submodule ".vim/pack/packages/start/vim-go"]
+	path = .vim/pack/packages/start/vim-go
+	url = https://github.com/fatih/vim-go.git
