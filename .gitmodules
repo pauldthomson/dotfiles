@@ -31,3 +31,6 @@
 [submodule ".vim/pack/packages/start/vim-go"]
 	path = .vim/pack/packages/start/vim-go
 	url = https://github.com/fatih/vim-go.git
+[submodule ".vim/pack/packages/start/coc.nvim"]
+	path = .vim/pack/packages/start/coc.nvim
+	url = https://github.com/neoclide/coc.nvim.git
