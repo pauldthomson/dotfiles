@@ -1,3 +1,5 @@
+#TERM=xterm-256color-italic
+
 # Use GNU versions of bash programs
 PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
 MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
