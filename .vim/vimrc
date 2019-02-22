@@ -1,6 +1,8 @@
 filetype plugin indent on
 syntax on
 
+set cursorline
+
 " don't use arrowkeys
 noremap <Up> <NOP>
 noremap <Down> <NOP>
