@@ -22,6 +22,6 @@
 [submodule ".vim/pack/packages/start/coc.nvim"]
 	path = .vim/pack/packages/start/coc.nvim
 	url = https://github.com/neoclide/coc.nvim.git
-[submodule ".vim/pack/packages/opt/nord-vim"]
-	path = .vim/pack/packages/opt/nord-vim
+[submodule ".vim/pack/packages/start/nord-vim"]
+	path = .vim/pack/packages/start/nord-vim
 	url = https://github.com/arcticicestudio/nord-vim.git
