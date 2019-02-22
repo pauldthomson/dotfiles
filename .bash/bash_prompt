@@ -4,7 +4,6 @@
 # - $local_username - username you don’t want to see in the prompt - can be defined in ~/.bashlocal : `local_username="admin"`
 #
 
-USERNAME_COLOUR="\[\033[1;38;5;141m\]"
 HOSTNAME_COLOUR="\[\033[1;38;5;121m\]"
 HAPPY_PROMPT_COLOUR="\[\033[1\;38\;5\;40m\]"
 WORKING_DIR_COLOUR="\[\033[1;38;5;75m\]"
@@ -12,12 +11,6 @@ GREEN="\[\033[32m\]"
 CYAN="\[\033[36m\]"
 NOCOLOR="\[\033[39m\]"
 RED="\[\033[31m\]"
-
-# User color
-case $(id -u) in
-	0) user_color="$RED" ;;  # root
-	*) user_color="$USERNAME_COLOUR" ;;
-esac
 
 # Symbols
 prompt_symbol="❯"
@@ -51,15 +44,8 @@ function prompt_command() {
 		fi
 	fi
 
-	# Only show username if not default
-	local user_prompt=
-	[ "$USER" != "$local_username" ] && user_prompt="$user_color$USER$NOCOLOR"
-
-	# Show hostname inside SSH session
-	host_prompt="@$HOSTNAME_COLOUR$HOSTNAME$NOCOLOR"
-
 	# Format prompt
-	first_line="$user_prompt$host_prompt:$WORKING_DIR_COLOUR\w$NOCOLOR$git_prompt"
+	first_line="$WORKING_DIR_COLOUR\w$NOCOLOR$git_prompt"
 	# Text (commands) inside \[...\] does not impact line length calculation which fixes stange bug when looking through the history
 	# $? is a status of last command, should be processed every time prompt prints
 	second_line="\`if [ \$? = 0 ]; then echo $HAPPY_PROMPT_COLOUR; else echo $RED; fi\`$prompt_symbol$NOCOLOR "
