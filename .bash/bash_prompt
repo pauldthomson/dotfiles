@@ -13,7 +13,7 @@ NOCOLOR="\[\033[39m\]"
 RED="\[\033[31m\]"
 
 # Symbols
-prompt_symbol="❯"
+prompt_symbol="λ"
 prompt_clean_symbol="☀ "
 prompt_dirty_symbol="☂ "
 
