@@ -62,3 +62,5 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 eval "$(rbenv init -)"
 
 [ -f ${HOME}/.dotfiles/ptmux_completion ] && . ${HOME}/.dotfiles/ptmux_completion
+
+source <(kubectl completion bash)
