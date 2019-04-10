@@ -152,6 +152,7 @@ let test#strategy = "vimux"
 set rtp+=/usr/local/opt/fzf
 
 nnoremap <C-t> :Files<CR>
+nnoremap <C-a> :Ag<Space>
 
 " Format terraform
 let g:terraform_fmt_on_save = 1
