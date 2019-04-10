@@ -28,3 +28,6 @@
 [submodule ".vim/pack/packages/start/vim-gutentags"]
 	path = .vim/pack/packages/start/vim-gutentags
 	url = https://github.com/ludovicchabant/vim-gutentags.git
+[submodule ".vim/pack/packages/start/markdown-preview.nvim"]
+	path = .vim/pack/packages/start/markdown-preview.nvim
+	url = https://github.com/iamcco/markdown-preview.nvim.git
