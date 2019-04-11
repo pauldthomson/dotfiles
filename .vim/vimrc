@@ -28,6 +28,9 @@ set termguicolors
 
 set laststatus=2
 
+" Attempt to make markdown preview work
+let g:mkdp_browser = 'chrome'
+
 " Disable old vi compatibility
 " :help compatible
 set nocompatible	
