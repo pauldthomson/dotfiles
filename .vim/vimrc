@@ -45,13 +45,11 @@ set encoding=utf-8
 set background=dark
 
 " A tab is four spaces
-set tabstop=4
-
-" Number of spaces in a tab while editing
-set softtabstop=4
-
-" Indent with 4 spaces
-set shiftwidth=4
+set tabstop=8 
+set softtabstop=0 
+set expandtab 
+set shiftwidth=4 
+set smarttab
 
 " Indent yaml files with two spaces
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
@@ -171,3 +169,5 @@ inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
+
+let g:go_def_mapping_enabled = 0
