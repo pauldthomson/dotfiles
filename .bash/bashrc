@@ -49,8 +49,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-export FZF_DEFAULT_COMMAND='ag --hidden -g ""'
+export FZF_DEFAULT_COMMAND='rg --no-ignore --files --hidden --follow --glob "!.git/*"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_TMUX=1
 
 if [ -f ~/.bash_functions ]; then
 	. ~/.bash_functions

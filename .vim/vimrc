@@ -116,7 +116,7 @@ set tags=tags;/
 " The Silver Searcher
 if executable('ag')
   " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
+  set grepprg=rg\ --vimgrep
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
@@ -152,8 +152,8 @@ let test#strategy = "vimux"
 " Fzf
 set rtp+=/usr/local/opt/fzf
 
-nnoremap <C-t> :Files<CR>
-nnoremap <C-a> :Ag<Space>
+nnoremap <C-n> :Files<CR>
+nnoremap <C-a> :Rg<Space>
 
 " Format terraform
 let g:terraform_fmt_on_save = 1
@@ -170,4 +170,20 @@ inoremap <silent><expr> <TAB>
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 
-let g:go_def_mapping_enabled = 0
+" Golang Stuff
+"
+" Highlighting
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+
+" Show info about type or method
+let g:go_auto_type_info = 1
+
+" GoDef Config 
+autocmd FileType go let g:go_def_mode = 'godef'
