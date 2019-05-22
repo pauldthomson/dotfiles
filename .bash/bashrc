@@ -16,12 +16,12 @@ source ~/.bash_prompt
 
 # COLOR COMMANDS
 export LSCOLORS=ExFxBxDxCxegedabagacad
+
+# ALIASES
 alias ls='ls -G'
 alias grep='grep --colour=auto'
 alias fgrep='fgrep --colour=auto'
 alias egrep='egrep --colour=auto'
-
-# ALIASES
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
@@ -29,6 +29,7 @@ alias mci='mvn clean install'
 alias mcis='mvn clean install -DskipTests'
 alias mbr='mvn spring-boot:run'
 alias mbrr='register_cwd_artefact && mbr'
+alias rg='rg -S'
 
 export EDITOR="vim"
 
