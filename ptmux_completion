@@ -9,7 +9,7 @@ _ptmux()
 
     [ -e ${HOME}/code ] && code_directories_to_search="${HOME}/code"
 
-    suggestions=$(find $code_directories_to_search -mindepth 2 -maxdepth 2 -type d | grep -o -E "[^/]*$")
+    suggestions=$(find $code_directories_to_search -mindepth 3 -maxdepth 3 -type d | grep -o -E "[^/]*$")
 
     if [ "${previous_word}" == "ptmux" ]
     then
