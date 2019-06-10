@@ -6,6 +6,7 @@ stty -ixon
 
 # Use GNU versions of bash programs
 PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
+PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
 
 # Use vi mode
