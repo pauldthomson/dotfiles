@@ -31,3 +31,6 @@
 [submodule ".vim/pack/packages/start/markdown-preview.nvim"]
 	path = .vim/pack/packages/start/markdown-preview.nvim
 	url = https://github.com/iamcco/markdown-preview.nvim.git
+[submodule ".vim/pack/packages/start/vim-indent-guides"]
+	path = .vim/pack/packages/start/vim-indent-guides
+	url = https://github.com/nathanaelkane/vim-indent-guides.git
