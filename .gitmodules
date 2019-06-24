@@ -37,3 +37,6 @@
 [submodule ".vim/pack/packages/start/indentLine"]
 	path = .vim/pack/packages/start/indentLine
 	url = https://github.com/Yggdroot/indentLine.git
+[submodule ".vim/pack/packages/start/vim-code-dark"]
+	path = .vim/pack/packages/start/vim-code-dark
+	url = https://github.com/tomasiser/vim-code-dark.git
