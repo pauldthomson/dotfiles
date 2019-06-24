@@ -159,6 +159,7 @@ nnoremap <C-a> :Rg<Space>
 let g:terraform_fmt_on_save = 1
 let g:tereraform_align = 1
 
+" Coc
 " use <tab> for trigger completion and navigate to next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -194,3 +195,6 @@ autocmd FileType go let g:go_def_mode = 'godef'
 " Show indentation
 "let g:indent_guides_enable_on_vim_startup = 1
 "let g:indent_guides_guide_size = 1
+
+" Comment highlighting for json
+autocmd FileType json syntax match Comment +\/\/.\+$+
