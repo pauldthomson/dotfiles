@@ -31,6 +31,9 @@ alias mcis='mvn clean install -DskipTests'
 alias mbr='mvn spring-boot:run'
 alias mbrr='register_cwd_artefact && mbr'
 alias rg='rg -S'
+alias pods='kubectl get pods'
+alias services='kubectl get services'
+alias kcfg='kubectl config'
 
 export EDITOR="vim"
 
