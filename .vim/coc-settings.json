@@ -1,3 +1,10 @@
 {
-    "suggest.noselect": false,
+    "suggest.noselect": false,  
+    "languageserver": {
+        "dockerfile": {
+          "command": "docker-langserver",
+          "filetypes": ["dockerfile"],
+          "args": ["--stdio"]
+        }
+  }
 }

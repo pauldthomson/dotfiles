@@ -2,20 +2,22 @@
 
 PROJECT=$1
 
-tmux new -d -s $PROJECT
-
 DIRECTORY=$(find ~/repos -maxdepth 3 -type d -name $PROJECT)
 if [[ -z "$DIRECTORY" ]]; then
-	echo Project not found, you may need to clone it 
-	tmux send-keys -t $PROJECT "cd" ENTER
+    echo Project not found, you may need to clone it 
+    tmux new -d -s $PROJECT
 else
-	tmux send-keys -t $PROJECT "cd $DIRECTORY" ENTER
+    tmux new  \
+        -d \
+        -s $PROJECT \
+        -c $DIRECTORY
 fi
 
-tmux send-keys -t $PROJECT "clear" ENTER
+tmux send-keys -t $PROJECT 'tmux split-window -v -p20' 'C-m'
+tmux send-keys -t $PROJECT 'vim' 'C-m'
 
 if [[ "$TMUX" ]]; then
-	tmux switch -t $PROJECT
+    tmux switch -t $PROJECT
 else
-	tmux a -t $PROJECT
+    tmux a -t $PROJECT
 fi
