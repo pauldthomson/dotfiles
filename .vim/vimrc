@@ -15,6 +15,12 @@ inoremap <Down>  <NOP>
 inoremap <Left>  <NOP>
 inoremap <Right> <NOP>
 
+" The Leader
+let mapleader="\<Space>"
+
+" Open FZF buffers list
+nnoremap <leader>e :Buffers<cr>
+
 colorscheme codedark
 let g:airline_theme = 'codedark'
 "let g:nord_italic = 1
