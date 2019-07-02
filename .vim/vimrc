@@ -30,9 +30,6 @@ let g:netrw_winsize = 25
 " Split right
 let g:netrw_altv = 1
 
-" Open FZF buffers list
-nnoremap <leader>e :Buffers<cr>
-
 colorscheme codedark
 let g:airline_theme = 'codedark'
 "let g:nord_italic = 1
@@ -151,7 +148,7 @@ map <Leader>vl :VimuxRunLastCommand<CR>
 let g:airline#extensions#tabline#enabled = 1
 "
 " Show just the filename
-let g:airline#extensions#tabline#fnamemod = ':t'
+"let g:airline#extensions#tabline#fnamemod = ':t'
 "let g:airline_theme = 'angr'
 "let g:airline_powerline_fonts = 1
 
@@ -171,8 +168,16 @@ let test#strategy = "vimux"
 " Fzf
 set rtp+=/usr/local/opt/fzf
 
-nnoremap <C-n> :Files<CR>
-nnoremap <C-a> :Rg<Space>
+" Fzf Files
+nnoremap <leader>f :Files<CR>
+" Ripgrep
+nnoremap <leader>r :Rg<Space>
+" Fzf lines in file
+nnoremap <leader>/ :Blines<cr>
+" Fzf vim commands
+nnoremap <leader>c :Commands<cr>
+" Open FZF buffers list
+nnoremap <leader>e :Buffers<cr>
 
 " Format terraform
 let g:terraform_fmt_on_save = 1
