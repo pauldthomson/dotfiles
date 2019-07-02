@@ -10,11 +10,16 @@ else
     tmux new  \
         -d \
         -s $PROJECT \
-        -c $DIRECTORY
+        -c $DIRECTORY \
+        \; \
+    send-keys \
+        -t $PROJECT \
+        'tmux split-window -v -p20' 'C-m' \
+    \; \
+    send-keys \
+        -t $PROJECT \
+        'vim' 'C-m'
 fi
-
-tmux send-keys -t $PROJECT 'tmux split-window -v -p20' 'C-m'
-tmux send-keys -t $PROJECT 'vim' 'C-m'
 
 if [[ "$TMUX" ]]; then
     tmux switch -t $PROJECT
