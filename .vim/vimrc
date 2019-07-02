@@ -173,7 +173,7 @@ nnoremap <leader>f :Files<CR>
 " Ripgrep
 nnoremap <leader>r :Rg<Space>
 " Fzf lines in file
-nnoremap <leader>/ :Blines<cr>
+nnoremap <leader>/ :BLines<cr>
 " Fzf vim commands
 nnoremap <leader>c :Commands<cr>
 " Open FZF buffers list
