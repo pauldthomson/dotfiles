@@ -18,6 +18,18 @@ inoremap <Right> <NOP>
 " The Leader
 let mapleader="\<Space>"
 
+" Netrw settings
+" Show file structure
+let g:netrw_liststyle = 3
+" Remove banner
+let g:netrw_banner = 0
+" Open in previous window
+let g:netrw_browse_split = 4
+" Set width
+let g:netrw_winsize = 25
+" Split right
+let g:netrw_altv = 1
+
 " Open FZF buffers list
 nnoremap <leader>e :Buffers<cr>
 
@@ -34,9 +46,6 @@ let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors
 
 set laststatus=2
-
-" Attempt to make markdown preview work
-let g:mkdp_browser = 'chrome'
 
 " Disable old vi compatibility
 " :help compatible
