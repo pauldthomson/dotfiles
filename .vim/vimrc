@@ -29,6 +29,8 @@ let g:netrw_browse_split = 4
 let g:netrw_winsize = 25
 " Split right
 let g:netrw_altv = 1
+" Open files in other window
+let g:netrw_chgwin=1
 
 colorscheme codedark
 let g:airline_theme = 'codedark'
