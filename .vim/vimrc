@@ -1,6 +1,9 @@
 filetype plugin indent on
 syntax on
 
+" Java syntax
+let g:java_highlight_functions = 1
+
 set cursorline
 
 " don't use arrowkeys
