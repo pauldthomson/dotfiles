@@ -37,6 +37,12 @@ alias kg='kubectl get'
 alias kl='kubectl logs'
 alias kd='kubectl describe'
 alias kx='kubectl exec -it'
+alias kctx=kubectx
+alias kns=kubens
+
+alias c=corectl
+alias ci='corectl idaptive'
+alias cia='corectl idaptive aws'
 
 export EDITOR="vim"
 
