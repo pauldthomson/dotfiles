@@ -40,3 +40,9 @@
 [submodule ".vim/pack/packages/start/vim-code-dark"]
 	path = .vim/pack/packages/start/vim-code-dark
 	url = https://github.com/tomasiser/vim-code-dark.git
+[submodule ".vim/pack/packages/start/nerdtree"]
+	path = .vim/pack/packages/start/nerdtree
+	url = https://github.com/scrooloose/nerdtree.git
+[submodule ".vim/pack/packages/start/vim-devicons"]
+	path = .vim/pack/packages/start/vim-devicons
+	url = https://github.com/ryanoasis/vim-devicons.git
