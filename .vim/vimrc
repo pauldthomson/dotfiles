@@ -185,6 +185,8 @@ nnoremap <leader>/ :BLines<cr>
 nnoremap <leader>c :Commands<cr>
 " Open FZF buffers list
 nnoremap <leader>e :Buffers<cr>
+" Save buffer
+nnoremap <leader>w :w<cr>
 
 " Format terraform
 let g:terraform_fmt_on_save = 1
