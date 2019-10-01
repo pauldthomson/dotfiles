@@ -187,6 +187,10 @@ nnoremap <leader>c :Commands<cr>
 nnoremap <leader>e :Buffers<cr>
 " Save buffer
 nnoremap <leader>w :w<cr>
+" Copy to system clipboard in visual mode
+vmap <leader>y "+y
+" Paste from system clipboard
+nmap <leader>p "+p
 
 " Format terraform
 let g:terraform_fmt_on_save = 1
