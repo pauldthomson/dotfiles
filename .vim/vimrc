@@ -1,6 +1,11 @@
 filetype plugin indent on
 syntax on
 
+" Toggle NERDTree
+map <C-n> :NERDTreeToggle<CR>
+" Show hidden files in NERDTree
+let NERDTreeShowHidden=1
+
 " Java syntax
 let g:java_highlight_functions = 1
 
