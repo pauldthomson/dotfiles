@@ -46,3 +46,6 @@
 [submodule ".vim/pack/packages/start/vim-devicons"]
 	path = .vim/pack/packages/start/vim-devicons
 	url = https://github.com/ryanoasis/vim-devicons.git
+[submodule ".vim/pack/packages/start/vim-commentary"]
+	path = .vim/pack/packages/start/vim-commentary
+	url = https://github.com/tpope/vim-commentary.git
