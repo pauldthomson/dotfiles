@@ -1,0 +1,26 @@
+{
+    "suggest.noselect": false,
+    "suggest.enablePreview": true,
+    "yaml.schemas": {
+        "http://json.schemastore.org/composer": "/*",
+        "kubernetes": "/**/*.yaml"
+    },  
+    "yaml.format.enable": true,
+    "languageserver": {
+        "gopls": {
+          "command": "gopls",
+          "filetypes": ["go"],
+          "rootPatterns": ["go.mod", ".git/"],
+          "initializationOptions": {
+            "usePlaceholders": true,
+            "completeUnimported": true
+          }
+        },
+        "bash": {
+          "command": "bash-language-server",
+          "filetypes": ["sh"],
+          "args": ["start"],
+          "ignoredRootPaths": ["~"]
+        }
+    }
+}
