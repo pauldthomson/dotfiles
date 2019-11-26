@@ -1,0 +1,27 @@
+export EDITOR="vim"
+
+# Use GNU versions of bash programs
+PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
+PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
+
+# K8s
+alias kctx=kubectx
+alias kns=kubens
+
+# Work
+alias c=corectl
+alias ci='corectl idaptive'
+alias cia='corectl idaptive aws'
+
+# FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_COMMAND='rg --no-ignore --files --hidden --follow --glob "!.git/*"'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_TMUX=1
+
+if [ -f ~/.zsh_functions ]; then
+    . ~/.zsh_functions
+fi
+
+[ -f ${HOME}/.dotfiles/ptmux_completion ] && . ${HOME}/.dotfiles/ptmux_completion
