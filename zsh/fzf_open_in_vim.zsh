@@ -7,4 +7,7 @@ fzf_then_open_in_editor() {
     ${EDITOR:-vim} "$file"
   fi
 }
-bind -x '"\C-t": fzf_then_open_in_editor'
+
+zle -N fzf_then_open_in_editor
+
+bindkey -s "\C-t" 'fzf_then_open_in_editor\n'

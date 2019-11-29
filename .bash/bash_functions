@@ -1,3 +1,41 @@
+function register_cwd_artefact {
+    unset ARTIFACTID_MVN_PROPERTY
+	if [[ -f "pom.xml" ]]; then
+	    ARTIFACTID_MVN_PROPERTY=$(xpath pom.xml project/artifactId 2>/dev/null | sed -E  's/<artifactId>(.*)<\/artifactId>/\1/' | sed  -e 's/-jar-deployable//' | sed  -e 's/-deployable//')
+	fi
+
+	if [[ -z ${ARTIFACTID_MVN_PROPERTY} ]]; then
+	    echo "Run this script from the deployable directory of a multi-module project or the root directory of a single module project";
+	    return 1;
+	else
+	    search_area='.'
+	    if [[ $(pwd | sed 's|/home/development/code/applications/||' | grep '/') ]]; then
+            search_area='../'
+	    fi
+
+	    if [[ $(find $search_area -name application.properties | xargs grep https.port | head -n1 | awk -F= '{print($2)}') ]]; then
+	        ARTEFACT_AND_PORT="${ARTIFACTID_MVN_PROPERTY} $(find $search_area -name application.properties | xargs grep https.port | head -n1 | awk -F= '{print($2)}')"
+	    elif [[ $(find $search_area -name application.properties | xargs grep server.port | head -n1 | awk -F= '{print($2)}') ]]; then
+	        ARTEFACT_AND_PORT="${ARTIFACTID_MVN_PROPERTY} $(find $search_area -name application.properties | xargs grep server.port | head -n1 | awk -F= '{print($2)}')"
+	    else
+            ARTEFACT_AND_PORT=$(MAVEN_OPTS= \mvn -q \
+                -Dexec.executable="echo" \
+                -Dexec.args="${ARTIFACTID_MVN_PROPERTY} \${jetty.plugin.ssl.port}" \
+                --non-recursive \
+                org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
+        fi
+	    echo "Registering $ARTEFACT_AND_PORT for service discovery";
+	    register-with-local-bind $(echo $ARTEFACT_AND_PORT | sed -E -e 's/^[[:space:]]+//' -e 's/[[:space:]]+$//');
+	fi
+}
+
+function wifi_dns_configure {
+    CURRENT_DNS=`grep nameserver <(scutil --dns) |  awk '{print $3}' | sort | uniq | tr '\n' ' '`
+    NEW_DNS="127.0.0.1 ${CURRENT_DNS//127.0.0.1/}"
+    echo "Configuring WIFI DNS adresses to $NEW_DNS"
+    /usr/sbin/networksetup -setdnsservers Wi-Fi ${NEW_DNS}
+}
+
 # tm - create new tmux session, or switch to existing one. Works from within tmux too. (@bag-man)
 # `tm` will allow you to select your tmux session via fzf.
 # `tm irc` will attach to the irc session (if it exists), else it will create it.
@@ -9,3 +47,14 @@ tm() {
   fi
   session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | fzf --exit-0) &&  tmux $change -t "$session" || echo "No sessions found."
 }
+
+# Search a file with fzf inside a Tmux pane and then open it in an editor
+fzf_then_open_in_editor() {
+  local file=$(fzf-tmux)
+  # Open the file if it exists
+  if [ -n "$file" ]; then
+    # Use the default editor if it's defined, otherwise Vim
+    ${EDITOR:-vim} "$file"
+  fi
+}
+bind -x '"\C-t": fzf_then_open_in_editor'
