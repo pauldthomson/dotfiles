@@ -10,4 +10,4 @@ fzf_then_open_in_editor() {
 
 zle -N fzf_then_open_in_editor
 
-bindkey -s "\C-t" 'fzf_then_open_in_editor\n'
+bindkey "^T" fzf_then_open_in_editor
