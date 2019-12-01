@@ -21,6 +21,11 @@
           "filetypes": ["sh"],
           "args": ["start"],
           "ignoredRootPaths": ["~"]
+        },
+        "docker" : {
+            "command": "docker-langserver",
+            "args": ["--stdio"],
+            "filetypes": ["dockerfile"]
         }
     }
 }
