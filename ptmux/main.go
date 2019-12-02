@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	fuzzyfinder "github.com/ktr0731/go-fuzzyfinder"
+	"github.com/ktr0731/go-fuzzyfinder"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -11,72 +11,76 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	project := args[0]
+	projectName := args[0]
 
-	cmd := exec.Command("/usr/bin/find", "/Users/pthomson/repos",
-		"-maxdepth", "3", "-type", "d",
-		"-name", project)
-
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
+	cmd := exec.Command("find", "/Users/pthomson/repos", "-maxdepth", "3", "-type", "d", "-name", projectName)
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return
+		log.Fatal(err)
 	}
 
-	results := strings.Split(out.String(), "\n")
-	idx, err := fuzzyfinder.Find(results, func(i int) string {
-		return results[i]
-	})
+	trimmed := strings.TrimSpace(string(out))
+	resultsSlice := strings.Split(trimmed, "\n")
+	if len(resultsSlice) == 1 && resultsSlice[0] == "" {
+		fmt.Println("Project doesn't exist")
+		cmd = exec.Command("tmux", "new", "-d", "-s", projectName)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		idx, err := fuzzyfinder.Find(resultsSlice, func(i int) string {
+			return resultsSlice[i]
+		})
 
-	cmd = exec.Command("/usr/local/bin/tmux", "new", "-d", "-s", project, "-c", results[idx])
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return
-	}
+		cmd = exec.Command("tmux", "new", "-d", "-s", projectName, "-c", resultsSlice[idx])
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	cmd = exec.Command("/usr/local/bin/tmux", "send-keys", "-t", project, "tmux split-window -v -p20", "C-m")
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return
-	}
+		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "tmux split-window -v -p20", "C-m")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	cmd = exec.Command("/usr/local/bin/tmux", "send-keys", "-t", project, "vim", "C-m")
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
-	err = cmd.Run()
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-		return
+		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "vim", "C-m")
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if os.Getenv("TMUX") != "" {
-		cmd = exec.Command("/usr/local/bin/tmux", "switch", "-t", project)
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
+		cmd = exec.Command("tmux", "switch", "-t", projectName)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		err = cmd.Run()
 		if err != nil {
-			fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-			return
+			log.Fatal(err)
 		}
 	} else {
-		cmd = exec.Command("/usr/local/bin/tmux", "a", "-t", project)
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
+		cmd = exec.Command("tmux", "a", "-t", projectName)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		err = cmd.Run()
 		if err != nil {
-			fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-			return
+			log.Fatal(err)
 		}
 	}
 }
