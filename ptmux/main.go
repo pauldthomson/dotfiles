@@ -17,7 +17,7 @@ func main() {
 	if len(args) == 0 {
 		cmd = exec.Command("find", "/Users/pthomson/repos", "-maxdepth", "3", "-type", "d")
 	} else {
-		projectName := args[0]
+		projectName = args[0]
 		cmd = exec.Command("find", "/Users/pthomson/repos", "-maxdepth", "3", "-type", "d", "-name", projectName)
 	}
 	out, err := cmd.CombinedOutput()
@@ -45,6 +45,9 @@ func main() {
 			idx, err = fuzzyfinder.Find(resultsSlice, func(i int) string {
 				return resultsSlice[i]
 			})
+			if err != nil && err.Error() == "abort" {
+				os.Exit(0)
+			}
 		}
 
 		if projectName == "" {
