@@ -1,5 +1,7 @@
 # Vi keybindings
 bindkey -v
+# Make backspace work after leaving normal
+# mode (going back to insert mode)
 bindkey '^?' backward-delete-char
 
 # If you come from bash you might have to change your $PATH.
@@ -16,6 +18,7 @@ ZSH_THEME="pure"
 
 autoload -U promptinit; promptinit
 
+# Pure theme customisation
 PURE_PROMPT_SYMBOL="λ"
 PURE_CMD_MAX_EXEC_TIME=300
 
@@ -84,6 +87,7 @@ plugins=(
     git 
     httpie 
     kubectl
+    # Keep this before fzf for vim keybindings
     vi-mode
     fzf
     zsh-autosuggestions
@@ -139,11 +143,11 @@ alias l='ls -CF'
 # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # export FZF_TMUX=1
 
-bindkey -s '^T' 'fzf_then_open_in_editor\n'
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 PATH=$PATH:/usr/local/go/bin
 
+# Make bash completion work with zsh
 autoload -U +X compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 

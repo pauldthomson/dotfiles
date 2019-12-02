@@ -10,4 +10,7 @@ fzf_then_open_in_editor() {
 
 zle -N fzf_then_open_in_editor
 
-bindkey "^T" fzf_then_open_in_editor
+# This should work, needs more investigation
+# into fzf-tmux and zsh
+# bindkey "^T" fzf_then_open_in_editor
+bindkey -s '^T' 'fzf_then_open_in_editor\n'
