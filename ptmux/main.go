@@ -32,9 +32,14 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
-		idx, err := fuzzyfinder.Find(resultsSlice, func(i int) string {
-			return resultsSlice[i]
-		})
+		var idx int
+		if len(resultsSlice) == 1 {
+			idx = 0
+		} else {
+			idx, err = fuzzyfinder.Find(resultsSlice, func(i int) string {
+				return resultsSlice[i]
+			})
+		}
 
 		cmd = exec.Command("tmux", "new", "-d", "-s", projectName, "-c", resultsSlice[idx])
 		cmd.Stdin = os.Stdin
