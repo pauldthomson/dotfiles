@@ -152,3 +152,8 @@ autoload -U +X compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 
 [ -f ${HOME}/.dotfiles/ptmux_completion ] && . ${HOME}/.dotfiles/ptmux_completion
+
+# For pure theme. Tab completion overwriting prompt.
+# See https://github.com/sindresorhus/pure/issues/300
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
