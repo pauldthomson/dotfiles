@@ -23,6 +23,10 @@ inoremap <Down>  <NOP>
 inoremap <Left>  <NOP>
 inoremap <Right> <NOP>
 
+" Move visual selection
+vnoremap J :m '>+1<cr>gv=gv
+vnoremap K :m '<-2<cr>gv=gv
+
 " The Leader
 let mapleader="\<Space>"
 
@@ -240,3 +244,7 @@ autocmd FileType go let g:go_def_mode = 'godef'
 
 " Comment highlighting for json
 autocmd FileType json syntax match Comment +\/\/.\+$+
+
+" Use gopls for golang
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
