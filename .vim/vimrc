@@ -264,10 +264,6 @@ let g:go_auto_type_info = 1
 " Comment highlighting for json
 autocmd FileType json syntax match Comment +\/\/.\+$+
 
-" Use gopls for golang
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
-
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
   let l:file = expand('%')
@@ -289,7 +285,8 @@ autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
 autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
 autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
 autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
-autocmd Filetype go nnoremap ga :call go#alternate#Switch(0, 'vsplit')<CR>
+autocmd Filetype go nnoremap av :<C-u>call go#alternate#Switch(0, 'vsplit')<CR>
+autocmd Filetype go nnoremap at :<C-u>call go#alternate#Switch(0, 'edit')<CR>
 autocmd Filetype go nnoremap <F12> :GoDecls<CR>
 
 " Automatically highlight same identifiers (functions, variables etc)
@@ -297,4 +294,8 @@ let g:go_auto_sameids = 1
 
 " GoDef Config 
 let g:go_def_mode = 'gopls'
-let g:go_info_mode='gopls'
+let g:go_info_mode = 'gopls'
+"
+" disable vim-go :GoDef short cut (gd)
+" this is handled by LanguageClient [LC]
+let g:go_def_mapping_enabled = 0
