@@ -1,6 +1,12 @@
 filetype plugin indent on
 syntax on
 
+" wrap long lines in quickfix
+augroup quickfix
+    autocmd!
+    autocmd FileType qf setlocal wrap
+augroup END
+
 " Toggle NERDTree
 map <C-n> :NERDTreeToggle<CR>
 " Show hidden files in NERDTree
@@ -12,6 +18,10 @@ let g:java_highlight_functions = 1
 set cursorline
 
 set autowrite
+
+set cmdheight=2
+
+set hidden
 
 " don't use arrowkeys
 noremap <Up> <NOP>
@@ -137,7 +147,7 @@ set splitright
 "endif
 
 " To make gitgutter diff markers show faster
-set updatetime=250
+set updatetime=100
 
 " Make ctags work in project subdirectories
 set tags=tags;/
@@ -216,11 +226,20 @@ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 " Coc definition
 nmap <silent> gd <Plug>(coc-definition)
 
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
 " Coc rename
 nmap <F2> <Plug>(coc-rename)
 
 " Use enter to select completion
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
 " Golang Stuff
 "
@@ -237,8 +256,6 @@ let g:go_highlight_types = 1
 " Show info about type or method
 let g:go_auto_type_info = 1
 
-" GoDef Config 
-autocmd FileType go let g:go_def_mode = 'godef'
 
 " Show indentation
 "let g:indent_guides_enable_on_vim_startup = 1
@@ -266,3 +283,18 @@ autocmd FileType go nmap <leader>t  <Plug>(go-test)
 
 " Run goimports on save
 let g:go_fmt_command = "goimports"
+
+" Control how to open buffer when alternating between test and src
+autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+autocmd Filetype go nnoremap ga :call go#alternate#Switch(0, 'vsplit')<CR>
+autocmd Filetype go nnoremap <F12> :GoDecls<CR>
+
+" Automatically highlight same identifiers (functions, variables etc)
+let g:go_auto_sameids = 1
+
+" GoDef Config 
+let g:go_def_mode = 'gopls'
+let g:go_info_mode='gopls'
