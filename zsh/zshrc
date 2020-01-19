@@ -136,6 +136,7 @@ alias egrep='egrep --colour=auto'
 alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
+alias p='ptmux'
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -157,3 +158,5 @@ autoload -U +X bashcompinit && bashcompinit
 # See https://github.com/sindresorhus/pure/issues/300
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+
+export GOBIN=/usr/local/go/bin
