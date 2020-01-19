@@ -195,7 +195,12 @@ nmap <leader>p "+p
 let g:terraform_fmt_on_save = 1
 let g:tereraform_align = 1
 
-" Coc
+" Comment highlighting for json
+autocmd FileType json syntax match Comment +\/\/.\+$+
+
+" Coc config
+" ##########
+
 " use <tab> for trigger completion and navigate to next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -207,12 +212,6 @@ inoremap <silent><expr> <TAB>
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-" Coc definition
-nmap <silent> gd <Plug>(coc-definition)
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
 
 " Coc rename
 nmap <F2> <Plug>(coc-rename)
@@ -226,8 +225,9 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" Golang Stuff
-"
+" vim-go config
+" ############
+
 " Highlighting
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
@@ -240,9 +240,6 @@ let g:go_highlight_types = 1
 
 " Show info about type or method
 let g:go_auto_type_info = 1
-"
-" Comment highlighting for json
-autocmd FileType json syntax match Comment +\/\/.\+$+
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
