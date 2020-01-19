@@ -1,9 +1,6 @@
 [submodule ".vim/pack/packages/start/vim-airline"]
 	path = .vim/pack/packages/start/vim-airline
 	url = https://github.com/vim-airline/vim-airline.git
-[submodule ".vim/pack/packages/start/vim-test"]
-	path = .vim/pack/packages/start/vim-test
-	url = https://github.com/janko-m/vim-test.git
 [submodule ".vim/pack/packages/start/gruvbox"]
 	path = .vim/pack/packages/start/gruvbox
 	url = https://github.com/morhetz/gruvbox.git

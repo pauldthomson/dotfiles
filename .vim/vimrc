@@ -58,11 +58,6 @@ let g:netrw_chgwin=1
 
 colorscheme codedark
 let g:airline_theme = 'codedark'
-"let g:nord_italic = 1
-"let g:nord_underline = 1
-"let g:nord_italic_comments = 1
-"let g:nord_uniform_status_lines = 1
-"let g:nord_cursor_line_number_background = 1
 
 let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
@@ -171,16 +166,6 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 " Open fugitive diff in verticle splits
 set diffopt+=vertical
 
-" Vim test mappings
-nmap <silent> t<C-n> :TestNearest<CR> " t Ctrl+n
-nmap <silent> t<C-f> :TestFile<CR>    " t Ctrl+f
-nmap <silent> t<C-s> :TestSuite<CR>   " t Ctrl+s
-nmap <silent> t<C-l> :TestLast<CR>    " t Ctrl+l
-nmap <silent> t<C-g> :TestVisit<CR>   " t Ctrl+g
-
-" Make test commands execute using vimux.vim
-let test#strategy = "vimux"
-
 " Fzf
 set rtp+=/usr/local/opt/fzf
 
@@ -255,12 +240,7 @@ let g:go_highlight_types = 1
 
 " Show info about type or method
 let g:go_auto_type_info = 1
-
-
-" Show indentation
-"let g:indent_guides_enable_on_vim_startup = 1
-"let g:indent_guides_guide_size = 1
-
+"
 " Comment highlighting for json
 autocmd FileType json syntax match Comment +\/\/.\+$+
 
