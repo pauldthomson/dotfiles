@@ -123,9 +123,9 @@ nnoremap <leader>e :Buffers<cr>
 
 " Use ripgrep
 nnoremap <leader>r :Rg<Space>
+
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-  set grepprg=rg\ --vimgrep
 endif
 
 " =========================
