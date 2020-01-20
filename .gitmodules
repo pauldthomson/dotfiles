@@ -1,9 +1,6 @@
 [submodule ".vim/pack/packages/start/vim-airline"]
 	path = .vim/pack/packages/start/vim-airline
 	url = https://github.com/vim-airline/vim-airline.git
-[submodule ".vim/pack/packages/start/gruvbox"]
-	path = .vim/pack/packages/start/gruvbox
-	url = https://github.com/morhetz/gruvbox.git
 [submodule ".vim/pack/packages/start/fzf.vim"]
 	path = .vim/pack/packages/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim.git
@@ -19,12 +16,6 @@
 [submodule ".vim/pack/packages/start/coc.nvim"]
 	path = .vim/pack/packages/start/coc.nvim
 	url = https://github.com/neoclide/coc.nvim.git
-[submodule ".vim/pack/packages/start/nord-vim"]
-	path = .vim/pack/packages/start/nord-vim
-	url = https://github.com/arcticicestudio/nord-vim.git
-[submodule ".vim/pack/packages/start/vim-gutentags"]
-	path = .vim/pack/packages/start/vim-gutentags
-	url = https://github.com/ludovicchabant/vim-gutentags.git
 [submodule ".vim/pack/packages/start/markdown-preview.nvim"]
 	path = .vim/pack/packages/start/markdown-preview.nvim
 	url = https://github.com/iamcco/markdown-preview.nvim.git

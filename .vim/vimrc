@@ -1,35 +1,32 @@
+" =========================
+" Vim built in config
+" =========================
 filetype plugin indent on
 syntax on
-
-" wrap long lines in quickfix
-augroup quickfix
-    autocmd!
-    autocmd FileType qf setlocal wrap
-augroup END
-
-" Toggle NERDTree
-map <C-n> :NERDTreeToggle<CR>
-" Show hidden files in NERDTree
-let NERDTreeShowHidden=1
-
-" Java syntax
-let g:java_highlight_functions = 1
-
 set cursorline
-
+set number
+set relativenumber
 set autowrite
+set encoding=utf-8
+set tabstop=2 
+set expandtab 
+set shiftwidth=2 
+set smarttab
+set showmatch
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set noerrorbells
+set visualbell
+set splitbelow
+set splitright
 
-set cmdheight=2
-
-set hidden
-
-" don't use arrowkeys
+" Disable arrowkeys in insert and normal modes
 noremap <Up> <NOP>
 noremap <Down> <NOP>
 noremap <Left> <NOP>
 noremap <Right> <NOP>
-
-" really, just don't
 inoremap <Up>    <NOP>
 inoremap <Down>  <NOP>
 inoremap <Left>  <NOP>
@@ -39,169 +36,109 @@ inoremap <Right> <NOP>
 vnoremap J :m '>+1<cr>gv=gv
 vnoremap K :m '<-2<cr>gv=gv
 
-" The Leader
+" Map leader to space
 let mapleader="\<Space>"
 
-" Netrw settings
-" Show file structure
-let g:netrw_liststyle = 3
-" Remove banner
-let g:netrw_banner = 0
-" Open in previous window
-let g:netrw_browse_split = 4
-" Set width
-let g:netrw_winsize = 25
-" Split right
-let g:netrw_altv = 1
-" Open files in other window
-let g:netrw_chgwin=1
-
-colorscheme codedark
-let g:airline_theme = 'codedark'
-
-let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
-set termguicolors
-
+" Always show statusline
 set laststatus=2
-
-" Disable old vi compatibility
-" :help compatible
-set nocompatible	
-
-" Always show line numbers
-set number
-
-" Show relative line numbers
-set relativenumber
-
-set encoding=utf-8
-set background=dark
-
-" A tab is four spaces
-set tabstop=4 
-set softtabstop=0 
-set expandtab 
-set shiftwidth=4 
-set smarttab
-
-" Indent yaml files with two spaces
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
-" Allow global searching with :find
-set path+=**
-
-" For tab completion with :find
-set wildmenu
-
-" Show matching parenthesis
-set showmatch
-
-" Highlight search terms
-set hlsearch
-
-" Show search matches as you type
-set incsearch
-
-" Case insensitive searching
-set ignorecase
-
-" Search is case sensitive only if an uppercase character is used
-set smartcase
-
-" No beep
-set noerrorbells
-
-" No beep
-set visualbell
-
 " Use jk to exit insert mode 
 inoremap jk <ESC>
 
-" Toggle spelling visuals with <leader>s
-nnoremap <leader>s :set spell!
-
-" Easier navigating of vim splits
+" Use ctrl+hjkl to navigate splits
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" More  natural split opening
-set splitbelow
-set splitright
+" Save buffer
+nnoremap <leader>w :w<cr>
 
-"if &term =~ '256color'
-"	" disable Background Color Erase (BCE) so that color schemes
-"	" render properly when inside 256-color tmux and GNU screen.
-"	" see also http://snk.tuxfamily.org/log/vim-256color-bce.html
-"	set t_ut=
-"endif
+" Copy to system clipboard in visual mode
+vmap <leader>y "+y
 
+" Paste from system clipboard
+nmap <leader>p "+p
+
+" =========================
+" NERDTree
+" =========================
+
+" Toggle NERDTree
+map <C-n> :NERDTreeToggle<CR>
+
+" Show hidden files in NERDTree
+let NERDTreeShowHidden=1
+
+" =========================
+" vim-java
+" =========================
+
+" Java syntax
+let g:java_highlight_functions = 1
+
+" =========================
+" Colourscheme
+" =========================
+colorscheme codedark
+
+" =========================
+" vim-airline
+" =========================
+let g:airline_theme = 'codedark'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+
+" =========================
+" vim-gitgutter
+" =========================
 " To make gitgutter diff markers show faster
 set updatetime=100
 
-" Make ctags work in project subdirectories
-set tags=tags;/
-
-" Prompt for a command to run
-map <Leader>vp :VimuxPromptCommand<CR>
-
-" Run last command executed by VimuxRunCommand
-map <Leader>vl :VimuxRunLastCommand<CR>
-
-" Airline customisation
-let g:airline#extensions#tabline#enabled = 1
-"
-" Show just the filename
-"let g:airline#extensions#tabline#fnamemod = ':t'
-
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-"let g:airline_theme = 'angr'
-"let g:airline_powerline_fonts = 1
-
+" =========================
+" vim-fugitive
+" =========================
 " Open fugitive diff in verticle splits
 set diffopt+=vertical
 
-" Fzf
+" =========================
+" fzf
+" =========================
 set rtp+=/usr/local/opt/fzf
 
-" Fzf Files
+" fzf files
 nnoremap <leader>f :Files<CR>
-" Ripgrep
+
+" fzf lines in file
+nnoremap <leader>/ :BLines<cr>
+
+" fzf vim commands
+nnoremap <leader>c :Commands<cr>
+
+" Open fzf buffers list
+nnoremap <leader>e :Buffers<cr>
+
+" Use ripgrep
 nnoremap <leader>r :Rg<Space>
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
   set grepprg=rg\ --vimgrep
 endif
 
-" Fzf lines in file
-nnoremap <leader>/ :BLines<cr>
-" Fzf vim commands
-nnoremap <leader>c :Commands<cr>
-" Open FZF buffers list
-nnoremap <leader>e :Buffers<cr>
-" Save buffer
-nnoremap <leader>w :w<cr>
-" Copy to system clipboard in visual mode
-vmap <leader>y "+y
-" Paste from system clipboard
-nmap <leader>p "+p
-
+" =========================
+" vim-terraform
+" =========================
 " Format terraform
 let g:terraform_fmt_on_save = 1
 let g:tereraform_align = 1
 
-" Comment highlighting for json
-autocmd FileType json syntax match Comment +\/\/.\+$+
-
-" Coc config
-" ##########
-
-" use <tab> for trigger completion and navigate to next complete item
+" =========================
+" coc.nvim
+" =========================
+" Use <tab> for trigger completion and navigate to next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
@@ -225,9 +162,9 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" vim-go config
-" ############
-
+" =========================
+" vim-go
+" =========================
 " Highlighting
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
@@ -241,7 +178,7 @@ let g:go_highlight_types = 1
 " Show info about type or method
 let g:go_auto_type_info = 1
 
-" run :GoBuild or :GoTestCompile based on the go file
+" Run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
   let l:file = expand('%')
   if l:file =~# '^\f\+_test\.go$'
@@ -269,12 +206,8 @@ autocmd Filetype go nnoremap <F12> :GoDecls<CR>
 " Automatically highlight same identifiers (functions, variables etc)
 let g:go_auto_sameids = 1
 
-" GoDef Config 
+" Use gopls everywhere I can
 let g:go_def_mode = 'gopls'
 let g:go_info_mode = 'gopls'
 let g:go_rename_command = 'gopls'
 let g:go_gopls_complete_unimported = 1
-"
-" disable vim-go :GoDef short cut (gd)
-" this is handled by LanguageClient [LC]
-let g:go_def_mapping_enabled = 0
