@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/ktr0731/go-fuzzyfinder"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/ktr0731/go-fuzzyfinder"
 )
 
 func main() {
@@ -64,14 +65,14 @@ func main() {
 			log.Fatal(err)
 		}
 
-		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "tmux split-window -v -p20", "C-m")
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
-		if err != nil {
-			log.Fatal(err)
-		}
+		// cmd = exec.Command("tmux", "send-keys", "-t", projectName, "tmux split-window -v -p20", "C-m")
+		// cmd.Stdin = os.Stdin
+		// cmd.Stdout = os.Stdout
+		// cmd.Stderr = os.Stderr
+		// err = cmd.Run()
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
 
 		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "vim", "C-m")
 		cmd.Stdin = os.Stdin
