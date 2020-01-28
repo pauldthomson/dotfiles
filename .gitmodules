@@ -37,3 +37,6 @@
 [submodule ".vim/pack/packages/start/vim-commentary"]
 	path = .vim/pack/packages/start/vim-commentary
 	url = https://github.com/tpope/vim-commentary.git
+[submodule ".vim/pack/packages/start/vim-tmux-navigator"]
+	path = .vim/pack/packages/start/vim-tmux-navigator
+	url = https://github.com/christoomey/vim-tmux-navigator.git
