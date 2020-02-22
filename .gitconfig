@@ -18,3 +18,9 @@
 [credential "https://git-codecommit.ap-southeast-2.amazonaws.com/"]
 	usehttppath = true
 	helper = !aws codecommit credential-helper $@
+[gpg]
+	program = /usr/local/bin/krgpg
+[commit]
+	gpgSign = true
+[tag]
+	forceSignAnnotated = true
