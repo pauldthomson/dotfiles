@@ -56,6 +56,10 @@ func main() {
 			projectName = ss[len(ss)-1]
 		}
 
+		if strings.Contains(projectName, ".") {
+			projectName = strings.ReplaceAll(projectName, ".", "-")
+		}
+
 		cmd = exec.Command("tmux", "new", "-d", "-s", projectName, "-c", resultsSlice[idx])
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
