@@ -8,9 +8,9 @@ set number
 set relativenumber
 set autowrite
 set encoding=utf-8
-set tabstop=2 
+set tabstop=4 
 set expandtab 
-set shiftwidth=2 
+set shiftwidth=4 
 set smarttab
 set showmatch
 set hlsearch
@@ -21,6 +21,9 @@ set noerrorbells
 set visualbell
 set splitbelow
 set splitright
+
+"Get the 2-space YAML as the default when hit carriage return after the colon
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Disable arrowkeys in insert and normal modes
 noremap <Up> <NOP>
