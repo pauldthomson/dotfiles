@@ -27,5 +27,6 @@
             "args": ["--stdio"],
             "filetypes": ["dockerfile"]
         }
-    }
+    },
+    "java.errors.incompleteClasspath.severity": "ignore"
 }
