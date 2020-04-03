@@ -137,6 +137,7 @@ alias ll='ls -la'
 alias la='ls -A'
 alias l='ls -CF'
 alias p='ptmux'
+alias cat=bat
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
