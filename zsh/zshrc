@@ -84,13 +84,13 @@ export FZF_BASE=/usr/local/opt/fzf
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    git 
-    httpie 
-    kubectl
+    zsh-autosuggestions
     # Keep this before fzf for vim keybindings
     vi-mode
     fzf
-    zsh-autosuggestions
+    git 
+    httpie 
+    kubectl
 )
 
 source $ZSH/oh-my-zsh.sh
