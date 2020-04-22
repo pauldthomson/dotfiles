@@ -138,6 +138,7 @@ alias la='ls -A'
 alias l='ls -CF'
 alias p='ptmux'
 alias cat=bat
+alias rg='rg --smart-case'
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
