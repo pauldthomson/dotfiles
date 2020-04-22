@@ -40,3 +40,6 @@
 [submodule ".vim/pack/packages/start/vim-tmux-navigator"]
 	path = .vim/pack/packages/start/vim-tmux-navigator
 	url = https://github.com/christoomey/vim-tmux-navigator.git
+[submodule ".vim/pack/packages/start/kotlin-vim"]
+	path = .vim/pack/packages/start/kotlin-vim
+	url = https://github.com/udalov/kotlin-vim.git
