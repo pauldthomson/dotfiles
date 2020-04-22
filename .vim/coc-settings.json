@@ -26,6 +26,10 @@
             "command": "docker-langserver",
             "args": ["--stdio"],
             "filetypes": ["dockerfile"]
+        },        
+        "kotlin": {
+            "command": "/Users/pthomson/repos/github.com/fwcd/kotlin-language-server/server/build/install/server/bin/kotlin-language-server",
+            "filetypes": ["kotlin"]
         }
     },
     "java.errors.incompleteClasspath.severity": "ignore"
