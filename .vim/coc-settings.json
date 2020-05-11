@@ -1,7 +1,6 @@
 {
     "suggest.noselect": false,
     "suggest.enablePreview": true,
-    "suggest.floatEnable": false,
     "yaml.schemas": {
         "http://json.schemastore.org/composer": "/*",
         "kubernetes": "/**/*.yaml"
