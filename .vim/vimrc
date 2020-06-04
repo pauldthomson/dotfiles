@@ -74,6 +74,9 @@ nmap <leader>p "+p
 " Toggle NERDTree
 map <C-n> :NERDTreeToggle<CR>
 
+" Open current file in NERDTree
+nnoremap <silent> <Leader>cf :NERDTreeFind<CR>
+
 " Show hidden files in NERDTree
 let NERDTreeShowHidden=1
 
