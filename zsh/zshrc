@@ -180,3 +180,6 @@ export GOPRIVATE="github.com/tyro-private"
 # [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
 # [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 export PATH="/Users/$USER/repos/github.com/bigH/git-fuzzy/bin:$PATH"
+
+# jenv
+export PATH="$HOME/.jenv/bin:$PATH"
