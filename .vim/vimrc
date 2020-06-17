@@ -215,6 +215,7 @@ autocmd Filetype go nmap <F12> :GoDecls<CR>
 autocmd FileType go nmap <F10> :GoTest<CR>
 autocmd FileType go nmap <F9> :GoTestFunc<CR>
 autocmd FileType go nmap <F7> :GoReferrers<CR>
+autocmd FileType go nmap <F2> :GoRename<CR>
 
 " Automatically highlight same identifiers (functions, variables etc)
 let g:go_auto_sameids = 1
