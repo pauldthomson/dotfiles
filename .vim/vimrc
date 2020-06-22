@@ -111,7 +111,7 @@ highlight GitGutterDelete guifg=#ff2222 ctermfg=1
 " =========================
 " vim-fugitive
 " =========================
-" Open fugitive diff in verticle splits
+" Open fugitive diff in vertical splits
 set diffopt+=vertical
 
 " =========================
@@ -232,3 +232,9 @@ let g:go_gopls_complete_unimported = 1
 " Scrolling performance
 let g:indentLine_faster     = 1
 let g:indentLine_char = '|'
+
+" =========================
+" coc-spell-checker
+" =========================
+vmap <leader>a <Plug>(coc-codeaction-selected)
+nmap <leader>a <Plug>(coc-codeaction-selected)
