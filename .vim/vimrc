@@ -114,8 +114,8 @@ highlight GitGutterDelete guifg=#ff2222 ctermfg=1
 " Open fugitive diff in vertical splits
 set diffopt+=vertical
 nmap <leader>gs :G<cr>
-nmap <leader>db :diffget //2<cr>
-nmap <leader>du :diffget //3<cr>
+nmap <leader>gt :diffget //2<cr>
+nmap <leader>gm :diffget //3<cr>
 
 " =========================
 " fzf
