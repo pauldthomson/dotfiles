@@ -183,3 +183,6 @@ export PATH="/Users/$USER/repos/github.com/bigH/git-fuzzy/bin:$PATH"
 
 # jenv
 export PATH="$HOME/.jenv/bin:$PATH"
+
+# krew
+export PATH="${PATH}:${HOME}/.krew/bin"
