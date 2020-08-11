@@ -43,3 +43,6 @@
 [submodule ".vim/pack/packages/start/vim-gitgutter"]
 	path = .vim/pack/packages/start/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter.git
+[submodule ".vim/pack/packages/start/dracula"]
+	path = .vim/pack/packages/start/dracula
+	url = https://github.com/dracula/vim.git
