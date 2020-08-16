@@ -90,12 +90,14 @@ let g:java_highlight_functions = 1
 " =========================
 " Colourscheme
 " =========================
-colorscheme codedark
+" colorscheme codedark
+packadd! dracula
+colorscheme dracula
 
 " =========================
 " vim-airline
 " =========================
-let g:airline_theme = 'codedark'
+let g:airline_theme = 'dracula'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 
