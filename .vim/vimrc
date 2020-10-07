@@ -21,6 +21,7 @@ set noerrorbells
 set visualbell
 set splitbelow
 set splitright
+set scrolloff=3
 " set list lcs=tab:\|\  
 
 "Get the 2-space YAML as the default when hit carriage return after the colon
