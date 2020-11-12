@@ -208,7 +208,7 @@ autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 autocmd FileType go nmap <leader>t  <Plug>(go-test)
 
 " Run goimports on save
-let g:go_fmt_command = "goimports"
+let g:go_fmt_command = "gopls"
 
 " Control how to open buffer when alternating between test and src
 autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
@@ -226,10 +226,6 @@ autocmd FileType go nmap <F2> :GoRename<CR>
 " Automatically highlight same identifiers (functions, variables etc)
 let g:go_auto_sameids = 1
 
-" Use gopls everywhere I can
-let g:go_def_mode = 'gopls'
-let g:go_info_mode = 'gopls'
-let g:go_rename_command = 'gopls'
 let g:go_gopls_complete_unimported = 1
 
 " =========================
