@@ -126,7 +126,7 @@ nmap <leader>gm :diffget //3<cr>
 set rtp+=/usr/local/opt/fzf
 
 " fzf files
-nnoremap <leader>f :Files<CR>
+nnoremap <leader>f :GFiles<CR>
 
 " fzf lines in file
 nnoremap <leader>/ :BLines<cr>
@@ -138,7 +138,7 @@ nnoremap <leader>c :Commands<cr>
 nnoremap <leader>e :Buffers<cr>
 
 " Use ripgrep
-nnoremap <leader>r :Rg<Space>
+nnoremap <leader>r :Rg<cr>
 
 if executable('rg')
   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
