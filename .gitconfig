@@ -20,3 +20,5 @@
 	helper = !aws codecommit credential-helper $@
 [tag]
 	forceSignAnnotated = true
+[url "git@github.com:tyro-private"]
+	insteadOf = https://github.com/tyro-private
