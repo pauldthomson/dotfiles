@@ -208,6 +208,7 @@ autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 autocmd FileType go nmap <leader>t  <Plug>(go-test)
 
 " Run goimports on save
+let g:go_imports_autosave = 1
 let g:go_fmt_command = "gopls"
 
 " Control how to open buffer when alternating between test and src
