@@ -96,6 +96,11 @@ packadd! dracula
 colorscheme dracula
 
 " =========================
+" Italic comments
+" =========================
+highlight Comment cterm=italic
+
+" =========================
 " vim-airline
 " =========================
 let g:airline_theme = 'dracula'
