@@ -1,10 +1,10 @@
 # Search a file with fzf inside a Tmux pane and then open it in an editor
 fzf_then_open_in_editor() {
-  local file=$(fzf-tmux</dev/tty --preview 'bat --style=numbers --color=always {}')
+  local file=$(fzf-tmux --preview 'bat --style=numbers --color=always {}' < /dev/tty)
   # Open the file if it exists
   if [ -n "$file" ]; then
     # Use the default editor if it's defined, otherwise Vim
-    ${EDITOR:-vim} "$file"
+    ${EDITOR:-vim} "$file" < /dev/tty
   fi
 }
 
