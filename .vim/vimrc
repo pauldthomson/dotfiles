@@ -51,7 +51,7 @@ set laststatus=2
 set backspace=indent,eol,start
 
 " Allow navigation past last character in normal mode
-set virtualedit=all
+" set virtualedit=all
 
 " Use jk to exit insert mode 
 inoremap jk <ESC>
