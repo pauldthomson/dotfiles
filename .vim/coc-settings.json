@@ -13,7 +13,8 @@
           "rootPatterns": ["go.mod", ".git/"],
           "initializationOptions": {
             "usePlaceholders": true,
-            "completeUnimported": true
+            "completeUnimported": true,
+            "ui.completion.experimentalPostfixCompletions": true
           }
         },
         "bash": {
