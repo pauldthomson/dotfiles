@@ -98,7 +98,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export EDITOR="vim"
+export EDITOR="nvim"
 
 # Use GNU versions of bash programs
 PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"

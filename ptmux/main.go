@@ -78,7 +78,7 @@ func main() {
 		// 	log.Fatal(err)
 		// }
 
-		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "vim", "C-m")
+		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "nvim", "C-m")
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
