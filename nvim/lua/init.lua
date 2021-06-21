@@ -99,8 +99,8 @@ vim.api.nvim_command('highlight GitGutterDelete guifg=#ff2222 ctermfg=1')
 -- vim-fugitive
 vim.opt.diffopt:append('vertical')
 vim.api.nvim_set_keymap('n', '<leader>gs', ':G<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>gt', ':diffget //2', { noremap = false })
-vim.api.nvim_set_keymap('n', '<leader>gm', ':diffget //3', { noremap = false })
+vim.api.nvim_set_keymap('n', '<leader>gt', ':diffget //2<CR>', { noremap = false })
+vim.api.nvim_set_keymap('n', '<leader>gm', ':diffget //3<CR>', { noremap = false })
 
 -- completion-nvim
 local function t(str)
@@ -148,7 +148,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  --buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   require'completion'.on_attach()
 end
