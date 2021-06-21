@@ -102,6 +102,22 @@ vim.api.nvim_set_keymap('n', '<leader>gs', ':G<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>gt', ':diffget //2', { noremap = false })
 vim.api.nvim_set_keymap('n', '<leader>gm', ':diffget //3', { noremap = false })
 
+-- completion-nvim
+local function t(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+function _G.smart_tab()
+    return vim.fn.pumvisible() == 1 and t'<C-n>' or t'<Tab>'
+end
+
+function _G.s_smart_tab()
+    return vim.fn.pumvisible() == 1 and t'<C-p>' or t'<S-Tab>'
+end
+
+vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.smart_tab()', { expr = true, noremap = true})
+vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua_s_smart_tab()', { expr = true, noremap = true})
+
 local nvim_lsp = require('lspconfig')
 -- Use an on_attach function to only map the following keys 
 -- after the language server attaches to the current buffer
@@ -139,13 +155,13 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "gopls" }
+local servers = { "gopls", "kotlin_language_server" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 
 nvim_lsp.jdtls.setup { cmd = {'jdt-ls'}, on_attach = on_attach }
-nvim_lsp.kotlin_language_server.setup { cmd = {'kotlin-ls'}, on_attach = on_attach }
+-- nvim_lsp.kotlin_language_server.setup { cmd = {'kotlin-ls-blah'}, on_attach = on_attach }
 
 -- vim-airline
 vim.g['airline#extensions#tabline#enabled'] = 1
