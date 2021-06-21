@@ -2,7 +2,7 @@ vim.cmd 'packadd paq-nvim'
 require 'paq-nvim' {
     {'savq/paq-nvim', opt=true};
     {'nvim-lua/completion-nvim'};
-    {'dracula/vim', as='dracula'};
+    {'dracula/vim', opt=true, as='dracula'};
     {'junegunn/fzf', run=vim.fn['fzf#install'] };
     {'junegunn/fzf.vim'};
     {'nvim-treesitter/nvim-treesitter'};
