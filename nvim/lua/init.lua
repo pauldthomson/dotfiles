@@ -5,7 +5,7 @@ require 'paq-nvim' {
     {'dracula/vim', opt=true, as='dracula'};
     {'junegunn/fzf', run=vim.fn['fzf#install'] };
     {'junegunn/fzf.vim'};
-    {'nvim-treesitter/nvim-treesitter'};
+    {'nvim-treesitter/nvim-treesitter', run=vim.fn['TSUpdate'] };
     {'neovim/nvim-lspconfig'};
     {'ms-jpq/chadtree', branch='chad', run='python3 -m chadtree deps'};
     {'vim-airline/vim-airline'};
@@ -51,6 +51,7 @@ vim.o.scrolloff = 3
 vim.o.laststatus = 2
 vim.o.cot = 'menuone,noinsert,noselect'
 
+vim.cmd('packadd! dracula')
 vim.cmd('colorscheme dracula')
 
 -- Use jk to exit insert mode
