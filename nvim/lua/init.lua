@@ -145,6 +145,7 @@ for _, lsp in ipairs(servers) do
 end
 
 nvim_lsp.jdtls.setup { cmd = {'jdt-ls'}, on_attach = on_attach }
+nvim_lsp.kotlin_language_server.setup { cmd = {'kotlin-ls'}, on_attach = on_attach }
 
 -- vim-airline
 vim.g['airline#extensions#tabline#enabled'] = 1
