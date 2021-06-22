@@ -66,6 +66,9 @@ vim.api.nvim_set_keymap('n', '<C-H>', '<C-W><C-H>', { noremap = true })
 -- Save buffer
 vim.api.nvim_set_keymap('n', '<leader>w', ':w<CR>', { noremap = true })
 
+-- Close quickfix window
+vim.api.nvim_set_keymap('n', '<leader>cc', ':ccl<CR>', { noremap = true })
+
 -- Copy and past to system clipboard in visual mode
 vim.api.nvim_set_keymap('v', '<leader>y', '\"+y', { noremap = false })
 vim.api.nvim_set_keymap('n', '<leader>p', '\"+p', { noremap = false })
@@ -155,13 +158,12 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "gopls", "kotlin_language_server" }
+local servers = { "gopls", "kotlin_language_server", "terraformls" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 
 nvim_lsp.jdtls.setup { cmd = {'jdt-ls'}, on_attach = on_attach }
--- nvim_lsp.kotlin_language_server.setup { cmd = {'kotlin-ls-blah'}, on_attach = on_attach }
 
 -- vim-airline
 vim.g['airline#extensions#tabline#enabled'] = 1
