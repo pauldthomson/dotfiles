@@ -16,6 +16,7 @@ require 'paq-nvim' {
     {'airblade/vim-gitgutter'};
     {'christoomey/vim-tmux-navigator'};
     {'tweekmonster/startuptime.vim'};
+    {'iamcco/markdown-preview.nvim'};
 }
 
 -- Enable built-in modules
@@ -119,7 +120,7 @@ function _G.s_smart_tab()
 end
 
 vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.smart_tab()', { expr = true, noremap = true})
-vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua_s_smart_tab()', { expr = true, noremap = true})
+vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_smart_tab()', { expr = true, noremap = true})
 
 local nvim_lsp = require('lspconfig')
 -- Use an on_attach function to only map the following keys 
