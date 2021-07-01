@@ -29,6 +29,16 @@ require'nvim-treesitter.configs'.setup {
     },
 }
 
+-- TODO: dies scheint funkioniert nicht
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.hcl = {
+    install_info = {
+    url = "~/repos/github.com/mitchellh/tree-sitter-hcl",
+    files = {"src/parser.c"}
+  },
+  used_by = {"terraform", "tf"}
+}
+
 -- Map leader to <Space>
 vim.g.mapleader = " "
 
@@ -159,12 +169,21 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "gopls", "kotlin_language_server", "terraformls" }
+local servers = { "gopls", "kotlin_language_server" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 
 nvim_lsp.jdtls.setup { cmd = {'jdt-ls'}, on_attach = on_attach }
+nvim_lsp.yamlls.setup { settings = { 
+    yaml = { 
+        schemas = { 
+            ['https://www.schemastore.org/api/json/catalog.json'] = '/*',
+            ['kubernetes'] = '/**/*.yaml'
+        }
+    } 
+}, on_attach = on_attach }
+nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_attach }
 
 -- vim-airline
 vim.g['airline#extensions#tabline#enabled'] = 1
