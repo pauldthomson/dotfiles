@@ -141,6 +141,7 @@ alias p='ptmux'
 alias cat=bat
 alias rg='rg --smart-case'
 alias k='kubectl'
+alias kp='kubectl -n payments'
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

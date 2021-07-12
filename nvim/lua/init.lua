@@ -16,7 +16,7 @@ require 'paq-nvim' {
     {'airblade/vim-gitgutter'};
     {'christoomey/vim-tmux-navigator'};
     {'tweekmonster/startuptime.vim'};
-    {'iamcco/markdown-preview.nvim'};
+    {'iamcco/markdown-preview.nvim', run='cd app && yarn install'};
 }
 
 -- Enable built-in modules
@@ -45,6 +45,7 @@ vim.g.mapleader = " "
 -- Vim built-in config
 vim.wo.cursorline = true
 vim.wo.number = true
+vim.wo.rnu = true
 vim.o.encoding = 'utf-8'
 vim.o.splitbelow = true
 vim.o.splitright = true
