@@ -8,7 +8,7 @@ require 'paq-nvim' {
     {'nvim-treesitter/nvim-treesitter'};
     {'neovim/nvim-lspconfig'};
     {'ms-jpq/chadtree', branch='chad', run='python3 -m chadtree deps'};
-    {'vim-airline/vim-airline'};
+    {'hoob3rt/lualine.nvim'};
     {'tpope/vim-commentary'};
     {'ryanoasis/vim-devicons'};
     {'tpope/vim-fugitive'};
@@ -17,6 +17,18 @@ require 'paq-nvim' {
     {'tweekmonster/startuptime.vim'};
     {'iamcco/markdown-preview.nvim', run='cd app && yarn install'};
     {'windwp/nvim-autopairs'};
+}
+
+require'lualine'.setup{
+    options = {
+        theme = 'dracula'
+    },
+    extensions = { 
+        'chadtree', 
+        'fzf', 
+        'quickfix',
+        'fugitive'
+    }
 }
 
 -- Enable built-in modules
@@ -194,6 +206,13 @@ local on_attach = function(client, bufnr)
   buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   require'completion'.on_attach()
+
+  if client.resolved_capabilities.document_formatting then
+      vim.api.nvim_command [[augroup Format]]
+      vim.api.nvim_command [[autocmd! * <buffer>]]
+      vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
+      vim.api.nvim_command [[augroup END]]
+  end
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
@@ -215,4 +234,4 @@ nvim_lsp.yamlls.setup { settings = {
 nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_attach }
 
 -- vim-airline
-vim.g['airline#extensions#tabline#enabled'] = 1
+-- vim.g['airline#extensions#tabline#enabled'] = 1
