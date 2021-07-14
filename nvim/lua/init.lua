@@ -5,11 +5,10 @@ require 'paq-nvim' {
     {'dracula/vim', opt=true, as='dracula'};
     {'junegunn/fzf', run=vim.fn['fzf#install'] };
     {'junegunn/fzf.vim'};
-    {'nvim-treesitter/nvim-treesitter', run=vim.fn['TSUpdate'] };
+    {'nvim-treesitter/nvim-treesitter'};
     {'neovim/nvim-lspconfig'};
     {'ms-jpq/chadtree', branch='chad', run='python3 -m chadtree deps'};
     {'vim-airline/vim-airline'};
-    {'9mm/vim-closer'};
     {'tpope/vim-commentary'};
     {'ryanoasis/vim-devicons'};
     {'tpope/vim-fugitive'};
@@ -17,6 +16,7 @@ require 'paq-nvim' {
     {'christoomey/vim-tmux-navigator'};
     {'tweekmonster/startuptime.vim'};
     {'iamcco/markdown-preview.nvim', run='cd app && yarn install'};
+    {'windwp/nvim-autopairs'};
 }
 
 -- Enable built-in modules
@@ -28,6 +28,34 @@ require'nvim-treesitter.configs'.setup {
         enable = true,
     },
 }
+
+local npairs = require('nvim-autopairs')
+npairs.setup({
+    check_ts = true
+})
+
+-- nvim-autopairs
+-- map <CR> to be in between inserted bracket etc
+_G.MUtils= {}
+
+vim.g.completion_confirm_key = ""
+
+MUtils.completion_confirm=function()
+  if vim.fn.pumvisible() ~= 0  then
+    if vim.fn.complete_info()["selected"] ~= -1 then
+      require'completion'.confirmCompletion()
+      return npairs.esc("<c-y>")
+    else
+      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
+      require'completion'.confirmCompletion()
+      return npairs.esc("<c-n><c-y>")
+    end
+  else
+    return npairs.autopairs_cr()
+  end
+end
+
+vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- TODO: dies scheint funkioniert nicht
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
