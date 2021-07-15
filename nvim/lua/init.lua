@@ -276,7 +276,10 @@ nvim_lsp.yamlls.setup { settings = {
     } 
 }, on_attach = on_attach }
 nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_attach }
-nvim_lsp.diagnosticls.setup {}
+nvim_lsp.diagnosticls.setup {
+    on_attach = on_attach,
+    filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown'},
+}
 
 -- vim-airline
 -- vim.g['airline#extensions#tabline#enabled'] = 1
