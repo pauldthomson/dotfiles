@@ -3,14 +3,18 @@ require 'paq-nvim' {
     {'savq/paq-nvim', opt=true};
     {'nvim-lua/completion-nvim'};
     {'dracula/vim', opt=true, as='dracula'};
-    {'junegunn/fzf', run=vim.fn['fzf#install'] };
-    {'junegunn/fzf.vim'};
+    -- {'junegunn/fzf', run=vim.fn['fzf#install'] };
+    -- {'junegunn/fzf.vim'};
+    {'nvim-lua/popup.nvim'};
+    {'nvim-lua/plenary.nvim'};
+    {'nvim-telescope/telescope.nvim'};
     {'nvim-treesitter/nvim-treesitter'};
     {'neovim/nvim-lspconfig'};
     {'ms-jpq/chadtree', branch='chad', run='python3 -m chadtree deps'};
     {'hoob3rt/lualine.nvim'};
     {'tpope/vim-commentary'};
-    {'ryanoasis/vim-devicons'};
+    -- {'ryanoasis/vim-devicons'};
+    {'kyazdani42/nvim-web-devicons'};
     {'tpope/vim-fugitive'};
     {'airblade/vim-gitgutter'};
     {'christoomey/vim-tmux-navigator'};
@@ -20,6 +24,7 @@ require 'paq-nvim' {
     {'glepnir/lspsaga.nvim'}
 }
 
+-- lspsaga settings
 require'lspsaga'.init_lsp_saga{
     error_sign = '',
     warn_sign = '',
@@ -34,10 +39,18 @@ require'lualine'.setup{
     },
     extensions = { 
         'chadtree', 
-        'fzf', 
+        -- 'fzf', 
         'quickfix',
         'fugitive'
-    }
+    },
+    tabline = {
+      lualine_a = {},
+      lualine_b = {},
+      lualine_c = {'filename'},
+      lualine_x = {},
+      lualine_y = {},
+      lualine_z = {}
+}
 }
 
 -- Enable built-in modules
@@ -138,21 +151,32 @@ vim.api.nvim_set_keymap('n', '<leader>p', '\"+p', { noremap = false })
 vim.api.nvim_set_keymap('', '<C-n>', ':CHADopen<CR>', { noremap = false })
 
 -- Italic comments
-vim.cmd('highlight Comment cterm=italic')
+-- vim.cmd('highlight Comment cterm=italic')
 -- vim.o.t_ZH = '[3m'
 -- vim.o.t_ZR = '[23m'
 vim.o.termguicolors = true
 
 -- fzf
-vim.api.nvim_set_keymap('n', '<leader>f', ':Files<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>e', ':Buffers<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>r', ':Rg<space>', { noremap = true })
+-- vim.api.nvim_set_keymap('n', '<leader>f', ':Files<CR>', { noremap = true })
+-- vim.api.nvim_set_keymap('n', '<leader>e', ':Buffers<CR>', { noremap = true })
+-- vim.api.nvim_set_keymap('n', '<leader>r', ':Rg<space>', { noremap = true })
 
-if vim.fn.executable('rg') == 1 then
-    vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-end
+-- if vim.fn.executable('rg') == 1 then
+--     vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+-- end
 
-vim.opt.rtp:append('/usr/local/opt/fzf')
+-- vim.opt.rtp:append('/usr/local/opt/fzf')
+
+-- telescope
+vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>Telescop buffers<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep<cr>', { noremap = true })
+
+require('telescope').setup{
+    defaults = {
+        color_devicons = true,
+    }
+}
 
 -- vim-gitgutter
 vim.opt.updatetime = 100
@@ -204,7 +228,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   -- buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
+  buf_set_keymap('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
   buf_set_keymap('n', '<C-G>', '<cmd>Lspsaga lsp_finder<CR>', opts)
   buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
   buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
