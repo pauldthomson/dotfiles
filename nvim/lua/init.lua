@@ -3,8 +3,8 @@ require 'paq-nvim' {
     {'savq/paq-nvim', opt=true};
     {'nvim-lua/completion-nvim'};
     {'dracula/vim', opt=true, as='dracula'};
-    -- {'junegunn/fzf', run=vim.fn['fzf#install'] };
-    -- {'junegunn/fzf.vim'};
+    {'junegunn/fzf', run=vim.fn['fzf#install'] };
+    {'junegunn/fzf.vim'};
     {'nvim-lua/popup.nvim'};
     {'nvim-lua/plenary.nvim'};
     {'nvim-telescope/telescope.nvim'};
@@ -21,7 +21,8 @@ require 'paq-nvim' {
     {'tweekmonster/startuptime.vim'};
     {'iamcco/markdown-preview.nvim', run='cd app && yarn install'};
     {'windwp/nvim-autopairs'};
-    {'glepnir/lspsaga.nvim'}
+    {'glepnir/lspsaga.nvim'};
+    {'hashivim/vim-terraform'};
 }
 
 -- lspsaga settings
@@ -168,9 +169,10 @@ vim.o.termguicolors = true
 -- vim.opt.rtp:append('/usr/local/opt/fzf')
 
 -- telescope
-vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>Telescope find_files<cr>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>Telescop buffers<cr>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>Telescope live_grep<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>lua require(\'telescope.builtin\').find_files({ find_command = {"rg", "--files", "--hidden", "--follow", "--glob", "!.git/*"}})<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua require(\'telescope.builtin\').buffers()<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>lua require(\'telescope.builtin\').live_grep()<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua require(\'telescope.builtin\').lsp_implementations()<cr>', { noremap = true })
 
 require('telescope').setup{
     defaults = {
@@ -226,7 +228,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  -- buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   -- buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('i', '<C-k>', '<cmd>Lspsaga signature_help<CR>', opts)
   buf_set_keymap('n', '<C-G>', '<cmd>Lspsaga lsp_finder<CR>', opts)
@@ -285,7 +287,7 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "gopls", "kotlin_language_server" }
+local servers = { "kotlin_language_server" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -303,6 +305,14 @@ nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_a
 nvim_lsp.diagnosticls.setup {
     on_attach = on_attach,
     filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown'},
+}
+nvim_lsp.gopls.setup {
+    settings = {
+	    gopls = {
+            buildFlags = {"-tags=test"}
+        }
+    },
+    on_attach = on_attach
 }
 
 -- vim-airline
