@@ -45,9 +45,9 @@ require'lualine'.setup{
         'fugitive'
     },
     tabline = {
-      lualine_a = {},
+      lualine_a = {{'filename', path = 1}},
       lualine_b = {},
-      lualine_c = {'filename'},
+      lualine_c = {},
       lualine_x = {},
       lualine_y = {},
       lualine_z = {}
@@ -162,16 +162,16 @@ vim.o.termguicolors = true
 -- vim.api.nvim_set_keymap('n', '<leader>e', ':Buffers<CR>', { noremap = true })
 -- vim.api.nvim_set_keymap('n', '<leader>r', ':Rg<space>', { noremap = true })
 
--- if vim.fn.executable('rg') == 1 then
---     vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
--- end
+if vim.fn.executable('rg') == 1 then
+    vim.env.FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+end
 
 -- vim.opt.rtp:append('/usr/local/opt/fzf')
 
 -- telescope
-vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>lua require(\'telescope.builtin\').find_files({ find_command = {"rg", "--files", "--hidden", "--follow", "--glob", "!.git/*"}})<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>lua require(\'telescope.builtin\').find_files({ find_command = {"rg", "--files", "--hidden", "--follow", "--glob", "!.git/*"}})<cr>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua require(\'telescope.builtin\').buffers()<cr>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>lua require(\'telescope.builtin\').live_grep()<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>lg', '<cmd>lua require(\'telescope.builtin\').live_grep()<cr>', { noremap = true })
 vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua require(\'telescope.builtin\').lsp_implementations()<cr>', { noremap = true })
 
 require('telescope').setup{
