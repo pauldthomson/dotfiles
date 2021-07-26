@@ -169,9 +169,9 @@ end
 -- vim.opt.rtp:append('/usr/local/opt/fzf')
 
 -- telescope
-vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>lua require(\'telescope.builtin\').find_files({ find_command = {"rg", "--files", "--hidden", "--follow", "--glob", "!.git/*"}})<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>lua require(\'telescope.builtin\').find_files({ find_command = {"rg", "--files", "--hidden", "--follow", "--glob", "!.git/*"}})<cr>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua require(\'telescope.builtin\').buffers()<cr>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<leader>lg', '<cmd>lua require(\'telescope.builtin\').live_grep()<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>lua require(\'telescope.builtin\').live_grep()<cr>', { noremap = true })
 vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua require(\'telescope.builtin\').lsp_implementations()<cr>', { noremap = true })
 
 require('telescope').setup{
@@ -244,7 +244,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  -- buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   require'completion'.on_attach()
 
@@ -277,6 +277,7 @@ local on_attach = function(client, bufnr)
     '', -- TypeParameter
   }
 
+  -- format on save
   if client.resolved_capabilities.document_formatting then
       vim.api.nvim_command [[augroup Format]]
       vim.api.nvim_command [[autocmd! * <buffer>]]
@@ -296,7 +297,6 @@ nvim_lsp.jdtls.setup { cmd = {'jdt-ls'}, on_attach = on_attach }
 nvim_lsp.yamlls.setup { settings = { 
     yaml = { 
         schemas = { 
-            ['https://www.schemastore.org/api/json/catalog.json'] = '/*',
             ['kubernetes'] = '/**/*.yaml'
         }
     } 
