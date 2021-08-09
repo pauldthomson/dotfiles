@@ -98,7 +98,7 @@ plugins=(
     git 
     httpie 
     # kubectl
-    zsh-jenv-lazy
+    # zsh-jenv-lazy
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -156,7 +156,7 @@ export FZF_DEFAULT_COMMAND='rg --no-ignore --files --hidden --follow --glob "!.g
 # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # export FZF_TMUX=1
 
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 PATH=$PATH:/usr/local/go/bin
 

@@ -16,14 +16,14 @@ func main() {
 	var cmd *exec.Cmd
 	var projectName string
 	if len(args) == 0 {
-		cmd = exec.Command("find", "/Users/pthomson/repos", "-maxdepth", "3", "-type", "d")
+		cmd = exec.Command("find", os.ExpandEnv("${HOME}")+"/repos", "-maxdepth", "3", "-type", "d")
 	} else {
 		projectName = args[0]
-		cmd = exec.Command("find", "/Users/pthomson/repos", "-maxdepth", "3", "-type", "d", "-name", projectName)
+		cmd = exec.Command("find", os.ExpandEnv("${HOME}")+"/repos", "-maxdepth", "3", "-type", "d", "-name", projectName)
 	}
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(string(out))
 	}
 
 	trimmed := strings.TrimSpace(string(out))
