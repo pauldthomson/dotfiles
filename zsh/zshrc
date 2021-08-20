@@ -156,7 +156,9 @@ export FZF_DEFAULT_COMMAND='rg --no-ignore --files --hidden --follow --glob "!.g
 # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 # export FZF_TMUX=1
 
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if ! source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null ; then
+    source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 PATH=$PATH:/usr/local/go/bin
 

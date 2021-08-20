@@ -1,7 +1,7 @@
 vim.cmd 'packadd paq-nvim'
 require 'paq-nvim' {
     {'savq/paq-nvim', opt=true};
-    {'nvim-lua/completion-nvim'};
+    -- {'nvim-lua/completion-nvim'};
     {'dracula/vim', opt=true, as='dracula'};
     {'junegunn/fzf', run=vim.fn['fzf#install'] };
     {'junegunn/fzf.vim'};
@@ -23,6 +23,8 @@ require 'paq-nvim' {
     {'windwp/nvim-autopairs'};
     {'glepnir/lspsaga.nvim'};
     {'hashivim/vim-terraform'};
+    {'ms-jpq/coq_nvim', branch = 'coq'};
+    {'ms-jpq/coq.artifacts', branch= 'artifacts'};
 }
 
 -- lspsaga settings
@@ -71,26 +73,26 @@ npairs.setup({
 
 -- nvim-autopairs
 -- map <CR> to be in between inserted bracket etc
-_G.MUtils= {}
+-- _G.MUtils= {}
 
-vim.g.completion_confirm_key = ""
+-- vim.g.completion_confirm_key = ""
 
-MUtils.completion_confirm=function()
-  if vim.fn.pumvisible() ~= 0  then
-    if vim.fn.complete_info()["selected"] ~= -1 then
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-y>")
-    else
-      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-n><c-y>")
-    end
-  else
-    return npairs.autopairs_cr()
-  end
-end
+-- MUtils.completion_confirm=function()
+--   if vim.fn.pumvisible() ~= 0  then
+--     if vim.fn.complete_info()["selected"] ~= -1 then
+--       require'completion'.confirmCompletion()
+--       return npairs.esc("<c-y>")
+--     else
+--       vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
+--       require'completion'.confirmCompletion()
+--       return npairs.esc("<c-n><c-y>")
+--     end
+--   else
+--     return npairs.autopairs_cr()
+--   end
+-- end
 
-vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+-- vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- TODO: dies scheint funkioniert nicht
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
@@ -101,6 +103,8 @@ parser_config.hcl = {
   },
   used_by = {"terraform", "tf"}
 }
+
+vim.g.coq_settings = { auto_start = true }
 
 -- Map leader to <Space>
 vim.g.mapleader = " "
@@ -246,7 +250,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   -- buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
-  require'completion'.on_attach()
+  -- require'completion'.on_attach()
 
   --protocol.SymbolKind = { }
   protocol.CompletionItemKind = {
@@ -284,6 +288,8 @@ local on_attach = function(client, bufnr)
       vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
       vim.api.nvim_command [[augroup END]]
   end
+
+  require'coq'.lsp_ensure_capabilities()
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
