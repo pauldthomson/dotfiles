@@ -104,7 +104,7 @@ parser_config.hcl = {
   used_by = {"terraform", "tf"}
 }
 
-vim.g.coq_settings = { auto_start = true }
+vim.g.coq_settings = { auto_start = 'shut-up' }
 
 -- Map leader to <Space>
 vim.g.mapleader = " "
