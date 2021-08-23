@@ -73,26 +73,26 @@ npairs.setup({
 
 -- nvim-autopairs
 -- map <CR> to be in between inserted bracket etc
--- _G.MUtils= {}
+_G.MUtils= {}
 
 -- vim.g.completion_confirm_key = ""
 
--- MUtils.completion_confirm=function()
---   if vim.fn.pumvisible() ~= 0  then
---     if vim.fn.complete_info()["selected"] ~= -1 then
---       require'completion'.confirmCompletion()
---       return npairs.esc("<c-y>")
---     else
---       vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
---       require'completion'.confirmCompletion()
---       return npairs.esc("<c-n><c-y>")
---     end
---   else
---     return npairs.autopairs_cr()
---   end
--- end
+MUtils.completion_confirm=function()
+  if vim.fn.pumvisible() ~= 0  then
+    if vim.fn.complete_info()["selected"] ~= -1 then
+      require'completion'.confirmCompletion()
+      return npairs.esc("<c-y>")
+    else
+      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
+      require'completion'.confirmCompletion()
+      return npairs.esc("<c-n><c-y>")
+    end
+  else
+    return npairs.autopairs_cr()
+  end
+end
 
--- vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- TODO: dies scheint funkioniert nicht
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
@@ -104,7 +104,7 @@ parser_config.hcl = {
   used_by = {"terraform", "tf"}
 }
 
-vim.g.coq_settings = { auto_start = 'shut-up', keymap = { jump_to_mark = '<c-m>' }}
+vim.g.coq_settings = { auto_start = 'shut-up', keymap = { jump_to_mark = '' }}
 
 -- Map leader to <Space>
 vim.g.mapleader = " "
