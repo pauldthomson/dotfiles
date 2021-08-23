@@ -104,7 +104,13 @@ parser_config.hcl = {
   used_by = {"terraform", "tf"}
 }
 
-vim.g.coq_settings = { auto_start = 'shut-up', keymap = { jump_to_mark = '' }}
+vim.g.coq_settings = { 
+    auto_start = 'shut-up', 
+    keymap = { 
+        jump_to_mark = '' ,
+        manual_complete = '<c-x><c-o>'
+    }
+}
 
 -- Map leader to <Space>
 vim.g.mapleader = " "
