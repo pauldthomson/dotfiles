@@ -20,7 +20,7 @@ require 'paq-nvim' {
     {'christoomey/vim-tmux-navigator'};
     {'tweekmonster/startuptime.vim'};
     {'iamcco/markdown-preview.nvim', run='cd app && yarn install'};
-    {'windwp/nvim-autopairs'};
+    -- {'windwp/nvim-autopairs'};
     {'glepnir/lspsaga.nvim'};
     {'hashivim/vim-terraform'};
     {'ms-jpq/coq_nvim', branch = 'coq'};
@@ -76,23 +76,45 @@ npairs.setup({
 _G.MUtils= {}
 
 -- vim.g.completion_confirm_key = ""
-
-MUtils.completion_confirm=function()
-  if vim.fn.pumvisible() ~= 0  then
-    if vim.fn.complete_info()["selected"] ~= -1 then
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-y>")
+--
+MUtils.CR = function()
+  if vim.fn.pumvisible() ~= 0 then
+    if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
+      return npairs.esc('<c-y>')
     else
-      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-n><c-y>")
+      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
     end
   else
     return npairs.autopairs_cr()
   end
 end
+vim.api.nvim_set_keymap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
 
-vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+MUtils.BS = function()
+  if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ 'mode' }).mode == 'eval' then
+    return npairs.esc('<c-e>') .. npairs.autopairs_bs()
+  else
+    return npairs.autopairs_bs()
+  end
+end
+vim.api.nvim_set_keymap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
+
+-- MUtils.completion_confirm=function()
+--   if vim.fn.pumvisible() ~= 0  then
+--     if vim.fn.complete_info()["selected"] ~= -1 then
+--       require'completion'.confirmCompletion()
+--       return npairs.esc("<c-y>")
+--     else
+--       vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
+--       require'completion'.confirmCompletion()
+--       return npairs.esc("<c-n><c-y>")
+--     end
+--   else
+--     return npairs.autopairs_cr()
+--   end
+-- end
+
+-- vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- TODO: dies scheint funkioniert nicht
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
@@ -250,7 +272,7 @@ local on_attach = function(client, bufnr)
   -- buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  --buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '<space>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
