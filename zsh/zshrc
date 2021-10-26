@@ -97,8 +97,6 @@ plugins=(
     fzf
     git 
     httpie 
-    # kubectl
-    # zsh-jenv-lazy
 )
 
 source $ZSH/oh-my-zsh.sh
