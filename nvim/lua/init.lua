@@ -26,6 +26,7 @@ require 'paq-nvim' {
     {'ms-jpq/coq_nvim', branch = 'coq'};
     {'ms-jpq/coq.artifacts', branch= 'artifacts'};
     {'tsandall/vim-rego'};
+    {'mfussenegger/nvim-jdtls'};
 }
 
 -- lspsaga settings
@@ -271,7 +272,10 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   -- buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)
+  if client.supports_method('textDocument/codeAction') then
+    buf_set_keymap('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)
+  end
+
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', '<space>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
@@ -328,7 +332,22 @@ for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 
-nvim_lsp.jdtls.setup { cmd = {'jdt-ls'}, on_attach = on_attach }
+local workspace_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+nvim_lsp.jdtls.setup { cmd = {
+        '/opt/homebrew/opt/java/bin/java',
+        '-Dosgi.bundles.defaultStartLevel=4',
+        '-Declipse.product=org.eclipse.jdt.ls.core.product',
+	    '-Dlog.level=ALL',
+	    '-noverify',
+	    '-Xmx1G',
+	    '-jar ~/repos/github.com/eclipse/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
+	    '-configuration ./config_mac',
+        '-data', '/path/to/workspace-root/' .. workspace_dir,
+	    '--add-modules=ALL-SYSTEM',
+	    '--add-opens java.base/java.util=ALL-UNNAMED',
+	    '--add-opens java.base/java.lang=ALL-UNNAMED'
+    }, 
+    on_attach = on_attach }
 nvim_lsp.yamlls.setup { settings = { 
     yaml = { 
         schemas = { 
