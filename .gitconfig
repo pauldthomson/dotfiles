@@ -1,5 +1,6 @@
 [core]
 	excludesfile = /Users/pthomson/.gitignore_global
+	pager = diff-so-fancy | less --tabs=4 -RFX
 [user]
 	email = thomsonp83@gmail.com
 	name = Paul Thomson
@@ -11,10 +12,12 @@
 	d = difftool
 	clone-submodules = submodule update --init --recursive
 	update-submodules = submodule update --recursive --remote
-[diff]
-	tool = vimdiff
 [difftool]
-	prompt = false
+    prompt = false
+[diff]
+    tool = nvimdiff
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [credential "https://git-codecommit.ap-southeast-2.amazonaws.com/"]
 	usehttppath = true
 	helper = !aws codecommit credential-helper $@
@@ -22,3 +25,20 @@
 	forceSignAnnotated = true
 [url "git@github.com:tyro-private"]
 	insteadOf = https://github.com/tyro-private
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[color]
+	ui = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = 11
+	frag = magenta bold
+	func = 146 bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse

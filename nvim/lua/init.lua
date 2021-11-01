@@ -26,7 +26,7 @@ require 'paq-nvim' {
     {'ms-jpq/coq_nvim', branch = 'coq'};
     {'ms-jpq/coq.artifacts', branch= 'artifacts'};
     {'tsandall/vim-rego'};
-    {'mfussenegger/nvim-jdtls'};
+    -- {'mfussenegger/nvim-jdtls'};
 }
 
 -- lspsaga settings
@@ -327,27 +327,27 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "kotlin_language_server" }
+local servers = { "jdtls", "kotlin_language_server" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 
 local workspace_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-nvim_lsp.jdtls.setup { cmd = {
-        '/opt/homebrew/opt/java/bin/java',
-        '-Dosgi.bundles.defaultStartLevel=4',
-        '-Declipse.product=org.eclipse.jdt.ls.core.product',
-	    '-Dlog.level=ALL',
-	    '-noverify',
-	    '-Xmx1G',
-	    '-jar ~/repos/github.com/eclipse/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
-	    '-configuration ./config_mac',
-        '-data', '/path/to/workspace-root/' .. workspace_dir,
-	    '--add-modules=ALL-SYSTEM',
-	    '--add-opens java.base/java.util=ALL-UNNAMED',
-	    '--add-opens java.base/java.lang=ALL-UNNAMED'
-    }, 
-    on_attach = on_attach }
+-- nvim_lsp.jdtls.setup { cmd = {
+--         '/opt/homebrew/opt/java/bin/java',
+--         '-Dosgi.bundles.defaultStartLevel=4',
+--         '-Declipse.product=org.eclipse.jdt.ls.core.product',
+-- 	    '-Dlog.level=ALL',
+-- 	    '-noverify',
+-- 	    '-Xmx1G',
+-- 	    '-jar ~/repos/github.com/eclipse/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
+-- 	    '-configuration ./config_mac',
+--         '-data', '/path/to/workspace-root/' .. workspace_dir,
+-- 	    '--add-modules=ALL-SYSTEM',
+-- 	    '--add-opens java.base/java.util=ALL-UNNAMED',
+-- 	    '--add-opens java.base/java.lang=ALL-UNNAMED'
+--     }, 
+--     on_attach = on_attach }
 nvim_lsp.yamlls.setup { settings = { 
     yaml = { 
         schemas = { 
