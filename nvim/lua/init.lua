@@ -27,6 +27,7 @@ require 'paq-nvim' {
     {'ms-jpq/coq.artifacts', branch= 'artifacts'};
     {'tsandall/vim-rego'};
     -- {'mfussenegger/nvim-jdtls'};
+    {'vim-test/vim-test'};
 }
 
 -- lspsaga settings
@@ -242,6 +243,13 @@ end
 vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.smart_tab()', { expr = true, noremap = true})
 vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_smart_tab()', { expr = true, noremap = true})
 
+-- vim-test
+vim.api.nvim_set_keymap('n', '<leader>tf', ':TestFile<CR>', { silent = true })
+vim.api.nvim_set_keymap('n', '<leader>tn', ':TestNearest<CR>', { silent = true })
+vim.api.nvim_set_keymap('n', '<leader>ts', ':TestSuite<CR>', { silent = true })
+vim.api.nvim_set_keymap('n', '<leader>tl', ':TestLast<CR>', { silent = true })
+vim.api.nvim_set_keymap('n', '<leader>tv', ':TestVisit<CR>', { silent = true })
+
 local nvim_lsp = require('lspconfig')
 local protocol = require'vim.lsp.protocol'
 
@@ -270,7 +278,8 @@ local on_attach = function(client, bufnr)
   -- buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   -- buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  -- buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>Lspsaga rename<CR>', opts)
   -- buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   if client.supports_method('textDocument/codeAction') then
     buf_set_keymap('n', '<space>ca', '<cmd>Lspsaga code_action<CR>', opts)

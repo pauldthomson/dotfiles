@@ -147,7 +147,7 @@ alias cat=bat
 alias rg='rg --smart-case'
 alias k='kubectl'
 alias kp='kubectl -n payments'
-alias docker='podman'
+alias go='nocorrect go'
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -198,3 +198,5 @@ export PATH="${PATH}:${HOME}/.krew/bin"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository:$PATH"
+
+source <(kubectl completion zsh)
