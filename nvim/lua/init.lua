@@ -28,6 +28,7 @@ require 'paq-nvim' {
     {'tsandall/vim-rego'};
     -- {'mfussenegger/nvim-jdtls'};
     {'vim-test/vim-test'};
+    {'b0o/schemastore.nvim'};
 }
 
 -- lspsaga settings
@@ -360,7 +361,8 @@ local workspace_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 nvim_lsp.yamlls.setup { settings = { 
     yaml = { 
         schemas = { 
-            ['kubernetes'] = '/**/*.yaml'
+            require('schemastore').json.schemas(),
+            -- ['kubernetes'] = '/**/*.yaml'
         }
     } 
 }, on_attach = on_attach }
