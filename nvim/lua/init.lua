@@ -1,5 +1,5 @@
 vim.cmd 'packadd paq-nvim'
-require 'paq-nvim' {
+require 'paq' {
     {'savq/paq-nvim', opt=true};
     -- {'nvim-lua/completion-nvim'};
     {'dracula/vim', opt=true, as='dracula'};
