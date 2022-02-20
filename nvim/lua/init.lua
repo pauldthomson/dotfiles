@@ -296,7 +296,7 @@ on_attach = function(client, bufnr)
 
   -- require'completion'.on_attach()
   require'aerial'.on_attach()
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', opts)
 
   --protocol.SymbolKind = { }
   protocol.CompletionItemKind = {
