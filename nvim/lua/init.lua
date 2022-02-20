@@ -29,6 +29,7 @@ require 'paq' {
     {'mfussenegger/nvim-jdtls'};
     {'vim-test/vim-test'};
     {'b0o/schemastore.nvim'};
+    {'stevearc/aerial.nvim'};
 }
 
 -- lspsaga settings
@@ -185,7 +186,7 @@ vim.api.nvim_set_keymap('v', '<leader>y', '\"+y', { noremap = false })
 vim.api.nvim_set_keymap('n', '<leader>p', '\"+p', { noremap = false })
 
 -- Toggle CHADTree
-vim.api.nvim_set_keymap('', '<C-n>', ':CHADopen<CR>', { noremap = false })
+vim.api.nvim_set_keymap('', '<leader>n', ':CHADopen<CR>', { noremap = false })
 
 -- Italic comments
 -- vim.cmd('highlight Comment cterm=italic')
@@ -294,6 +295,8 @@ on_attach = function(client, bufnr)
   -- buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   -- require'completion'.on_attach()
+  require'aerial'.on_attach()
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
 
   --protocol.SymbolKind = { }
   protocol.CompletionItemKind = {
