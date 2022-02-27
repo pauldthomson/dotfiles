@@ -30,6 +30,8 @@ require 'paq' {
     {'vim-test/vim-test'};
     {'b0o/schemastore.nvim'};
     {'stevearc/aerial.nvim'};
+    {'akinsho/bufferline.nvim'};
+    {'kyazdani42/nvim-web-devicons'};
 }
 
 -- lspsaga settings
@@ -210,6 +212,7 @@ vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>lua require(\'telescope.builtin\
 vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua require(\'telescope.builtin\').buffers()<cr>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<leader>r', '<cmd>lua require(\'telescope.builtin\').live_grep()<cr>', { noremap = true })
 vim.api.nvim_set_keymap('n', 'gi', '<cmd>lua require(\'telescope.builtin\').lsp_implementations()<cr>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>s', '<cmd>lua require(\'telescope.builtin\').lsp_document_symbols()<cr>', { noremap = true })
 
 require('telescope').setup{
     defaults = {
@@ -288,15 +291,13 @@ on_attach = function(client, bufnr)
   end
 
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>d', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.show()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.show()<CR>', opts)
+  buf_set_keymap('n', '<space>d', '<cmd>Lspsaga show_cursor_diagnostics<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>Lspsaga diagnostic_jump_next<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
   -- buf_set_keymap("n", "<space>fm", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   -- require'completion'.on_attach()
-  require'aerial'.on_attach()
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', opts)
 
   --protocol.SymbolKind = { }
   protocol.CompletionItemKind = {
@@ -357,6 +358,18 @@ nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_a
 nvim_lsp.diagnosticls.setup {
     on_attach = on_attach,
     filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown'},
+}
+require'aerial'.setup {
+    on_attach = function(bufnr)
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>a', '<cmd>AerialToggle!<CR>', {})
+        -- Jump forwards/backwards with '{' and '}'
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '{', '<cmd>AerialPrev<CR>', {})
+        vim.api.nvim_buf_set_keymap(bufnr, 'n', '}', '<cmd>AerialNext<CR>', {})
+        -- Jump up the tree with '[[' or ']]'
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '[[', '<cmd>AerialPrevUp<CR>', {})
+        -- vim.api.nvim_buf_set_keymap(bufnr, 'n', ']]', '<cmd>AerialNextUp<CR>', {})
+    end,
+    close_behaviour = "auto"
 }
 nvim_lsp.gopls.setup {
     settings = {
