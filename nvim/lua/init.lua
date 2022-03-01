@@ -424,3 +424,5 @@ require'lspsaga'.init_lsp_saga()
 
 -- vim-airline
 -- vim.g['airline#extensions#tabline#enabled'] = 1
+
+vim.g['test#go#gotest#options'] = '-v'
