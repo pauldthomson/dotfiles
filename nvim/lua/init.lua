@@ -32,6 +32,7 @@ require 'paq' {
     {'stevearc/aerial.nvim'};
     {'akinsho/bufferline.nvim'};
     {'kyazdani42/nvim-web-devicons'};
+    {'udalov/kotlin-vim'};
 }
 
 -- lspsaga settings
