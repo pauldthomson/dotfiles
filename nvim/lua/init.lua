@@ -33,6 +33,9 @@ require 'paq' {
     {'akinsho/bufferline.nvim'};
     {'kyazdani42/nvim-web-devicons'};
     {'udalov/kotlin-vim'};
+    {'nvim-lua/plenary.nvim'};
+    {'ThePrimeagen/refactoring.nvim'};
+    {'chaoren/vim-wordmotion'};
 }
 
 -- lspsaga settings
@@ -79,12 +82,22 @@ npairs.setup({
     check_ts = true
 })
 
--- nvim-autopairs
--- map <CR> to be in between inserted bracket etc
+local remap = vim.api.nvim_set_keymap
+local npairs = require('nvim-autopairs')
+
+npairs.setup({ map_bs = false, map_cr = false })
+
+vim.g.coq_settings = { keymap = { recommended = false } }
+
+-- these mappings are coq recommended mappings unrelated to nvim-autopairs
+remap('i', '<esc>', [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
+remap('i', '<c-c>', [[pumvisible() ? "<c-e><c-c>" : "<c-c>"]], { expr = true, noremap = true })
+remap('i', '<tab>', [[pumvisible() ? "<c-n>" : "<tab>"]], { expr = true, noremap = true })
+remap('i', '<s-tab>', [[pumvisible() ? "<c-p>" : "<bs>"]], { expr = true, noremap = true })
+
+-- skip it, if you use another global object
 _G.MUtils= {}
 
--- vim.g.completion_confirm_key = ""
---
 MUtils.CR = function()
   if vim.fn.pumvisible() ~= 0 then
     if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
@@ -96,7 +109,7 @@ MUtils.CR = function()
     return npairs.autopairs_cr()
   end
 end
-vim.api.nvim_set_keymap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
+remap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
 
 MUtils.BS = function()
   if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ 'mode' }).mode == 'eval' then
@@ -105,24 +118,7 @@ MUtils.BS = function()
     return npairs.autopairs_bs()
   end
 end
-vim.api.nvim_set_keymap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
-
--- MUtils.completion_confirm=function()
---   if vim.fn.pumvisible() ~= 0  then
---     if vim.fn.complete_info()["selected"] ~= -1 then
---       require'completion'.confirmCompletion()
---       return npairs.esc("<c-y>")
---     else
---       vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
---       require'completion'.confirmCompletion()
---       return npairs.esc("<c-n><c-y>")
---     end
---   else
---     return npairs.autopairs_cr()
---   end
--- end
-
--- vim.api.nvim_set_keymap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+remap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
 
 -- TODO: dies scheint funkioniert nicht
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
@@ -162,7 +158,6 @@ vim.o.incsearch = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.visualbell = true
-vim.o.scrolloff = 30
 vim.o.laststatus = 2
 vim.o.cot = 'menuone,noinsert,noselect'
 
@@ -353,6 +348,12 @@ nvim_lsp.yamlls.setup { settings = {
             require('schemastore').json.schemas(),
             -- ['kubernetes'] = '/**/*.yaml'
         }
+    }, 
+    json = { 
+        schemas = { 
+            require('schemastore').json.schemas(),
+            -- ['kubernetes'] = '/**/*.yaml'
+        }
     } 
 }, on_attach = on_attach }
 nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_attach }
@@ -425,5 +426,34 @@ require'lspsaga'.init_lsp_saga()
 
 -- vim-airline
 -- vim.g['airline#extensions#tabline#enabled'] = 1
+
+-- load refactoring Telescope extension
+require("telescope").load_extension("refactoring")
+
+-- remap to open the Telescope refactoring menu in visual mode
+vim.api.nvim_set_keymap(
+	"v",
+	"<leader>x",
+	"<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>",
+	{ noremap = true }
+)
+require('refactoring').setup({
+    -- prompt for return type
+    prompt_func_return_type = {
+        go = true,
+        cpp = true,
+        c = true,
+        java = true,
+    },
+    -- prompt for function parameters
+    prompt_func_param_type = {
+        go = true,
+        cpp = true,
+        c = true,
+        java = true,
+    },
+})
+
+require("bufferline").setup{}
 
 vim.g['test#go#gotest#options'] = '-v'
