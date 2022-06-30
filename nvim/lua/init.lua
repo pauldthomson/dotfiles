@@ -337,7 +337,7 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "clangd", "kotlin_language_server" }
+local servers = { "clangd", "kotlin_language_server", "csharp_ls", "tsserver" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -376,7 +376,7 @@ require'aerial'.setup {
 nvim_lsp.gopls.setup {
     settings = {
 	    gopls = {
-            buildFlags = {"-tags=test"}
+            buildFlags = {"-tags=test,pivkey"}
         }
     },
     on_attach = on_attach
