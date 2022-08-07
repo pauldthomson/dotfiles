@@ -214,3 +214,6 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 if [[ -f /Library/Certificates/allcerts.pem ]]; then
     export REQUESTS_CA_BUNDLE=/Library/Certificates/allcerts.pem
 fi
+
+# docker
+export DOCKER_HOST=unix:///Users/pthomson/.docker/docker.sock

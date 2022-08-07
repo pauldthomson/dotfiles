@@ -36,6 +36,7 @@ require 'paq' {
     {'nvim-lua/plenary.nvim'};
     {'ThePrimeagen/refactoring.nvim'};
     {'chaoren/vim-wordmotion'};
+    {'frabjous/knap'};
 }
 
 -- lspsaga settings
@@ -359,7 +360,7 @@ nvim_lsp.yamlls.setup { settings = {
 nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_attach }
 nvim_lsp.diagnosticls.setup {
     on_attach = on_attach,
-    filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown'},
+    filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown', "pylsp"},
 }
 require'aerial'.setup {
     on_attach = function(bufnr)
@@ -376,7 +377,8 @@ require'aerial'.setup {
 nvim_lsp.gopls.setup {
     settings = {
 	    gopls = {
-            buildFlags = {"-tags=test,pivkey"}
+            buildFlags = {"-tags=test,pivkey"},
+            experimentalWorkspaceModule = false
         }
     },
     on_attach = on_attach

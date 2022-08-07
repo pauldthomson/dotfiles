@@ -23,8 +23,6 @@
 	helper = !aws codecommit credential-helper $@
 [tag]
 	forceSignAnnotated = true
-[url "git@github.com:tyro-private"]
-	insteadOf = https://github.com/tyro-private
 [interactive]
 	diffFilter = diff-so-fancy --patch
 [color]
@@ -42,8 +40,8 @@
 	old = red bold
 	new = green bold
 	whitespace = red reverse
-[credential "https://dev.azure.com"]
-	useHttpPath = true
 [credential]
 	helper = 
 	helper = /usr/local/share/gcm-core/git-credential-manager-core
+[credential "https://dev.azure.com"]
+	useHttpPath = true
