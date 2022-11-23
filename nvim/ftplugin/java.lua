@@ -8,8 +8,8 @@ local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local function workspace_dir()
     return util.path.join(env.HOME, 'workspace', project_name)
 end
-local function get_jdtls_jar()
-    return vim.fn.expand '$JDTLS_HOME/plugins/org.eclipse.equinox.launcher_*.jar'
+local function get_jdtls_script()
+    return vim.fn.expand '$JDTLS_HOME/bin/jdtls'
 end
 local function get_jdtls_config()
     return util.path.join(env.JDTLS_HOME, 'config_mac')
@@ -20,21 +20,7 @@ local config = {
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {
         -- 💀
-        '/opt/homebrew/opt/openjdk@11/bin/java', -- or '/path/to/java11_or_newer/bin/java'
-                -- depends on if `java` is in your $PATH env variable and if it points to the right version.
-        '-Declipse.application=org.eclipse.jdt.ls.core.id1',
-        '-Dosgi.bundles.defaultStartLevel=4',
-        '-Declipse.product=org.eclipse.jdt.ls.core.product',
-        '-Dlog.protocol=true',
-        '-Dlog.level=ALL',
-        '-Xms1g',
-        '-Xmx2G',
-        '--add-modules=ALL-SYSTEM',
-        '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-
-        -- 💀
-        '-jar', get_jdtls_jar(),
+        get_jdtls_script(),
              -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                       ^^^^^^^^^^^^^^
              -- Must point to the                                                     Change this to
              -- eclipse.jdt.ls installation                                           the actual version

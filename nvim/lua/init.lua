@@ -11,9 +11,8 @@ require 'paq' {
     {'nvim-treesitter/nvim-treesitter'};
     {'neovim/nvim-lspconfig'};
     {'ms-jpq/chadtree', branch='chad', run='python3 -m chadtree deps'};
-    {'hoob3rt/lualine.nvim'};
+    {'nvim-lualine/lualine.nvim'};
     {'tpope/vim-commentary'};
-    -- {'ryanoasis/vim-devicons'};
     {'kyazdani42/nvim-web-devicons'};
     {'tpope/vim-fugitive'};
     {'airblade/vim-gitgutter'};
@@ -326,10 +325,10 @@ on_attach = function(client, bufnr)
   }
 
   -- format on save
-  if client.resolved_capabilities.document_formatting then
+  if client.server_capabilities.documentFormattingProvider then
       vim.api.nvim_command [[augroup Format]]
       vim.api.nvim_command [[autocmd! * <buffer>]]
-      vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()]]
+      vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
       vim.api.nvim_command [[augroup END]]
   end
 
@@ -378,7 +377,6 @@ nvim_lsp.gopls.setup {
     settings = {
 	    gopls = {
             buildFlags = {"-tags=test,pivkey"},
-            experimentalWorkspaceModule = false
         }
     },
     on_attach = on_attach
