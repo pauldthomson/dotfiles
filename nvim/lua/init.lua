@@ -8,6 +8,7 @@ require 'paq' {
     {'nvim-lua/popup.nvim'};
     {'nvim-lua/plenary.nvim'};
     {'nvim-telescope/telescope.nvim'};
+    {'nvim-telescope/telescope-fzf-native.nvim', run='make' };
     {'nvim-treesitter/nvim-treesitter'};
     {'neovim/nvim-lspconfig'};
     {'ms-jpq/chadtree', branch='chad', run='python3 -m chadtree deps'};
@@ -36,6 +37,16 @@ require 'paq' {
     {'ThePrimeagen/refactoring.nvim'};
     {'chaoren/vim-wordmotion'};
     {'frabjous/knap'};
+    {'williamboman/mason.nvim'};
+    {'williamboman/mason-lspconfig.nvim'};
+}
+
+-- mason.nvim
+require'mason'.setup{
+    log_level = vim.log.levels.DEBUG
+}
+require'mason-lspconfig'.setup{
+    log_level = vim.log.levels.DEBUG
 }
 
 -- lspsaga settings
@@ -215,6 +226,8 @@ require('telescope').setup{
         color_devicons = true,
     }
 }
+require('telescope').load_extension('fzf')
+require("telescope").load_extension("refactoring")
 
 -- vim-gitgutter
 vim.opt.updatetime = 100
@@ -337,7 +350,7 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "clangd", "kotlin_language_server", "csharp_ls", "tsserver" }
+local servers = { "clangd", "kotlin_language_server", "csharp_ls", "tsserver", "pylsp" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -359,7 +372,7 @@ nvim_lsp.yamlls.setup { settings = {
 nvim_lsp.terraformls.setup { filetypes = { 'terraform', 'tf' }, on_attach = on_attach }
 nvim_lsp.diagnosticls.setup {
     on_attach = on_attach,
-    filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown', "pylsp"},
+    filetypes = { 'go', 'java', 'yaml', 'kotlin', 'markdown', "py"},
 }
 require'aerial'.setup {
     on_attach = function(bufnr)
@@ -381,54 +394,17 @@ nvim_lsp.gopls.setup {
     },
     on_attach = on_attach
 }
+
+--Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+nvim_lsp.jsonls.setup {
+    capabilities = capabilities,
+    on_attach = on_attach 
+}
+
 require'lspsaga'.init_lsp_saga()
--- require'lspsaga'.setup {
---     debug = false,
---     use_saga_diagnostic_sign = true,
---     -- diagnostic sign
---     error_sign = "",
---     warn_sign = "",
---     hint_sign = "",
---     infor_sign = "",
---     diagnostic_header_icon = "   ",
---     -- code action title icon
---     code_action_icon = " ",
---     code_action_prompt = {
---         enable = true,
---         sign = true,
---         sign_priority = 40,
---         virtual_text = true,
---     },
---     finder_definition_icon = "  ",
---     finder_reference_icon = "  ",
---     max_preview_lines = 10,
---     finder_action_keys = {
---         open = "o",
---         vsplit = "s",
---         split = "i",
---         quit = "q",
---         scroll_down = "<C-f>",
---         scroll_up = "<C-b>",
---     },
---     code_action_keys = {
---         quit = "q",
---         exec = "<CR>",
---     },
---     rename_action_keys = {
---         quit = "<C-c>",
---         exec = "<CR>",
---     },
---     definition_preview_icon = "  ",
---     border_style = "single",
---     rename_prompt_prefix = "➤",
---     server_filetype_map = {},
--- }
-
--- vim-airline
--- vim.g['airline#extensions#tabline#enabled'] = 1
-
--- load refactoring Telescope extension
-require("telescope").load_extension("refactoring")
 
 -- remap to open the Telescope refactoring menu in visual mode
 vim.api.nvim_set_keymap(
