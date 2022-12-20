@@ -247,6 +247,9 @@ vim.keymap.set('n', '<leader>p', '\"+p', { noremap = false })
 -- Toggle Neotree
 vim.keymap.set('n', '<leader>n', ':NeoTreeShowToggle<CR>', { desc = 'Toggle [N]eoTree' })
 
+-- Close quickfix
+vim.keymap.set('n', '<leader>cc', ':ccl<CR>', { desc = 'Close quickfix list' })
+
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
@@ -258,10 +261,16 @@ require('nvim-treesitter.configs').setup {
   incremental_selection = {
     enable = true,
     keymaps = {
-      init_selection = '<c-space>',
-      node_incremental = '<c-space>',
-      scope_incremental = '<c-s>',
-      node_decremental = '<c-backspace>',
+      -- TODO: clashes with tmux
+      --
+      -- init_selection = '<c-space>',
+      -- node_incremental = '<c-space>',
+      -- scope_incremental = '<c-s>',
+      -- node_decremental = '<c-backspace>',
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
     },
   },
   textobjects = {
