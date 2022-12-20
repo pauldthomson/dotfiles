@@ -3,7 +3,7 @@ local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nv
 local is_bootstrap = false
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   is_bootstrap = true
-  vim.fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  vim.fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
   vim.cmd [[packadd packer.nvim]]
 end
 
@@ -122,6 +122,15 @@ vim.cmd [[colorscheme onedark]]
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
+-- Fix splits
+vim.o.splitbelow = true
+vim.o.splitright = true
+
+-- Fix tab size
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.smarttab = true
+
 -- [[ Basic Keymaps ]]
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -228,7 +237,7 @@ vim.keymap.set('n', '<leader>p', '\"+p', { noremap = false })
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'java', 'kotlin'},
+  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'java', 'kotlin' },
 
   highlight = { enable = true },
   indent = { enable = true },
@@ -342,15 +351,15 @@ local on_attach = function(client, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 
   if client.server_capabilities.documentFormattingProvider then
-      vim.api.nvim_command [[augroup Format]]
-      vim.api.nvim_command [[autocmd! * <buffer>]]
-      vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-      vim.api.nvim_command [[augroup END]]
+    vim.api.nvim_command [[augroup Format]]
+    vim.api.nvim_command [[autocmd! * <buffer>]]
+    vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+    vim.api.nvim_command [[augroup END]]
   end
 end
 
 -- Setup mason so it can manage external tooling
-require('mason').setup{
+require('mason').setup {
   providers = {
     "mason.providers.client",
     "mason.providers.registry-api"
@@ -359,7 +368,8 @@ require('mason').setup{
 }
 -- Enable the following language servers
 -- Feel free to add/remove any LSPs that you want here. They will automatically be installed
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua', 'gopls', 'jdtls', 'kotlin_language_server' }
+local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'sumneko_lua', 'gopls', 'jdtls',
+  'kotlin_language_server' }
 
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
