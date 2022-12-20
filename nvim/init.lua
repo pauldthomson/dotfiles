@@ -172,7 +172,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help lualine.txt`
 require('lualine').setup {
   options = {
-    icons_enabled = false,
     theme = 'onedark',
     component_separators = '|',
     section_separators = '',
@@ -249,6 +248,11 @@ vim.keymap.set('n', '<leader>n', ':NeoTreeShowToggle<CR>', { desc = 'Toggle [N]e
 
 -- Close quickfix
 vim.keymap.set('n', '<leader>cc', ':ccl<CR>', { desc = 'Close quickfix list' })
+
+-- Vim fugitive
+vim.keymap.set('n', '<leader>gs', ':Git<CR>', { desc = '[G]it [S]tatus' })
+vim.keymap.set('n', '<leader>gt', ':diffget //2<CR>', { desc = '[G]et [T]arget branch' })
+vim.keymap.set('n', '<leader>gm', ':diffget //3<CR>', { desc = '[G]et [M]erge branch' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
