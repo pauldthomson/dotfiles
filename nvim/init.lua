@@ -57,6 +57,17 @@ require('packer').startup(function(use)
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
+  -- File explorer
+  use {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v2.x",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+    },
+  }
+
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
   if has_plugins then
@@ -232,6 +243,9 @@ vim.keymap.set('n', '<leader>w', ':w<CR>', { noremap = true })
 -- Copy and paste to system clipboard in visual mode
 vim.keymap.set('v', '<leader>y', '\"+y', { noremap = false })
 vim.keymap.set('n', '<leader>p', '\"+p', { noremap = false })
+
+-- Toggle Neotree
+vim.keymap.set('n', '<leader>n', ':NeoTreeShowToggle<CR>', { desc = 'Toggle [N]eoTree' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
