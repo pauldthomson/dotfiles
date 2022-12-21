@@ -77,5 +77,6 @@ func main() {
 
 func runCmd(cmd string, args ...string) error {
 	c := exec.Command(cmd, args...)
+	c.Stdin = os.Stdin
 	return c.Run()
 }
