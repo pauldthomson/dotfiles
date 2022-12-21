@@ -278,6 +278,9 @@ vim.keymap.set('x', 'p', '\"_dP')
 vim.keymap.set('n', 'd', '\"_d')
 vim.keymap.set('v', 'd', '\"_d')
 
+-- Run ptmux from nvim
+vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww ptmux<CR>')
+
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
