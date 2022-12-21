@@ -139,8 +139,10 @@ vim.o.splitright = true
 
 -- Fix tab size
 vim.o.tabstop = 4
+vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.smarttab = true
+vim.o.expandtab = true
 
 -- [[ Basic Keymaps ]]
 -- Set <space> as the leader key
@@ -253,6 +255,28 @@ vim.keymap.set('n', '<leader>cc', ':ccl<CR>', { desc = 'Close quickfix list' })
 vim.keymap.set('n', '<leader>gs', ':Git<CR>', { desc = '[G]it [S]tatus' })
 vim.keymap.set('n', '<leader>gt', ':diffget //2<CR>', { desc = '[G]et [T]arget branch' })
 vim.keymap.set('n', '<leader>gm', ':diffget //3<CR>', { desc = '[G]et [M]erge branch' })
+
+-- Move visual selection
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+-- Keep cursor at start when appending lower line
+vim.keymap.set('n', 'J', 'mzJ`z')
+
+-- Keep cursor centered when half-page jumping
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+
+-- Keep cursor centered when searching
+vim.keymap.set('n', 'n', 'nzzzv')
+vim.keymap.set('n', 'N', 'Nzzzv')
+
+-- Don't nuke paste buffer when pasting over text
+vim.keymap.set('x', 'p', '\"_dP')
+
+-- Don't nuke paste buffer when deleting
+vim.keymap.set('n', 'd', '\"_d')
+vim.keymap.set('v', 'd', '\"_d')
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
