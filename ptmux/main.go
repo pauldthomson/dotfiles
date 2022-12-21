@@ -30,11 +30,7 @@ func main() {
 	resultsSlice := strings.Split(trimmed, "\n")
 	if len(resultsSlice) == 1 && resultsSlice[0] == "" {
 		fmt.Println("Project doesn't exist")
-		cmd = exec.Command("tmux", "new", "-d", "-s", projectName)
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
+		err := runCmd("tmux", "new", "-d", "-s", projectName)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -60,51 +56,30 @@ func main() {
 			projectName = strings.ReplaceAll(projectName, ".", "-")
 		}
 
-		cmd = exec.Command("tmux", "new", "-d", "-s", projectName, "-c", resultsSlice[idx])
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		// cmd = exec.Command("tmux", "send-keys", "-t", projectName, "tmux split-window -v -p20", "C-m")
-		// cmd.Stdin = os.Stdin
-		// cmd.Stdout = os.Stdout
-		// cmd.Stderr = os.Stderr
-		// err = cmd.Run()
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-
-		cmd = exec.Command("tmux", "send-keys", "-t", projectName, "nvim", "C-m")
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
-		if err != nil {
-			log.Fatal(err)
+		if err := runCmd("tmux", "has-session", "-t", projectName); err != nil {
+			err := runCmd("tmux", "new", "-d", "-s", projectName, "-c", resultsSlice[idx])
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = runCmd("tmux", "send-keys", "-t", projectName, "nvim", "C-m")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 
 	if os.Getenv("TMUX") != "" {
-		cmd = exec.Command("tmux", "switch", "-t", projectName)
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
-		if err != nil {
-			log.Fatal(err)
-		}
+		runCmd("tmux", "switch", "-t", projectName)
 	} else {
-		cmd = exec.Command("tmux", "a", "-t", projectName)
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		err = cmd.Run()
-		if err != nil {
-			log.Fatal(err)
-		}
+		runCmd("tmux", "a", "-t", projectName)
 	}
+}
+
+func runCmd(cmd string, args ...string) error {
+	c := exec.Command(cmd, args...)
+	c.Stdin = os.Stdin
+	c.Stdout = os.Stdout
+	c.Stderr = os.Stderr
+
+	return c.Run()
 }
