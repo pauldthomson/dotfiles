@@ -446,6 +446,7 @@ local servers = {
   kotlin_language_server = {},
   yamlls = {},
   terraformls = {},
+  diagnosticls = {},
 
   sumneko_lua = {
     Lua = {
