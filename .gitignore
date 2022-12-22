@@ -3,3 +3,9 @@ yarn.lock
 grip/cache*
 tags
 logo-ls_Darwin_x86_64/
+.classpath
+.project
+.settings
+**/**/.classpath
+**/**/.project
+**/**/.settings

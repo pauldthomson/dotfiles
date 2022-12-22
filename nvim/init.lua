@@ -71,6 +71,8 @@ require('packer').startup(function(use)
     },
   }
 
+  use 'christoomey/vim-tmux-navigator' -- navigate tmux/vim splits better
+
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
   if has_plugins then
@@ -283,6 +285,12 @@ vim.keymap.set('v', 'd', '\"_d')
 
 -- Run ptmux from nvim
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww ptmux<CR>')
+
+-- Use ctrl+hjkl to navigate splits
+vim.keymap.set('n', '<C-J>', '<C-W><C-J>')
+vim.keymap.set('n', '<C-K>', '<C-W><C-K>')
+vim.keymap.set('n', '<C-L>', '<C-W><C-L>')
+vim.keymap.set('n', '<C-H>', '<C-W><C-H>')
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
