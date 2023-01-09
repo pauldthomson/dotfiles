@@ -73,6 +73,18 @@ require('packer').startup(function(use)
 
   use 'christoomey/vim-tmux-navigator' -- navigate tmux/vim splits better
 
+  use {
+    "folke/trouble.nvim",
+    requires = "kyazdani42/nvim-web-devicons",
+    config = function()
+      require("trouble").setup {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      }
+    end
+  }
+
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
   if has_plugins then
@@ -218,6 +230,13 @@ require('telescope').setup {
       },
     },
   },
+}
+
+-- Configure Neotree
+require('neo-tree').setup {
+  filesystem = {
+    follow_current_file = true
+  }
 }
 
 -- Enable telescope fzf native, if installed
