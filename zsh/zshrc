@@ -202,7 +202,7 @@ export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.pr
 source <(kubectl completion zsh)
 
 export JDTLS_HOME="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository"
-export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.5"
+export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.6"
 
 # .Net/Csharp Lang Server
 export PATH="$PATH:/Users/pthomson/.dotnet/tools"
@@ -218,3 +218,6 @@ fi
 # docker
 export DOCKER_HOST=unix:///Users/pthomson/.docker/docker.sock
 export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
