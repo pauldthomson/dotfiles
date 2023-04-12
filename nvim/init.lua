@@ -11,7 +11,7 @@ require('packer').startup(function(use)
   -- Package manager
   use 'wbthomason/packer.nvim'
 
-  use {   -- LSP Configuration & Plugins
+  use { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     requires = {
       -- Automatically install LSPs to stdpath for neovim
@@ -26,19 +26,19 @@ require('packer').startup(function(use)
     },
   }
 
-  use {   -- Autocompletion
+  use { -- Autocompletion
     'hrsh7th/nvim-cmp',
     requires = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
   }
 
-  use {   -- Highlight, edit, and navigate code
+  use { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     run = function()
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
   }
 
-  use {   -- Additional text objects via treesitter
+  use { -- Additional text objects via treesitter
     'nvim-treesitter/nvim-treesitter-textobjects',
     after = 'nvim-treesitter',
   }
@@ -48,11 +48,11 @@ require('packer').startup(function(use)
   use 'tpope/vim-rhubarb'
   use 'lewis6991/gitsigns.nvim'
 
-  use 'navarasu/onedark.nvim'                 -- Theme inspired by Atom
-  use 'nvim-lualine/lualine.nvim'             -- Fancier statusline
-  use 'lukas-reineke/indent-blankline.nvim'   -- Add indentation guides even on blank lines
-  use 'numToStr/Comment.nvim'                 -- "gc" to comment visual regions/lines
-  use 'tpope/vim-sleuth'                      -- Detect tabstop and shiftwidth automatically
+  use 'navarasu/onedark.nvim'               -- Theme inspired by Atom
+  use 'nvim-lualine/lualine.nvim'           -- Fancier statusline
+  use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
+  use 'numToStr/Comment.nvim'               -- "gc" to comment visual regions/lines
+  use 'tpope/vim-sleuth'                    -- Detect tabstop and shiftwidth automatically
 
   -- Fuzzy Finder (files, lsp, etc)
   use { 'nvim-telescope/telescope.nvim', branch = '0.1.x', requires = { 'nvim-lua/plenary.nvim' } }
@@ -66,12 +66,12 @@ require('packer').startup(function(use)
     branch = "v2.x",
     requires = {
       "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",       -- not strictly required, but recommended
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
     },
   }
 
-  use 'christoomey/vim-tmux-navigator'   -- navigate tmux/vim splits better
+  use 'christoomey/vim-tmux-navigator' -- navigate tmux/vim splits better
 
   use {
     "folke/trouble.nvim",
@@ -241,8 +241,8 @@ require('telescope').setup {
   defaults = {
     mappings = {
       i = {
-            ['<C-u>'] = false,
-            ['<C-d>'] = false,
+        ['<C-u>'] = false,
+        ['<C-d>'] = false,
       },
     },
   },
@@ -362,44 +362,44 @@ require('nvim-treesitter.configs').setup {
   textobjects = {
     select = {
       enable = true,
-      lookahead = true,       -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
       keymaps = {
         -- You can use the capture groups defined in textobjects.scm
-            ['aa'] = '@parameter.outer',
-            ['ia'] = '@parameter.inner',
-            ['af'] = '@function.outer',
-            ['if'] = '@function.inner',
-            ['ac'] = '@class.outer',
-            ['ic'] = '@class.inner',
+        ['aa'] = '@parameter.outer',
+        ['ia'] = '@parameter.inner',
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+        ['ac'] = '@class.outer',
+        ['ic'] = '@class.inner',
       },
     },
     move = {
       enable = true,
-      set_jumps = true,       -- whether to set jumps in the jumplist
+      set_jumps = true, -- whether to set jumps in the jumplist
       goto_next_start = {
-            [']m'] = '@function.outer',
-            [']]'] = '@class.outer',
+        [']m'] = '@function.outer',
+        [']]'] = '@class.outer',
       },
       goto_next_end = {
-            [']M'] = '@function.outer',
-            [']['] = '@class.outer',
+        [']M'] = '@function.outer',
+        [']['] = '@class.outer',
       },
       goto_previous_start = {
-            ['[m'] = '@function.outer',
-            ['[['] = '@class.outer',
+        ['[m'] = '@function.outer',
+        ['[['] = '@class.outer',
       },
       goto_previous_end = {
-            ['[M'] = '@function.outer',
-            ['[]'] = '@class.outer',
+        ['[M'] = '@function.outer',
+        ['[]'] = '@class.outer',
       },
     },
     swap = {
       enable = true,
       swap_next = {
-            ['<leader>a'] = '@parameter.inner',
+        ['<leader>a'] = '@parameter.inner',
       },
       swap_previous = {
-            ['<leader>A'] = '@parameter.inner',
+        ['<leader>A'] = '@parameter.inner',
       },
     },
   },
@@ -484,7 +484,11 @@ local servers = {
   -- tsserver = {},
   jdtls = {},
   kotlin_language_server = {},
-  yamlls = {},
+  yamlls = {
+    yaml = {
+      keyOrdering = false,
+    },
+  },
   terraformls = {},
   diagnosticls = {},
   lua_ls = {
@@ -493,6 +497,9 @@ local servers = {
       telemetry = { enable = false },
     },
   },
+  omnisharp = {},
+  omnisharp_mono = {},
+  csharp_ls = {},
 }
 
 -- Setup neovim lua configuration
@@ -536,14 +543,14 @@ cmp.setup {
     end,
   },
   mapping = cmp.mapping.preset.insert {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<CR>'] = cmp.mapping.confirm {
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-        ['<Tab>'] = cmp.mapping(function(fallback)
+    ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
       elseif luasnip.expand_or_jumpable() then
@@ -552,7 +559,7 @@ cmp.setup {
         fallback()
       end
     end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
       elseif luasnip.jumpable(-1) then
