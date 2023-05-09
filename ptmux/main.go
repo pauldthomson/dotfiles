@@ -62,7 +62,8 @@ func main() {
 		}
 
 		if err := runCmd("tmux", "has-session", "-t", projectName); err != nil {
-			err := runCmd("tmux", "new", "-d", "-s", projectName, "-c", resultsSlice[idx])
+			//TODO: don't assume github.com
+			err := runCmd("tmux", "new", "-d", "-s", projectName, "-c", strings.Join([]string{os.ExpandEnv("${HOME}"), "repos", "github.com", resultsSlice[idx]}, string(os.PathSeparator)))
 			if err != nil {
 				log.Fatal(err)
 			}
