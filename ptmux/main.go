@@ -16,10 +16,10 @@ func main() {
 	var cmd *exec.Cmd
 	var projectName string
 	if len(args) == 0 {
-		cmd = exec.Command("find", os.ExpandEnv("${HOME}")+"/repos", "-maxdepth", "3", "-type", "d")
+		cmd = exec.Command("find", os.ExpandEnv("${HOME}")+"/repos", "-maxdepth", "3", "-mindepth", "3", "-type", "d")
 	} else {
 		projectName = args[0]
-		cmd = exec.Command("find", os.ExpandEnv("${HOME}")+"/repos", "-maxdepth", "3", "-type", "d", "-name", projectName)
+		cmd = exec.Command("find", os.ExpandEnv("${HOME}")+"/repos", "-maxdepth", "3", "-mindepth", "3", "-type", "d", "-name", projectName)
 	}
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -35,6 +35,11 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
+		for i, p := range resultsSlice {
+			sp := strings.Split(p, string(os.PathSeparator))
+			resultsSlice[i] = strings.Join(sp[len(sp)-2:], string(os.PathSeparator))
+		}
+
 		var idx int
 		if len(resultsSlice) == 1 {
 			idx = 0
