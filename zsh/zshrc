@@ -160,6 +160,7 @@ if ! source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.
 fi
 
 PATH=$PATH:/usr/local/go/bin
+export PATH="$PATH:${HOME}/go/bin"
 
 # Make bash completion work with zsh
 autoload -Uz compinit
