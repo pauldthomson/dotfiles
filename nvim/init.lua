@@ -466,6 +466,13 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_command [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
     vim.api.nvim_command [[augroup END]]
   end
+
+  vim.api.nvim_create_autocmd('BufWritePre', {
+    pattern = '*.go',
+    callback = function()
+      vim.lsp.buf.code_action({ context = { only = { 'source.organizeImports' } }, apply = true })
+    end
+  })
 end
 
 -- Setup mason so it can manage external tooling
@@ -492,6 +499,12 @@ local servers = {
   yamlls = {
     yaml = {
       keyOrdering = false,
+      schemaStore = {
+        enable = true,
+      },
+      schemas = {
+        ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/master/all.json"] = "/*",
+      },
     },
   },
   terraformls = {},
@@ -505,6 +518,8 @@ local servers = {
   omnisharp = {},
   omnisharp_mono = {},
   csharp_ls = {},
+  bashls = {},
+  marksman = {},
 }
 
 -- Setup neovim lua configuration
