@@ -61,7 +61,7 @@ func main() {
 			projectName = strings.ReplaceAll(projectName, ".", "-")
 		}
 
-		if err := runCmd("tmux", "has-session", "-t=", projectName); err != nil {
+		if err := runCmd("tmux", "has-session", fmt.Sprintf("-t=%s", projectName)); err != nil {
 			//TODO: don't assume github.com
 			err := runCmd("tmux", "new", "-d", "-s", projectName, "-c", strings.Join([]string{os.ExpandEnv("${HOME}"), "repos", "github.com", resultsSlice[idx]}, string(os.PathSeparator)))
 			if err != nil {
