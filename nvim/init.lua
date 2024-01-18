@@ -1,4 +1,4 @@
--- local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
+-- local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'ini
 -- local is_bootstrap = false
 -- if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
 --   is_bootstrap = true
@@ -57,13 +57,52 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-  'lewis6991/gitsigns.nvim',
+  {
+    'lewis6991/gitsigns.nvim',
+    opts = {
+      signs = {
+        add = { text = '+' },
+        change = { text = '~' },
+        delete = { text = '_' },
+        topdelete = { text = '‾' },
+        changedelete = { text = '~' },
+      },
+      on_attach = function()
+        vim.keymap.set({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<cr>')
+        vim.keymap.set({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<cr>')
+        vim.keymap.set({ 'n', 'v' }, '<leader>hn', ':Gitsigns next_hunk<cr>')
+        vim.keymap.set({ 'n', 'v' }, '<leader>hp', ':Gitsigns prev_hunk<cr>')
+        vim.keymap.set({ 'n', 'v' }, '<leader>ph', ':Gitsigns preview_hunk<cr>')
+      end
+    },
+  },
 
-  'navarasu/onedark.nvim',               -- Theme inspired by Atom
-  'nvim-lualine/lualine.nvim',           -- Fancier statusline
-  'lukas-reineke/indent-blankline.nvim', -- Add indentation guides even on blank lines
-  'numToStr/Comment.nvim',               -- "gc" to comment visual regions/lines
-  'tpope/vim-sleuth',                    -- Detect tabstop and shiftwidth automatically
+  'navarasu/onedark.nvim', -- Theme inspired by Atom
+
+  {
+    'nvim-lualine/lualine.nvim', -- Fancier statusline
+    opts = {
+      options = {
+        theme = 'onedark',
+        component_separators = '|',
+        section_separators = '',
+      }
+    }
+  },
+
+  {
+    'lukas-reineke/indent-blankline.nvim', -- Add indentation guides even on blank lines
+    main = "ibl",
+    opts = {}
+  },
+
+  {
+    'numToStr/Comment.nvim', -- "gc" to comment visual regions/lines
+    lazy = false,
+    opts = {}
+  },
+
+  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -71,6 +110,16 @@ require('lazy').setup({
     branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim'
+    },
+    opts = {
+      defaults = {
+        mappings = {
+          i = {
+            ['<C-u>'] = false,
+            ['<C-d>'] = false,
+          },
+        },
+      },
     }
   },
 
@@ -97,13 +146,13 @@ require('lazy').setup({
   {
     "folke/trouble.nvim",
     dependencies = "kyazdani42/nvim-web-devicons",
-    config = function()
+    config = [[ function()
       require("trouble").setup {
         -- your configuration comes here
         -- or leave it empty to use the default settings
         -- refer to the configuration section below
       }
-    end
+    end ]]
   },
 
   {
@@ -198,57 +247,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
-
--- Set lualine as statusline
--- See `:help lualine.txt`
-require('lualine').setup {
-  options = {
-    theme = 'onedark',
-    component_separators = '|',
-    section_separators = '',
-  },
-}
-
--- Enable Comment.nvim
-require('Comment').setup()
-
--- Enable `lukas-reineke/indent-blankline.nvim`
--- See `:help indent_blankline.txt`
-require('ibl').setup {
-  indent = { char = '┊' },
-}
-
--- Gitsigns
--- See `:help gitsigns.txt`
-require('gitsigns').setup {
-  signs = {
-    add = { text = '+' },
-    change = { text = '~' },
-    delete = { text = '_' },
-    topdelete = { text = '‾' },
-    changedelete = { text = '~' },
-  },
-  on_attach = function()
-    vim.keymap.set({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<cr>')
-    vim.keymap.set({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<cr>')
-    vim.keymap.set({ 'n', 'v' }, '<leader>hn', ':Gitsigns next_hunk<cr>')
-    vim.keymap.set({ 'n', 'v' }, '<leader>hp', ':Gitsigns prev_hunk<cr>')
-    vim.keymap.set({ 'n', 'v' }, '<leader>ph', ':Gitsigns preview_hunk<cr>')
-  end
-}
-
--- [[ Configure Telescope ]]
--- See `:help telescope` and `:help telescope.setup()`
-require('telescope').setup {
-  defaults = {
-    mappings = {
-      i = {
-        ['<C-u>'] = false,
-        ['<C-d>'] = false,
-      },
-    },
-  },
-}
 
 -- Configure Neotree
 require('neo-tree').setup {
