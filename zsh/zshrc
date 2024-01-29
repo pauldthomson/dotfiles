@@ -203,7 +203,7 @@ export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.pr
 source <(kubectl completion zsh)
 
 export JDTLS_HOME="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository"
-export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.7"
+export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.9"
 
 # .Net/Csharp Lang Server
 export PATH="$PATH:/Users/pthomson/.dotnet/tools"
