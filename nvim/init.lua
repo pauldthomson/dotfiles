@@ -134,7 +134,24 @@ require('lazy').setup({
     }
   },
 
-  'christoomey/vim-tmux-navigator', -- navigate tmux/vim splits better
+  {
+    'christoomey/vim-tmux-navigator',
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatePrevious",
+    },
+    lazy = false,
+    keys = {
+      { "<C-h>",  "<cmd><C-U>TmuxNavigateLeft<cr>" },
+      { "<C-j>",  "<cmd><C-U>TmuxNavigateDown<cr>" },
+      { "<C-k>",  "<cmd><C-U>TmuxNavigateUp<cr>" },
+      { "<C-l>",  "<cmd><C-U>TmuxNavigateRight<cr>" },
+      { "<C-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+    }
+  },
 
   {
     "folke/trouble.nvim",
@@ -322,12 +339,6 @@ vim.keymap.set('v', 'd', '\"_d')
 
 -- Run ptmux from nvim
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww ptmux<CR>')
-
--- Use ctrl+hjkl to navigate splits
-vim.keymap.set('n', '<C-J>', '<C-W><C-J>')
-vim.keymap.set('n', '<C-K>', '<C-W><C-K>')
-vim.keymap.set('n', '<C-L>', '<C-W><C-L>')
-vim.keymap.set('n', '<C-H>', '<C-W><C-H>')
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
