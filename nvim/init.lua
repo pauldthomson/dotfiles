@@ -186,6 +186,21 @@ require('lazy').setup({
     },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
+  -- nvim v0.8.0
+  {
+    "kdheepak/lazygit.nvim",
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+  },
 })
 
 -- [[ Setting options ]]
@@ -334,8 +349,8 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('x', 'p', '\"_dP')
 
 -- Don't nuke paste buffer when deleting
-vim.keymap.set('n', 'd', '\"_d')
-vim.keymap.set('v', 'd', '\"_d')
+-- vim.keymap.set('n', 'd', '\"_d')
+-- vim.keymap.set('v', 'd', '\"_d')
 
 -- Run ptmux from nvim
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww ptmux<CR>')
