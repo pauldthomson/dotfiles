@@ -201,6 +201,10 @@ require('lazy').setup({
       "nvim-lua/plenary.nvim",
     },
   },
+  {
+    "nvim-telescope/telescope-file-browser.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  }
 })
 
 -- [[ Setting options ]]
@@ -308,6 +312,10 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').git_commits, { desc = '[S]earch [C]ommits' })
+
+vim.keymap.set("n", "<space>fb", function()
+  require("telescope").extensions.file_browser.file_browser({ select_buffer = true, path = '%:p:h' })
+end)
 
 -- Use jk to exit insert mode
 vim.keymap.set('i', 'jk', '<ESC>', { noremap = true })
@@ -534,6 +542,11 @@ local servers = {
   csharp_ls = {},
   bashls = {},
   marksman = {},
+  snyk_ls = {
+    init_options = {
+      activateSnykCode = true,
+    },
+  },
 }
 
 -- Setup neovim lua configuration

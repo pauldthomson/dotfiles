@@ -223,3 +223,5 @@ export NVM_DIR="$HOME/.nvm"
 
 # IntelliJ
 export PATH="/Applications/IntelliJ IDEA CE.app/Contents/MacOS:$PATH"
+
+eval "$(atuin init zsh --disable-up-arrow)"
