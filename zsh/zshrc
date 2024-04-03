@@ -133,8 +133,6 @@ MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 # Work
 alias c=corectl
-alias ci='corectl idaptive'
-alias cia='corectl idaptive aws'
 alias ls='ls -G'
 alias grep='grep --colour=auto'
 alias fgrep='fgrep --colour=auto'
@@ -146,8 +144,8 @@ alias p='ptmux'
 alias cat=bat
 alias rg='rg --smart-case'
 alias k='kubectl'
-alias kp='kubectl -n payments'
 alias go='nocorrect go'
+alias lg='lazygit'
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -363,6 +363,9 @@ vim.keymap.set('x', 'p', '\"_dP')
 -- Run ptmux from nvim
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww ptmux<CR>')
 
+-- Launch LazyGit
+vim.keymap.set('n', '<leader>lg', ':LazyGit<CR>', { desc = '[L]azy [G]it' })
+
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
