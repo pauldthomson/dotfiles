@@ -545,11 +545,6 @@ local servers = {
   csharp_ls = {},
   bashls = {},
   marksman = {},
-  snyk_ls = {
-    init_options = {
-      activateSnykCode = true,
-    },
-  },
 }
 
 -- Setup neovim lua configuration
