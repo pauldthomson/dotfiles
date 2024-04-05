@@ -68,6 +68,7 @@ require('lazy').setup({
         vim.keymap.set({ 'n', 'v' }, '<leader>ph', ':Gitsigns preview_hunk<cr>')
       end
     },
+    config = true
   },
 
   'navarasu/onedark.nvim', -- Theme inspired by Atom
@@ -204,6 +205,21 @@ require('lazy').setup({
   {
     "nvim-telescope/telescope-file-browser.nvim",
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+  },
+  {
+    "windwp/nvim-autopairs",
+    -- Optional dependency
+    dependencies = { 'hrsh7th/nvim-cmp' },
+    config = function()
+      require("nvim-autopairs").setup {}
+      -- If you want to automatically add `(` after selecting a function or method
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      local cmp = require('cmp')
+      cmp.event:on(
+        'confirm_done',
+        cmp_autopairs.on_confirm_done()
+      )
+    end,
   }
 })
 
@@ -549,7 +565,7 @@ local servers = {
 
 -- Setup neovim lua configuration
 require('neodev').setup()
---
+
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
