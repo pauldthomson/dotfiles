@@ -267,6 +267,8 @@ vim.o.shiftwidth = 4
 vim.o.smarttab = true
 vim.o.expandtab = true
 
+vim.g.have_nerd_font = true
+
 -- [[ Basic Keymaps ]]
 -- Set <space> as the leader key
 -- See `:help mapleader`
