@@ -220,7 +220,8 @@ require('lazy').setup({
         cmp_autopairs.on_confirm_done()
       )
     end,
-  }
+  },
+  { "mistricky/codesnap.nvim", build = "make" },
 })
 
 -- [[ Setting options ]]
