@@ -222,6 +222,10 @@ require('lazy').setup({
     end,
   },
   { "mistricky/codesnap.nvim", build = "make" },
+  {
+    "klen/nvim-test",
+    config = true
+  },
 })
 
 -- [[ Setting options ]]
