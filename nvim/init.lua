@@ -224,7 +224,11 @@ require('lazy').setup({
   { "mistricky/codesnap.nvim", build = "make" },
   {
     "klen/nvim-test",
-    config = true
+    config = {
+      termOpts = {
+        direction = "float"
+      },
+    },
   },
 })
 
