@@ -212,6 +212,7 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # DLP Proxy
 if [[ -f /Library/Certificates/allcerts.pem ]]; then
     export REQUESTS_CA_BUNDLE=/Library/Certificates/allcerts.pem
+    export NODE_EXTRA_CA_CERTS=/Library/Certificates/allcerts.pem
 fi
 
 #export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
