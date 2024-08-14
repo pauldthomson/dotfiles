@@ -230,7 +230,7 @@ require('lazy').setup({
     "klen/nvim-test",
     config = {
       termOpts = {
-        direction = "float"
+        direction = "horizontal"
       },
     },
   },
