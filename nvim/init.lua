@@ -81,7 +81,7 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim', -- Fancier statusline
     opts = {
       options = {
-        theme = 'onedark',
+        theme = 'catppuccin',
         component_separators = '|',
         section_separators = '',
       }
@@ -234,6 +234,15 @@ require('lazy').setup({
       },
     },
   },
+  "tpope/vim-dadbod",
+  "kristijanhusak/vim-dadbod-completion",
+  "kristijanhusak/vim-dadbod-ui",
+
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+  }
 })
 
 -- [[ Setting options ]]
@@ -264,7 +273,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd [[colorscheme onedark]]
+vim.cmd [[colorscheme catppuccin]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menu,menuone,noselect'
@@ -279,6 +288,9 @@ vim.o.softtabstop = 4
 vim.o.shiftwidth = 4
 vim.o.smarttab = true
 vim.o.expandtab = true
+
+vim.o.smoothscroll = true
+vim.o.scrolloff = 5
 
 vim.g.have_nerd_font = true
 
@@ -345,7 +357,7 @@ vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { de
 vim.keymap.set('n', '<leader>sc', require('telescope.builtin').git_commits, { desc = '[S]earch [C]ommits' })
 
 vim.keymap.set("n", "<space>fb", function()
-  require("telescope").extensions.file_browser.file_browser({ select_buffer = true, path = '%:p:h' })
+  require("telescope").extensions.file_browser.file_browser()
 end)
 
 -- Use jk to exit insert mode
@@ -546,7 +558,13 @@ require('mason').setup {
 --  the `settings` field of the server config. You must look up that documentation yourself.
 local servers = {
   -- clangd = {},
-  gopls = {},
+  gopls = {
+    completeUnimported = true,
+    usePlaceholders = true,
+    analyses = {
+      unusedparams = true,
+    }
+  },
   -- pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},

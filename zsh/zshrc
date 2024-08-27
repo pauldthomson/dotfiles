@@ -201,7 +201,7 @@ export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.pr
 source <(kubectl completion zsh)
 
 export JDTLS_HOME="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository"
-export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.10"
+export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.12"
 
 # .Net/Csharp Lang Server
 export PATH="$PATH:/Users/pthomson/.dotnet/tools"
@@ -223,4 +223,4 @@ export NVM_DIR="$HOME/.nvm"
 # IntelliJ
 export PATH="/Applications/IntelliJ IDEA CE.app/Contents/MacOS:$PATH"
 
-eval "$(atuin init zsh --disable-up-arrow)"
+# eval "$(atuin init zsh --disable-up-arrow)"
