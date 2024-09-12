@@ -1,14 +1,26 @@
 return { -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    dependencies = {
-        -- Automatically install LSPs to stdpath for neovim
+    {
+        'neovim/nvim-lspconfig',
+        dependencies = {
+            -- Automatically install LSPs to stdpath for neovim
+            'williamboman/mason.nvim',
+            'williamboman/mason-lspconfig.nvim',
+
+            -- Useful status updates for LSP
+            'j-hui/fidget.nvim',
+
+            -- Additional lua configuration, makes nvim stuff amazing
+            'folke/neodev.nvim',
+        },
+    },
+    {
         'williamboman/mason.nvim',
-        'williamboman/mason-lspconfig.nvim',
-
-        -- Useful status updates for LSP
-        'j-hui/fidget.nvim',
-
-        -- Additional lua configuration, makes nvim stuff amazing
-        'folke/neodev.nvim',
+        opts = {
+            providers = {
+                "mason.providers.client",
+                "mason.providers.registry-api"
+            },
+            log_level = vim.log.levels.DEBUG
+        }
     },
 }
