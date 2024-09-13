@@ -23,4 +23,8 @@ return { -- LSP Configuration & Plugins
             log_level = vim.log.levels.DEBUG
         }
     },
+    {
+        'j-hui/fidget.nvim',
+        opts = {}
+    }
 }
