@@ -93,16 +93,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- Configure Neotree
-require('neo-tree').setup {
-  filesystem = {
-    follow_current_file = true,
-    filtered_items = {
-      hide_dotfiles = false
-    }
-  }
-}
-
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
