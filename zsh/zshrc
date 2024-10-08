@@ -146,6 +146,7 @@ alias rg='rg --smart-case'
 alias k='kubectl'
 alias go='nocorrect go'
 alias lg='lazygit'
+alias gsp='gcloud-set-project'
 
 # FZF
 # [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -228,3 +229,6 @@ export PATH="/Applications/IntelliJ IDEA CE.app/Contents/MacOS:$PATH"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
