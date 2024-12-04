@@ -50,9 +50,8 @@ return { -- LSP Configuration & Plugins
                         schemaStore = {
                             enable = true,
                         },
-                        schemas = {
-                            ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/master/all.json"] =
-                            "/*",
+                        format = {
+                            enable = true
                         },
                     },
                 },
