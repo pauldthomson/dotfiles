@@ -9,13 +9,6 @@ return {
             }
         }
     },
-
-    {
-        'lukas-reineke/indent-blankline.nvim', -- Add indentation guides even on blank lines
-        main = "ibl",
-        opts = {}
-    },
-
     {
         'numToStr/Comment.nvim', -- "gc" to comment visual regions/lines
         lazy = false,
