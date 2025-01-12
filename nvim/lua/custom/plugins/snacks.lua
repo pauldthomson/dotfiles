@@ -13,6 +13,6 @@ return {
                 only_current = true,
             },
         },
-
+        scroll = { enabled = true }
     },
 }
