@@ -1,0 +1,71 @@
+[core]
+	excludesfile = /Users/pthomson/.gitignore_global
+	pager = diff-so-fancy | less --tabs=4 -RFX
+[user]
+	email = pthomson@nurturecloud.com
+	name = Paul Thomson
+	signingkey = BE1FE22322C71B79
+[alias]
+	st = status
+	ci = commit
+	co = checkout
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --abbrev-commit --date=local --all
+	d = difftool
+	clone-submodules = submodule update --init --recursive
+	update-submodules = submodule update --recursive --remote
+[difftool]
+    prompt = false
+[diff]
+    tool = nvimdiff
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+[tag]
+	forceSignAnnotated = true
+	sort = version:refname
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[color]
+	ui = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = 11
+	frag = magenta bold
+	func = 146 bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+[credential]
+	helper = 
+	helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[commit]
+	gpgsign = true
+	verbose = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[push]
+	autoSetupRemote = true
+	followTags = true
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[help]
+	autocorrect = prompt
+[rerere]
+	enabled = true
+	autoupdate = true
+[pull]
+	rebase = true
