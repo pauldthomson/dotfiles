@@ -1,6 +1,6 @@
 module github.com/pauldthomson/ptmux
 
-go 1.19
+go 1.24.1
 
 require github.com/ktr0731/go-fuzzyfinder v0.6.0
 

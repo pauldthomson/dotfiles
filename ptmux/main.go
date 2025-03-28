@@ -67,7 +67,13 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = runCmd("tmux", "send-keys", "-t", projectName, "nvim", "C-m")
+
+			err = runCmd("tmux", "new-window", "-n", "scratch", "-t", projectName)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			err = runCmd("tmux", "send-keys", "-t", fmt.Sprintf("%s:1", projectName), "nvim", "C-m")
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -75,9 +81,9 @@ func main() {
 	}
 
 	if os.Getenv("TMUX") != "" {
-		runCmd("tmux", "switch", "-t", projectName)
+		runCmd("tmux", "switch", "-t", fmt.Sprintf("%s:1", projectName))
 	} else {
-		runCmd("tmux", "a", "-t", projectName)
+		runCmd("tmux", "a", "-t", fmt.Sprintf("%s:1", projectName))
 	}
 }
 
