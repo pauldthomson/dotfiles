@@ -63,12 +63,13 @@ func main() {
 
 		if err := runCmd("tmux", "has-session", fmt.Sprintf("-t=%s", projectName)); err != nil {
 			//TODO: don't assume github.com
-			err := runCmd("tmux", "new", "-d", "-s", projectName, "-c", strings.Join([]string{os.ExpandEnv("${HOME}"), "repos", "github.com", resultsSlice[idx]}, string(os.PathSeparator)))
+			startDir := strings.Join([]string{os.ExpandEnv("${HOME}"), "repos", "github.com", resultsSlice[idx]}, string(os.PathSeparator))
+			err := runCmd("tmux", "new", "-d", "-s", projectName, "-c", startDir)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			err = runCmd("tmux", "new-window", "-n", "scratch", "-t", projectName)
+			err = runCmd("tmux", "new-window", "-n", "scratch", "-t", projectName, "-c", startDir)
 			if err != nil {
 				log.Fatal(err)
 			}
