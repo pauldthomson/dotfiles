@@ -72,8 +72,6 @@ vim.o.scrolloff = 5
 
 vim.g.have_nerd_font = true
 
-vim.o.winborder = 'rounded'
-
 vim.cmd("set completeopt+=noselect")
 
 -- [[ Basic Keymaps ]]
