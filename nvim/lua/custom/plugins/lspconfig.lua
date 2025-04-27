@@ -69,6 +69,9 @@ return { -- LSP Configuration & Plugins
                 csharp_ls = {},
                 bashls = {},
                 marksman = {},
+                dockerls = {},
+                docker_compose_language_service = {},
+                gradle_ls = {},
             }
 
             local on_attach = function(client, bufnr)
