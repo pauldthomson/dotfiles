@@ -23,6 +23,9 @@ return {
                                 default = "claude-opus-4-20250514"
                             },
                         },
+                        env = {
+                            api_key = "cmd:op read \"op://private/Anthropic API Key/credential\" --no-newline"
+                        }
                     })
                 end,
             },
