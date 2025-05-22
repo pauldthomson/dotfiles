@@ -37,6 +37,9 @@ return {
                 }
             },
         },
+        init = function()
+            require("custom.codecompanion.spinner"):init()
+        end,
     },
     {
         "ravitemer/mcphub.nvim",
