@@ -4,6 +4,7 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
+            "ravitemer/mcphub.nvim",
         },
         opts = {
             strategies = {
@@ -15,7 +16,7 @@ return {
                 },
             },
             adapters = {
-                anthropic = function ()
+                anthropic = function()
                     return require("codecompanion.adapters").extend("anthropic", {
                         schema = {
                             model = {
@@ -25,6 +26,44 @@ return {
                     })
                 end,
             },
+            extensions = {
+                mcphub = {
+                    callback = "mcphub.extensions.codecompanion",
+                    opts = {
+                        show_result_in_chat = true, -- Show mcp tool results in chat
+                        make_vars = true,           -- Convert resources to #variables
+                        make_slash_commands = true, -- Add prompts as /slash commands
+                    }
+                }
+            },
         },
     },
+    {
+        "ravitemer/mcphub.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        build = "npm install -g mcp-hub@latest", -- Installs `mcp-hub` node binary globally
+        config = function()
+            require("mcphub").setup()
+        end
+    },
+    {
+        "MeanderingProgrammer/render-markdown.nvim",
+        ft = { "markdown", "codecompanion" }
+    },
+    {
+        {
+            "HakonHarnes/img-clip.nvim",
+            opts = {
+                filetypes = {
+                    codecompanion = {
+                        prompt_for_file_name = false,
+                        template = "[Image]($FILE_PATH)",
+                        use_absolute_path = true,
+                    },
+                },
+            },
+        },
+    }
 }
