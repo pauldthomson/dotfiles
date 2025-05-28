@@ -12,6 +12,9 @@ return { -- LSP Configuration & Plugins
             -- Additional lua configuration, makes nvim stuff amazing
             'folke/neodev.nvim',
         },
+        config = function()
+            vim.lsp.enable('kotlin_lsp')
+        end
     },
     {
         'mason-org/mason.nvim',
@@ -43,16 +46,11 @@ return { -- LSP Configuration & Plugins
                 -- rust_analyzer = {},
                 -- tsserver = {},
                 jdtls = {},
-                kotlin_language_server = {},
                 yamlls = {
                     yaml = {
                         keyOrdering = false,
                         schemaStore = {
                             enable = true,
-                        },
-                        schemas = {
-                            ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/master/all.json"] =
-                            "/*",
                         },
                     },
                 },
