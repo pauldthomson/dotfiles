@@ -1,0 +1,1 @@
+- You can commit and push to the main branch of this repo unless told otherwise

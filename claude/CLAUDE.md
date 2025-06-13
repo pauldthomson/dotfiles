@@ -1,0 +1,2 @@
+- remember to always create a branch first when we commit, push, pr
+- When you open a GitHub pull request, use pbpaste to copy the create PR URL
