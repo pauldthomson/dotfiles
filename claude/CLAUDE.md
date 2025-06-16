@@ -1,2 +1,2 @@
 - remember to always create a branch first when we commit, push, pr
-- When you open a GitHub pull request, use pbpaste to copy the create PR URL
+- When you open a GitHub pull request, use pbcopy to copy the actual PR URL (returned by gh pr create) to clipboard, not the "create PR" URL from git push
