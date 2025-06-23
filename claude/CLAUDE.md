@@ -1,2 +1,2 @@
 - remember to always create a branch first when we commit, push, pr
-- When using the `gh` CLI tool to create any new resource (issues, pull requests, etc.) that returns a URL, always use pbcopy to copy the URL to the system clipboard
+- When using the `gh` CLI tool to create any new resource (issues, pull requests, etc.) that returns a URL, always use pbcopy to copy the URL to the system clipboard. Use separate bash tool calls: first create the resource, then copy the returned URL with a dedicated pbcopy command.
