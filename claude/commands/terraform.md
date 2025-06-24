@@ -119,3 +119,40 @@ f. Pull request description:
 
 If you need any clarification or additional information to complete the task, please ask before proceeding with the implementation.
 
+# `/terraform` Command Usage
+
+**Basic Structure:**
+```
+/terraform
+
+Task Description: [What you want to accomplish]
+Target Environment(s): [dev/staging/prod/etc.]
+Additional Context: [Any constraints, existing resources, or special requirements]
+```
+
+**Example Usage:**
+```
+/terraform
+
+Task Description: Create a new GCS bucket for storing application logs with lifecycle policies to automatically delete logs older than 30 days
+Target Environment(s): staging, prod
+Additional Context: Bucket should be in us-central1 region, enable versioning, and grant read access to the logging service account
+```
+
+**Common Task Types:**
+- Create new GCP resources (GCS buckets, Cloud SQL, GKE clusters, etc.)
+- Modify existing infrastructure (scaling, configuration changes)
+- Add IAM permissions or security policies
+- Set up monitoring and alerting resources
+- Implement networking changes (VPCs, firewall rules)
+- Update or refactor existing Terraform modules
+
+**What You'll Get:**
+- Research using latest Terraform Registry documentation
+- Step-by-step implementation plan
+- Terraform code with best practices
+- Git workflow (branch, commits, PR description)
+- Documentation updates
+- Risk assessment and mitigation strategies
+
+The assistant will handle the research, planning, and implementation while ensuring safe practices and proper Git workflow.
