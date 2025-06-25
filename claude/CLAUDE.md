@@ -1,4 +1,4 @@
 - remember to always create a branch first when we commit, push, pr
-- When using the `gh` CLI tool to create any new resource (issues, pull requests, etc.) that returns a URL, always use pbcopy to copy the URL to the system clipboard. Use separate bash tool calls: first create the resource, then copy the returned URL with a dedicated pbcopy command.
+- When using the `gh` CLI tool to create any new resource (issues, pull requests, etc.) that returns a URL, get the URL directly from the command output and pipe it to pbcopy in a single step. The URL is returned in the gh command response - don't make a separate gh pr view call.
 - Whenever you commit, push, pr make sure you're on a new branch up to date with the main branch. If you think the new change is related to an existing PR then check the PR status first (using `gh pr view <number>`) to see if it's still open before deciding whether to add to the existing branch or create a new one.
 - always update all relevant documentation (README.md etc) whenver making changes
