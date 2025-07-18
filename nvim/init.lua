@@ -72,7 +72,7 @@ vim.o.scrolloff = 5
 
 vim.g.have_nerd_font = true
 
-vim.cmd("set completeopt+=noselect")
+vim.cmd("set completeopt+=noselect,menuone,popup")
 
 -- [[ Basic Keymaps ]]
 

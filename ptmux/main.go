@@ -89,16 +89,6 @@ func main() {
 				log.Fatal(err)
 			}
 
-			err = runCmd("tmux", "new-window", "-n", "gemini", "-t", projectName, "-c", startDir)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			err = runCmd("tmux", "send-keys", "-t", fmt.Sprintf("%s:4", projectName), "gemini", "C-m")
-			if err != nil {
-				log.Fatal(err)
-			}
-
 			err = runCmd("tmux", "new-window", "-n", "scratch", "-t", projectName, "-c", startDir)
 			if err != nil {
 				log.Fatal(err)
