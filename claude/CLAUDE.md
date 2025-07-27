@@ -3,3 +3,4 @@
 - Before ANY git operations (add, commit, push, pr), ALWAYS check your current branch status with `git status` and `git branch -vv`. If you're on a feature branch, verify it still exists upstream with `git fetch origin && git branch -r | grep <branch-name>`. If the upstream branch is gone (likely merged), switch to main with `git checkout main && git pull origin main` and create a fresh feature branch. If you think the new change is related to an existing PR then check the PR status first (using `gh pr view <number>`) to see if it's still open before deciding whether to add to the existing branch or create a new one.
 - always update all relevant documentation (README.md etc) whenver making changes
 - Make sure commit messages/PR descriptions include why we made the change and not just what was changed. If you're unclear about what the "why" part was, don't make something up and just ask me
+- don't include test plan in PR descriptions
