@@ -153,9 +153,9 @@ vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 -- Keep cursor at start when appending lower line
 vim.keymap.set('n', 'J', 'mzJ`z')
 
--- Keep cursor centered when half-page jumping
-vim.keymap.set('n', '<C-d>', '<C-d>zz')
-vim.keymap.set('n', '<C-u>', '<C-u>zz')
+-- -- Keep cursor centered when half-page jumping
+-- vim.keymap.set('n', '<C-d>', '<C-d>zz')
+-- vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 -- Keep cursor centered when searching
 vim.keymap.set('n', 'n', 'nzzzv')
@@ -175,7 +175,6 @@ vim.keymap.set('n', '<C-p>', '<cmd>silent !tmux neww ptmux<CR>')
 vim.keymap.set('n', '<leader>lg', ':LazyGit<CR>', { desc = '[L]azy [G]it' })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.diagnostic.config({ jump = { float = true } })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
