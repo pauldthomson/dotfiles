@@ -10,4 +10,5 @@ return {
             desc = "Open file picker",
         },
     },
+    opts = {}
 }
