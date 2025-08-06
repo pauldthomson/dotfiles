@@ -136,7 +136,7 @@ vim.keymap.set('v', '<leader>y', '\"+y', { noremap = false })
 vim.keymap.set('n', '<leader>p', '\"+p', { noremap = false })
 
 -- Toggle Neotree
-vim.keymap.set('n', '<leader>n', ':NeoTreeShowToggle<CR>', { desc = 'Toggle [N]eoTree' })
+vim.keymap.set('n', '<leader>n', ':Neotree<CR>', { desc = 'Toggle [N]eoTree' })
 
 -- Close quickfix
 vim.keymap.set('n', '<leader>cc', ':ccl<CR>', { desc = 'Close quickfix list' })

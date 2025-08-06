@@ -1,7 +1,7 @@
 return {
     -- File explorer
     "nvim-neo-tree/neo-tree.nvim",
-    branch = "v2.x",
+    branch = "v3.x",
     dependencies = {
         "nvim-lua/plenary.nvim",
         "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
@@ -9,10 +9,15 @@ return {
     },
     opts = {
         filesystem = {
-            follow_current_file = true,
+            follow_current_file = {
+                enabled = true
+            },
             filtered_items = {
                 hide_dotfiles = false
             }
+        },
+        window = {
+            position = "float",
         }
     }
 }
