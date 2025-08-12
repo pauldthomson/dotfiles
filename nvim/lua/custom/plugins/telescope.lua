@@ -62,13 +62,11 @@ return {
                             layout_config = { width = 0.4, height = 0.4 },
                         },
 
-                    }
+                    },
+                    file_browser = {}
                 }
             }
         },
-        config = function()
-            require("telescope").load_extension "file_browser"
-        end,
     },
 
     -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
