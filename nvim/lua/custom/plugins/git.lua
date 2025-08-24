@@ -52,5 +52,8 @@ return {
             -- (fugitive is still needed to open in browser)
             -- "sindrets/diffview.nvim",
         },
+    },
+    {
+        'sindrets/diffview.nvim'
     }
 }
