@@ -1,4 +1,4 @@
-theme = catppuccin-mocha
-font-family = "Cascadia Code NF"
+theme = Catppuccin Mocha
+font-family = "Cascadia Code"
 cursor-invert-fg-bg = true
 keybind = shift+enter=text:\x1b\r
