@@ -233,5 +233,3 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ ! -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]] || source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 [[ ! -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]] || source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 export GOOGLE_CLOUD_PROJECT="shared-infra-448603"
-
-alias claude="${HOME}/.claude/local/claude"

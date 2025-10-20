@@ -4,3 +4,4 @@
 - always update all relevant documentation (README.md etc) whenver making changes
 - Make sure commit messages/PR descriptions include why we made the change and not just what was changed. If you're unclear about what the "why" part was, don't make something up and just ask me
 - don't include test plan in PR descriptions
+- Always use `go mod tidy` instead of manually editing go.mod. It properly resolves transitive dependencies, updates go.sum with correct checksums, and prevents build failures. Run it after making code changes that add/remove imports, or when switching between package versions (e.g., HTTP → gRPC exporters).
