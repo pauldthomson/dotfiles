@@ -1,0 +1,1 @@
+/Users/paul/repos/github.com/pauldthomson/dotfiles/AGENTS.md
