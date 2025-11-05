@@ -1,14 +1,4 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "doit": {
-      "type": "local",
-      "command": ["npx", "-y", "@doitintl/doit-mcp-server@latest"],
-      "enabled": true,
-      "environment": {
-        "DOIT_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJLZXkiOiJmRHU4V1pINVFuUFFqaGx0WVRWeC4xNzU0Mjg1NjI5LmlzcjNIczVIZGNCYmZHZW8iLCJVc2VySUQiOiJnb29nbGU6MTEzMDYyMjIwNzI3MzY1OTcwMTAxIiwiRG9pdE93bmVyIjpmYWxzZSwiRG9pdEVtcGxveWVlIjpmYWxzZSwiYXVkIjoiY21wIiwiaWF0IjoxNzU0Mjg1NjI5LCJpc3MiOiJkb2l0Iiwic3ViIjoicHRob21zb25AbnVydHVyZWNsb3VkLmNvbSJ9.NMgI3cji9lylnylIiGO2_mNP5nns-CYCmcsaAx3WJ2s"
-      }
-    }
-  },
   "autoupdate": true
 }
