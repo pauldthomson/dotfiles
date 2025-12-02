@@ -12,6 +12,7 @@ return {
                     i = {
                         ['<C-u>'] = false,
                         ['<C-d>'] = false,
+                        ["<C-r>"] = require("telescope.actions").to_fuzzy_refine,
                     },
                 },
             },
