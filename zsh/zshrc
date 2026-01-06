@@ -97,6 +97,7 @@ plugins=(
     fzf
     git 
     httpie 
+    jj
 )
 
 source $ZSH/oh-my-zsh.sh
