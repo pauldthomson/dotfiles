@@ -74,7 +74,7 @@ func main() {
 				log.Fatal(err)
 			}
 
-			err = runCmd("tmux", "send-keys", "-t", fmt.Sprintf("%s:3", projectName), "opencode", "C-m")
+			err = runCmd("tmux", "send-keys", "-t", fmt.Sprintf("%s:2", projectName), "opencode", "C-m")
 			if err != nil {
 				log.Fatal(err)
 			}
