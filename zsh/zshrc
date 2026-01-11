@@ -98,6 +98,7 @@ plugins=(
     git 
     httpie 
     jj
+    async
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -242,3 +243,6 @@ export PATH="$HOME/.local/bin:$PATH"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# To customize prompt, run `p10k configure` or edit ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh.
+[[ ! -f ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh ]] || source ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh

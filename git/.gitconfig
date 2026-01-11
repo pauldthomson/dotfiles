@@ -2,7 +2,7 @@
 	excludesfile = /Users/pthomson/.gitignore_global
 	pager = diff-so-fancy | less --tabs=4 -RFX
 [user]
-	email = pthomson@nurturecloud.com
+	email = thomsonp83@gmail.com
 	name = Paul Thomson
 	signingkey = BE1FE22322C71B79
 [alias]
@@ -69,3 +69,6 @@
 	autoupdate = true
 [pull]
 	rebase = true
+[delta]
+	line-numbers = true
+	side-by-side = true

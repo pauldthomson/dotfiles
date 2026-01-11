@@ -1,0 +1,29 @@
+#:schema https://jj-vcs.github.io/jj/latest/config-schema.json
+
+[[--scope]]
+--when.repositories = [
+    "~/repos/github.com/upsiderealty",
+    "~/repos/github.com/nc-helix",
+]
+[--scope.user]
+email = "pthomson@nurturecloud.com"
+
+[user]
+name = "Paul Thomson"
+email = "thomsonp83@gmail.com"
+
+[remotes.origin]
+auto-track-bookmarks = "glob:*"
+
+[[--scope]]
+--when.commands = ["diff", "show"]
+[--scope.ui]
+pager = "delta"
+diff-formatter = ":git"
+
+[delta]
+line-numbers = true
+side-by-side = true
+
+[ui]
+diff-editor = "nvim -d"
