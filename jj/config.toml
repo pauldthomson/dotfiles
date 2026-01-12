@@ -7,6 +7,10 @@
 ]
 [--scope.user]
 email = "pthomson@nurturecloud.com"
+key = "BE1FE22322C71B79"
+[--scope.signing]
+behaviour = "own"
+backend = "gpg"
 
 [user]
 name = "Paul Thomson"
