@@ -2,7 +2,7 @@
 
 [[--scope]]
 --when.repositories = [
-    "~/repos/github.com/upsiderealty",
+    "~/repos/github.com/UpsideRealty",
     "~/repos/github.com/nc-helix",
 ]
 [--scope.user]
