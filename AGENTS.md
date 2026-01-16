@@ -11,6 +11,7 @@
 - If you spot unexpected modifications (for example, untracked documents such as `AGENT_ARCHITECTURE.md`), leave them as-is and inform the relevant collaborator instead of removing or altering them.
 - Record any assumptions or coordination notes in the task conversation so other agents stay aligned.
 - remember to always create a bookmark/branch first when we commit, push, pr
+- In this repo, commit directly to the `master` bookmark by default (avoid topic bookmarks unless explicitly requested).
 - When using the `gh` CLI tool to create any new resource (issues, pull requests, etc.) that returns a URL, get the URL directly from the command output and pipe it to pbcopy in a single step. The URL is returned in the gh command response - don't make a separate gh pr view call. IMPORTANT: When piping to pbcopy, the command will show NO output on success (the output goes to clipboard). Don't retry thinking it failed - the lack of output means success.
 - Before ANY VCS operations (commit, push, pr), ALWAYS check your current state with `jj status` and your current bookmark(s) with `jj bookmark list`. If you’re working on a bookmark that should exist upstream, run `jj git fetch` and confirm it’s still present; if it’s gone (likely merged), start from the mainline and create a fresh bookmark.
 - always update all relevant documentation (README.md etc) whenver making changes
