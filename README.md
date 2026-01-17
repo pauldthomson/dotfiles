@@ -13,3 +13,4 @@ My environment setup.
 - `prefix + k`: switch windows (fzf popup).
 - `prefix + X`: kill one-or-many sessions (TAB multi-select).
 - `prefix + C-p`: run `ptmux` project/session launcher.
+- OSC passthrough is disabled to prevent terminal responses showing in editors.
