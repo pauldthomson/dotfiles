@@ -4,6 +4,13 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+local java_exe = vim.fn.exepath("java")
+if java_exe ~= "" then
+  local java_home = vim.fn.fnamemodify(java_exe, ":h:h")
+  vim.env.JAVA_HOME = java_home
+  vim.env.PATH = java_home .. "/bin:" .. vim.env.PATH
+end
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({

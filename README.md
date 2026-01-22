@@ -14,3 +14,7 @@ My environment setup.
 - `prefix + X`: kill one-or-many sessions (TAB multi-select).
 - `prefix + C-p`: run `ptmux` project/session launcher.
 - OSC passthrough is disabled to prevent terminal responses showing in editors.
+
+## Neovim
+- Kotlin LSP decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.
+- `JAVA_HOME` is derived from the `java` on PATH to keep JDTLS on a 21+ runtime.

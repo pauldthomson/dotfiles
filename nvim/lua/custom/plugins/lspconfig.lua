@@ -14,6 +14,7 @@ return { -- LSP Configuration & Plugins
         },
         config = function()
             vim.lsp.enable('kotlin_lsp')
+            require('custom.kotlin_lsp').setup()
         end
     },
     {
