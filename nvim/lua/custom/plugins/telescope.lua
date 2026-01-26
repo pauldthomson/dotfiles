@@ -1,17 +1,17 @@
 return {
     -- Fuzzy Finder (files, lsp, etc)
     {
-        'nvim-telescope/telescope.nvim',
-        branch = '0.1.x',
+        "nvim-telescope/telescope.nvim",
+        -- tag = "0.2.x",
         dependencies = {
-            'nvim-lua/plenary.nvim'
+            "nvim-lua/plenary.nvim",
         },
         opts = {
             defaults = {
                 mappings = {
                     i = {
-                        ['<C-u>'] = false,
-                        ['<C-d>'] = false,
+                        ["<C-u>"] = false,
+                        ["<C-d>"] = false,
                         ["<C-r>"] = require("telescope.actions").to_fuzzy_refine,
                     },
                 },
@@ -20,7 +20,7 @@ return {
                 live_grep = {
                     additional_args = function()
                         return { "--hidden" }
-                    end
+                    end,
                 },
             },
             extensions = {
@@ -62,22 +62,21 @@ return {
                         show_custom_functions = {
                             layout_config = { width = 0.4, height = 0.4 },
                         },
-
                     },
-                    file_browser = {}
-                }
-            }
+                    file_browser = {},
+                },
+            },
         },
     },
 
     -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
     {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-        cond = vim.fn.executable 'make' == 1
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = "make",
+        cond = vim.fn.executable("make") == 1,
     },
     {
         "nvim-telescope/telescope-file-browser.nvim",
-        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
+        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
     },
 }
