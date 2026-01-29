@@ -17,4 +17,4 @@ My environment setup.
 
 ## Neovim
 - Kotlin LSP decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.
-- `JAVA_HOME` is derived from the `java` on PATH to keep JDTLS on a 21+ runtime.
+- `JAVA_HOME` follows the newest installed JDK (via `java_home` with a Homebrew fallback); keep a 21+ JDK installed for JDTLS.

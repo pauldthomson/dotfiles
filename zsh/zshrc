@@ -198,13 +198,35 @@ export PATH="${PATH}:${HOME}/.krew/bin"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository:$PATH"
 
 source <(kubectl completion zsh)
 
 export JDTLS_HOME="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository"
-export JAVA_HOME="/opt/homebrew/Cellar/openjdk@17/17.0.12"
+
+# Java (Homebrew) - keep JAVA_HOME on newest installed JDK
+if [[ -x /usr/libexec/java_home ]]; then
+  JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
+fi
+
+if [[ -z "$JAVA_HOME" ]]; then
+  if command -v brew >/dev/null 2>&1; then
+    brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+    if [[ -d "$brew_prefix/opt/openjdk" ]]; then
+      JAVA_HOME="$brew_prefix/opt/openjdk"
+    else
+      latest_jdk="$(print -l "$brew_prefix"/opt/openjdk@*(N) | sort -t@ -k2,2n | tail -n 1)"
+      if [[ -n "$latest_jdk" ]]; then
+        JAVA_HOME="$latest_jdk"
+      fi
+    fi
+  fi
+fi
+
+if [[ -n "$JAVA_HOME" ]]; then
+  export JAVA_HOME
+  export PATH="$JAVA_HOME/bin:$PATH"
+fi
 
 # .Net/Csharp Lang Server
 export PATH="$PATH:/Users/pthomson/.dotnet/tools"
@@ -227,10 +249,6 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
 
 # eval "$(atuin init zsh --disable-up-arrow)"
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 [[ ! -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]] || source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 [[ ! -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]] || source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
