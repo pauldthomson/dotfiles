@@ -13,7 +13,7 @@ return { -- LSP Configuration & Plugins
             'folke/neodev.nvim',
         },
         config = function()
-            vim.lsp.enable('kotlin_lsp')
+            -- vim.lsp.enable('kotlin_lsp')
             require('custom.kotlin_lsp').setup()
         end
     },
