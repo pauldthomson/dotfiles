@@ -15,6 +15,12 @@ My environment setup.
 - `prefix + C-p`: run `ptmux` project/session launcher.
 - OSC passthrough is disabled to prevent terminal responses showing in editors.
 
+## Ghostty
+- `Shift+Enter` sends a literal newline + carriage return for apps that expect CRLF input.
+
+## Pi
+- Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
+
 ## Neovim
 - Kotlin LSP decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.
 - `JAVA_HOME` follows the newest installed JDK (via `java_home` with a Homebrew fallback); keep a 21+ JDK installed for JDTLS.
