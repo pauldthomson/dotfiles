@@ -1,0 +1,10 @@
+{
+  "lastChangelogVersion": "0.51.6",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.2-codex",
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false,
+  "editorPaddingX": 1,
+  "theme": "dark",
+  "skills": ["~/.agents/skills"]
+}
