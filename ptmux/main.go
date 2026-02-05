@@ -69,12 +69,12 @@ func main() {
 				log.Fatal(err)
 			}
 
-			err = runCmd("tmux", "new-window", "-n", "opencode", "-t", projectName, "-c", startDir)
+			err = runCmd("tmux", "new-window", "-n", "agent", "-t", projectName, "-c", startDir)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			err = runCmd("tmux", "send-keys", "-t", fmt.Sprintf("%s:2", projectName), "opencode", "C-m")
+			err = runCmd("tmux", "send-keys", "-t", fmt.Sprintf("%s:2", projectName), "pi", "C-m")
 			if err != nil {
 				log.Fatal(err)
 			}
