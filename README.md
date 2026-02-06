@@ -20,6 +20,7 @@ My environment setup.
 
 ## Pi
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
+- Uses a custom `catppuccin` theme (Mocha palette) defined in `.pi/themes/catppuccin.json`.
 
 ## Neovim
 - Kotlin LSP decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.
