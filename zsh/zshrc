@@ -264,3 +264,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # To customize prompt, run `p10k configure` or edit ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh.
 [[ ! -f ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh ]] || source ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh
+
+# sonarqube skill
+if security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" >/dev/null 2>&1; then
+  export SONARQUBE_TOKEN="$(security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" -w)"
+  export SONARQUBE_ORG="nurturecloud"
+fi
