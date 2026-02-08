@@ -21,7 +21,7 @@ My environment setup.
 ## Pi
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
-- Uses a custom `catppuccin` theme (Mocha palette) defined in `.pi/themes/catppuccin.json`.
+- Uses a custom `catppuccin` theme (Mocha palette) defined in `.pi/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
 
 ## Neovim
 - Kotlin LSP decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.
