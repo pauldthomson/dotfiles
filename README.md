@@ -17,12 +17,41 @@ My environment setup.
 
 ## Ghostty
 - `Shift+Enter` sends a literal newline + carriage return for apps that expect CRLF input.
+- `custom-shader-animation = always` keeps cursor shaders animating through focus/mode changes to avoid stuck cursor-outline artifacts.
 
 ## Pi
+- Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds a `jj-footer` extension that replaces git `(detached)` branch display with jj-aware status (`jj:<bookmark>` or `jj:@<change-id>`), while still falling back to git when outside jj repos.
-- Uses a custom `catppuccin` theme (Mocha palette) defined in `.pi/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
+- Uses a custom `catppuccin` theme (Mocha palette) defined in `pi-agent/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
+
+### Pi symlink setup
+Run this after cloning (or anytime you need to re-point your global Pi config):
+
+```bash
+./pi-agent/setup-symlinks.sh
+```
+
+Agent handoff snippet:
+
+```text
+Task: Re-link global Pi resources to this dotfiles repo.
+Run: ./pi-agent/setup-symlinks.sh
+Expected result:
+  ~/.pi/agent/extensions   -> <repo>/pi-agent/extensions
+  ~/.pi/agent/settings.json -> <repo>/pi-agent/settings.json
+  ~/.pi/agent/themes       -> <repo>/pi-agent/themes
+```
+
+Manual fallback:
+
+```bash
+mkdir -p ~/.pi/agent
+ln -sfn "$PWD/pi-agent/extensions" ~/.pi/agent/extensions
+ln -sfn "$PWD/pi-agent/settings.json" ~/.pi/agent/settings.json
+ln -sfn "$PWD/pi-agent/themes" ~/.pi/agent/themes
+```
 
 ## Neovim
 - Kotlin LSP decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.

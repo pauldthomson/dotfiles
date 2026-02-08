@@ -2,5 +2,6 @@ theme = Catppuccin Mocha
 font-family = "Cascadia Code"
 cursor-invert-fg-bg = true
 keybind = shift+enter=text:\\\n\r
+custom-shader-animation = always
 custom-shader = ~/.config/ghostty/shaders/ghostty-cursor-shaders/cursor_tail.glsl
 custom-shader = ~/.config/ghostty/shaders/ghostty-cursor-shaders/ripple_cursor.glsl
