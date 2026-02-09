@@ -3,5 +3,8 @@ font-family = "Cascadia Code"
 cursor-invert-fg-bg = true
 keybind = shift+enter=text:\\\n\r
 custom-shader-animation = always
+# Cursor effects used with pi; keep tail before ripple.
+# cursor_tail.glsl is patched with an animation guard to avoid a startup
+# cursor-outline artifact in the lower-left when launching full-screen TUIs.
 custom-shader = ~/.config/ghostty/shaders/ghostty-cursor-shaders/cursor_tail.glsl
 custom-shader = ~/.config/ghostty/shaders/ghostty-cursor-shaders/ripple_cursor.glsl

@@ -18,6 +18,7 @@ My environment setup.
 ## Ghostty
 - `Shift+Enter` sends a literal newline + carriage return for apps that expect CRLF input.
 - `custom-shader-animation = always` keeps cursor shaders animating through focus/mode changes to avoid stuck cursor-outline artifacts.
+- Cursor shader stack uses `cursor_tail.glsl` then `ripple_cursor.glsl`; `cursor_tail.glsl` includes an animation-state guard to prevent a lower-left cursor-outline artifact seen when launching full-screen TUIs like `pi`.
 
 ## Pi
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
