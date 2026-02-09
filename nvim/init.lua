@@ -4,6 +4,10 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Neo-tree replaces netrw
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 local java_exe = vim.fn.exepath("java")
 if java_exe ~= "" then
   local java_home = vim.fn.fnamemodify(java_exe, ":h:h")
@@ -102,12 +106,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- Enable telescope fzf native, if installed
-require('telescope').load_extension('fzf')
-
 -- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>?', function()
+  require('telescope.builtin').oldfiles()
+end, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader><space>', function()
+  require('telescope.builtin').buffers()
+end, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -122,11 +127,21 @@ vim.keymap.set('n', '<leader>sf', function()
       "!.git/*" }
   })
 end, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sc', require('telescope.builtin').git_commits, { desc = '[S]earch [C]ommits' })
+vim.keymap.set('n', '<leader>sh', function()
+  require('telescope.builtin').help_tags()
+end, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw', function()
+  require('telescope.builtin').grep_string()
+end, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg', function()
+  require('telescope.builtin').live_grep()
+end, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', function()
+  require('telescope.builtin').diagnostics()
+end, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sc', function()
+  require('telescope.builtin').git_commits()
+end, { desc = '[S]earch [C]ommits' })
 
 vim.keymap.set("n", "<space>fb", function()
   require("telescope").extensions.file_browser.file_browser()

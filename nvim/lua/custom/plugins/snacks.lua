@@ -1,7 +1,7 @@
 return {
     'folke/snacks.nvim',
     priority = 100,
-    lazy = false,
+    event = 'VeryLazy',
     opts = {
         indent = {
             indent = {

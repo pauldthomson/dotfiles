@@ -1,6 +1,7 @@
 return { -- LSP Configuration & Plugins
     {
         'neovim/nvim-lspconfig',
+        event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
             'williamboman/mason.nvim',
@@ -19,6 +20,7 @@ return { -- LSP Configuration & Plugins
     },
     {
         'mason-org/mason.nvim',
+        cmd = { 'Mason', 'MasonInstall', 'MasonUninstall', 'MasonUninstallAll', 'MasonLog', 'MasonUpdate' },
         opts = {
             providers = {
                 "mason.providers.client",
@@ -29,10 +31,12 @@ return { -- LSP Configuration & Plugins
     },
     {
         'j-hui/fidget.nvim',
+        event = 'LspAttach',
         opts = {}
     },
     {
         'mason-org/mason-lspconfig.nvim',
+        event = { 'BufReadPre', 'BufNewFile' },
         config = function()
             local servers = {
                 -- clangd = {},

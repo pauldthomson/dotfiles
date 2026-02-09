@@ -1,6 +1,7 @@
 return {
     {
         'nvim-lualine/lualine.nvim', -- Fancier statusline
+        event = 'VeryLazy',
         opts = {
             options = {
                 theme = 'catppuccin',
@@ -19,9 +20,12 @@ return {
     },
     {
         'numToStr/Comment.nvim', -- "gc" to comment visual regions/lines
-        lazy = false,
+        event = { 'BufReadPre', 'BufNewFile' },
         opts = {}
     },
 
-    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+    {
+        'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+        event = { 'BufReadPre', 'BufNewFile' },
+    },
 }

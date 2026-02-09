@@ -1,9 +1,16 @@
 return {
     -- Git related plugins
-    'tpope/vim-fugitive',
-    'tpope/vim-rhubarb',
+    {
+        'tpope/vim-fugitive',
+        cmd = { 'Git', 'G', 'Gdiffsplit', 'Gvdiffsplit' },
+    },
+    {
+        'tpope/vim-rhubarb',
+        cmd = { 'GBrowse' },
+    },
     {
         'lewis6991/gitsigns.nvim',
+        event = { 'BufReadPre', 'BufNewFile' },
         opts = {
             signs = {
                 add = { text = '+' },
@@ -54,6 +61,7 @@ return {
         },
     },
     {
-        'sindrets/diffview.nvim'
+        'sindrets/diffview.nvim',
+        cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory' },
     }
 }

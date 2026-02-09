@@ -7,7 +7,7 @@ return {
         "TmuxNavigateRight",
         "TmuxNavigatePrevious",
     },
-    lazy = false,
+    lazy = true,
     keys = {
         { "<C-h>",  "<cmd><C-U>TmuxNavigateLeft<cr>" },
         { "<C-j>",  "<cmd><C-U>TmuxNavigateDown<cr>" },

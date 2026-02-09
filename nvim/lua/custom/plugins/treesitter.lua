@@ -1,6 +1,7 @@
 return {
     { -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
+        event = { 'BufReadPost', 'BufNewFile' },
         build = ':TSUpdate',
         config = function()
             require('nvim-treesitter.configs').setup {
@@ -73,5 +74,8 @@ return {
     },
 
     -- Additional text objects via treesitter
-    'nvim-treesitter/nvim-treesitter-textobjects',
+    {
+        'nvim-treesitter/nvim-treesitter-textobjects',
+        event = { 'BufReadPost', 'BufNewFile' },
+    },
 }
