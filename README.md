@@ -22,7 +22,6 @@ My environment setup.
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds a `jj-footer` extension that replaces git `(detached)` branch display with jj-aware status (`jj:<bookmark>` or `jj:@<change-id>`), while still falling back to git when outside jj repos.
-- Pi extensions include duplicate-load guards so global + project discovery (common with symlinked dotfiles) does not double-register commands/tools.
 - Uses a custom `catppuccin` theme (Mocha palette) defined in `.pi/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
 
 ## Neovim

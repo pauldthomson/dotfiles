@@ -577,17 +577,7 @@ function parseArgs(args: string | undefined): ReviewTarget | { type: "pr"; ref: 
   }
 }
 
-const REVIEW_EXTENSION_GUARD = "__dotfiles_pi_review_extension_loaded__";
-
 export default function reviewExtension(pi: ExtensionAPI) {
-  const runtime = globalThis as Record<string, unknown>;
-  if (runtime[REVIEW_EXTENSION_GUARD]) return;
-  runtime[REVIEW_EXTENSION_GUARD] = true;
-
-  pi.on("session_shutdown", () => {
-    delete runtime[REVIEW_EXTENSION_GUARD];
-  });
-
   pi.on("session_start", (_event, ctx) => {
     applyReviewState(ctx);
   });
