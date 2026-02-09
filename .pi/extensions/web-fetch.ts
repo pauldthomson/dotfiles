@@ -21,7 +21,17 @@ const fetchSchema = Type.Object({
   ),
 });
 
+const WEB_FETCH_EXTENSION_GUARD = "__dotfiles_pi_web_fetch_extension_loaded__";
+
 export default function (pi: ExtensionAPI) {
+  const runtime = globalThis as Record<string, unknown>;
+  if (runtime[WEB_FETCH_EXTENSION_GUARD]) return;
+  runtime[WEB_FETCH_EXTENSION_GUARD] = true;
+
+  pi.on("session_shutdown", () => {
+    delete runtime[WEB_FETCH_EXTENSION_GUARD];
+  });
+
   pi.registerTool({
     name: "web_fetch",
     label: "Web Fetch",
