@@ -1,7 +1,8 @@
 return {
     "klen/nvim-test",
+    main = "nvim-test",
     cmd = { 'TestNearest', 'TestFile', 'TestSuite', 'TestLast', 'TestVisit' },
-    config = {
+    opts = {
         termOpts = {
             direction = "vertical"
         },

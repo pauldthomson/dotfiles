@@ -4,8 +4,8 @@ return { -- LSP Configuration & Plugins
         event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
-            'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim',
+            'mason-org/mason.nvim',
+            'mason-org/mason-lspconfig.nvim',
 
             -- Useful status updates for LSP
             'j-hui/fidget.nvim',
@@ -37,6 +37,7 @@ return { -- LSP Configuration & Plugins
     {
         'mason-org/mason-lspconfig.nvim',
         event = { 'BufReadPre', 'BufNewFile' },
+        dependencies = { 'neovim/nvim-lspconfig' },
         config = function()
             local servers = {
                 -- clangd = {},
@@ -59,7 +60,18 @@ return { -- LSP Configuration & Plugins
                         },
                     },
                 },
-                terraformls = {},
+                terraformls = {
+                    -- Prefer the nearest Terraform module directory over the repo root.
+                    -- This avoids terraform-ls scanning huge monorepo roots (e.g. node_modules).
+                    root_dir = function(bufnr, on_dir)
+                        local util = require('lspconfig.util')
+                        local fname = vim.api.nvim_buf_get_name(bufnr)
+                        local root = util.root_pattern('.terraform')(fname)
+                            or util.root_pattern('*.tf', '*.tfvars')(fname)
+                            or util.root_pattern('.git')(fname)
+                        on_dir(root)
+                    end,
+                },
                 diagnosticls = {},
                 lua_ls = {
                     Lua = {
@@ -164,10 +176,19 @@ return { -- LSP Configuration & Plugins
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
+            for server_name, server_config in pairs(servers) do
+                local merged = vim.tbl_deep_extend('force', {}, server_config, {
+                    capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {}),
+                })
+                vim.lsp.config(server_name, merged)
+            end
+
             local mason_lspconfig = require 'mason-lspconfig'
+            local server_names = vim.tbl_keys(servers)
 
             mason_lspconfig.setup {
-                ensure_installed = vim.tbl_keys(servers),
+                ensure_installed = server_names,
+                automatic_enable = server_names,
             }
         end
     }

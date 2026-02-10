@@ -27,7 +27,6 @@ return {
                 vim.keymap.set({ 'n', 'v' }, '<leader>ph', ':Gitsigns preview_hunk<cr>')
             end
         },
-        config = true
     },
     {
         "kdheepak/lazygit.nvim",
