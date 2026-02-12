@@ -14,7 +14,6 @@ return { -- LSP Configuration & Plugins
             'folke/neodev.nvim',
         },
         config = function()
-            -- vim.lsp.enable('kotlin_lsp')
             require('custom.kotlin_lsp').setup()
         end
     },
@@ -52,6 +51,7 @@ return { -- LSP Configuration & Plugins
                 -- rust_analyzer = {},
                 -- tsserver = {},
                 jdtls = {},
+                kotlin_lsp = {},
                 yamlls = {
                     yaml = {
                         keyOrdering = false,
