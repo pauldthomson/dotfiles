@@ -61,5 +61,6 @@ ln -sfn "$PWD/pi-agent/themes" ~/.pi/agent/themes
 - `JAVA_HOME` follows the newest installed JDK (via `java_home` with a Homebrew fallback); keep a 21+ JDK installed for JDTLS.
 - Terraform LSP prefers the nearest Terraform module directory as its root so monorepo roots (and large folders like `node_modules/`) don’t get indexed unnecessarily.
 - Plugin specs follow lazy.nvim guidance: prefer `opts` for setup, and reserve `config` for custom/non-standard initialization.
+- `nvim-treesitter` is pinned to the rewrite (`main`) branch and uses `require('nvim-treesitter').setup(...)`; parser installation is now explicit via `:TSInstall ...`/`:TSUpdate`, and core treesitter features are enabled via a FileType autocommand (highlight/folds/indent).
 - Regression checks for lazy loading and Terraform LSP behavior are documented in `nvim/REGRESSION_SPEC.md`.
 - Startup-heavy plugins are lazy-loaded (InsertEnter/BufRead/command triggers), and Telescope keymaps defer `require(...)` until invocation to keep empty-start startup fast.
