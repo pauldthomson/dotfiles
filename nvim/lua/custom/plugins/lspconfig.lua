@@ -87,6 +87,7 @@ return { -- LSP Configuration & Plugins
                 dockerls = {},
                 docker_compose_language_service = {},
                 gradle_ls = {},
+                just = {},
             }
 
             vim.api.nvim_create_autocmd("LspAttach", {
