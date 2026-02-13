@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.52.10",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.3-codex-spark",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "high",
   "hideThinkingBlock": false,
   "editorPaddingX": 1,
   "theme": "catppuccin",
