@@ -2,11 +2,13 @@ return {
     -- Git related plugins
     {
         'tpope/vim-fugitive',
-        cmd = { 'Git', 'G', 'Gdiffsplit', 'Gvdiffsplit' },
+        cmd = { 'Git', 'G', 'GBrowse', 'Gdiffsplit', 'Gvdiffsplit' },
+        dependencies = {
+            'tpope/vim-rhubarb',
+        },
     },
     {
         'tpope/vim-rhubarb',
-        cmd = { 'GBrowse' },
     },
     {
         'lewis6991/gitsigns.nvim',
