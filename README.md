@@ -64,3 +64,4 @@ ln -sfn "$PWD/pi-agent/themes" ~/.pi/agent/themes
 - `nvim-treesitter` is pinned to the rewrite (`main`) branch and uses `require('nvim-treesitter').setup(...)`; parser installation is now explicit via `:TSInstall ...`/`:TSUpdate`, and core treesitter features are enabled via a FileType autocommand (highlight/folds/indent).
 - Regression checks for lazy loading and Terraform LSP behavior are documented in `nvim/REGRESSION_SPEC.md`.
 - Startup-heavy plugins are lazy-loaded (InsertEnter/BufRead/command triggers), and Telescope keymaps defer `require(...)` until invocation to keep empty-start startup fast.
+- The Markdown preview plugin (`iamcco/markdown-preview.nvim`) builds with `cd app && npm install` via Lazy, so run `:Lazy sync` after initial setup or when updating the plugin.
