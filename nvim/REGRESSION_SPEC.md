@@ -93,6 +93,21 @@ nvim -n --headless "$TMP" \
 
 ---
 
+### B3. FFF native backend initializes without process kill
+
+**Command**
+```bash
+nvim -n --headless \
+  '+lua require("fff.core").ensure_initialized()' \
+  '+qa'
+```
+
+**Expected**
+- Exit code `0`
+- No native-backend load crash (no abrupt process kill)
+
+---
+
 ## C. Terraform LSP behavior checks
 
 ### C1. `terraformls` attaches to `.tf` files
@@ -174,7 +189,7 @@ Note: historical lines may exist; evaluate only newly appended lines.
 1. `:Telescope find_files`
 2. `:Trouble`
 3. `:DBUI` (if DB plugins are installed)
-4. `:TestNearest` in a test buffer
+4. `:FFFFind`
 
 **Expected**
 - Command triggers plugin load
