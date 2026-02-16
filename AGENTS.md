@@ -19,3 +19,4 @@
 - don't include test plan in PR descriptions
 - Always use `go mod tidy` instead of manually editing go.mod. It properly resolves transitive dependencies, updates go.sum with correct checksums, and prevents build failures. Run it after making code changes that add/remove imports, or when switching between package versions (e.g., HTTP → gRPC exporters).
 - For Neovim plugin/LSP changes, consult and run `nvim/REGRESSION_SPEC.md` to verify lazy-loading and Terraform LSP behavior.
+- For `pi-agent/extensions/auto-qna.ts` or question-extraction logic changes, run `node --test pi-agent/extensions/auto-qna-question-extractor.test.ts`.

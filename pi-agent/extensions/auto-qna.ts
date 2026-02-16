@@ -2,9 +2,9 @@ import type { AgentMessage } from "@mariozechner/pi-agent-core";
 import type { AssistantMessage, TextContent } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@mariozechner/pi-tui";
+import { extractQuestions } from "./auto-qna-question-extractor";
 
 const AUTO_QNA_STATE_TYPE = "auto-qna-state";
-const MAX_QUESTIONS = 6;
 
 type AutoQnaState = {
   enabled: boolean;
@@ -19,63 +19,6 @@ function extractTextContent(message: AssistantMessage): string {
     .filter((block): block is TextContent => block.type === "text")
     .map((block) => block.text)
     .join("\n");
-}
-
-function cleanQuestion(candidate: string): string | null {
-  let question = candidate
-    .replace(/^\s*(?:[-*+]\s+|\d+[.)]\s+|Q:\s*)/i, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  const marker = question.indexOf("?");
-  if (marker === -1) return null;
-
-  question = question.slice(0, marker + 1).trim();
-
-  if (question.length < 6) return null;
-  if (!/[a-z]/i.test(question)) return null;
-
-  return question;
-}
-
-function extractQuestions(text: string): string[] {
-  const questions: string[] = [];
-  const seen = new Set<string>();
-
-  let inCodeFence = false;
-
-  for (const rawLine of text.split("\n")) {
-    const trimmedLine = rawLine.trim();
-
-    if (trimmedLine.startsWith("```")) {
-      inCodeFence = !inCodeFence;
-      continue;
-    }
-
-    if (inCodeFence || trimmedLine.length === 0 || trimmedLine.startsWith(">")) {
-      continue;
-    }
-
-    const sentenceMatches = trimmedLine.match(/[^?]{1,240}\?/g);
-    if (!sentenceMatches) continue;
-
-    for (const match of sentenceMatches) {
-      const cleaned = cleanQuestion(match);
-      if (!cleaned) continue;
-
-      const key = cleaned.toLowerCase();
-      if (seen.has(key)) continue;
-
-      seen.add(key);
-      questions.push(cleaned);
-
-      if (questions.length >= MAX_QUESTIONS) {
-        return questions;
-      }
-    }
-  }
-
-  return questions;
 }
 
 function buildAnswerMessage(questions: string[], answers: string[]): string | null {
