@@ -2,7 +2,7 @@ import type { AgentMessage } from "@mariozechner/pi-agent-core";
 import type { AssistantMessage, TextContent } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@mariozechner/pi-tui";
-import { extractQuestions } from "./auto-qna-question-extractor";
+import { extractQuestions } from "./auto-qna/question-extractor.ts";
 
 const AUTO_QNA_STATE_TYPE = "auto-qna-state";
 

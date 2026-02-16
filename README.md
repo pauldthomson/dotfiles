@@ -26,7 +26,7 @@ My environment setup.
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds an `auto-qna` extension that detects multiple explicit user-directed clarification questions in final assistant responses (e.g. prompts containing “you/your” or “should I…”), opens an interactive Q&A TUI, and sends captured answers back as a structured JSON follow-up user message (`/auto-qna [on|off|status]`).
-- Includes regression tests for auto-qna question extraction in `pi-agent/extensions/auto-qna-question-extractor.test.ts` (run with `node --test pi-agent/extensions/auto-qna-question-extractor.test.ts`).
+- Includes regression tests for auto-qna question extraction in `pi-agent/extensions/auto-qna/question-extractor.test.ts` (run with `node --test pi-agent/extensions/auto-qna/question-extractor.test.ts`).
 - Adds a `jj-footer` extension that replaces git `(detached)` branch display with jj-aware status (`jj:<bookmark>` or `jj:@<change-id>`), while still falling back to git when outside jj repos.
 - Uses a custom `catppuccin` theme (Mocha palette) defined in `pi-agent/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
 
