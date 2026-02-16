@@ -6,8 +6,16 @@ return {
         lazy = false,
         build = ':TSUpdate',
         config = function()
+            local nvim_treesitter = require('nvim-treesitter')
+
             -- The rewrite currently exposes configuration only for parser/query install location.
-            require('nvim-treesitter').setup {}
+            nvim_treesitter.setup {}
+
+            -- Automatically ensure parsers/queries used by this config are installed.
+            -- Installation is async; already-installed languages are a no-op.
+            -- Note: nvim-treesitter requires `tree-sitter` CLI for parser installs/updates.
+            local managed_languages = { 'c', 'cpp', 'go', 'lua', 'vim', 'python', 'rust', 'typescript', 'vimdoc', 'java', 'kotlin' }
+            nvim_treesitter.install(managed_languages)
 
             -- Enable treesitter-backed features only when the parser is available.
             local treesitter_augroup = vim.api.nvim_create_augroup('treesitter-compat', { clear = true })
@@ -34,10 +42,6 @@ return {
                     -- Fold options are kept at Neovim defaults (disabled) so files do not open folded.
                 end,
             })
-
-            -- Parser installation is now explicitly managed via:
-            -- :TSInstall c cpp go lua vim python rust typescript vimdoc java kotlin
-            -- or `:TSInstall all`. This avoids parser compilation during every startup.
         end,
     },
 

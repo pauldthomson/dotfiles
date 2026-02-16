@@ -25,7 +25,8 @@ My environment setup.
 - Local agent skills are kept in `skills/` (for example `git-clone` and `excalidraw-mcp-app`).
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
-- Adds an `auto-qna` extension that detects multiple user-directed questions in final assistant responses, opens an interactive Q&A TUI, and sends captured answers back as a structured JSON follow-up user message (`/auto-qna [on|off|status]`).
+- Adds an `auto-qna` extension that detects multiple explicit user-directed clarification questions in final assistant responses (e.g. prompts containing “you/your” or “should I…”), opens an interactive Q&A TUI, and sends captured answers back as a structured JSON follow-up user message (`/auto-qna [on|off|status]`).
+- Includes regression tests for auto-qna question extraction in `pi-agent/extensions/auto-qna-question-extractor.test.ts` (run with `node --test pi-agent/extensions/auto-qna-question-extractor.test.ts`).
 - Adds a `jj-footer` extension that replaces git `(detached)` branch display with jj-aware status (`jj:<bookmark>` or `jj:@<change-id>`), while still falling back to git when outside jj repos.
 - Uses a custom `catppuccin` theme (Mocha palette) defined in `pi-agent/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
 
@@ -61,7 +62,7 @@ ln -sfn "$PWD/pi-agent/themes" ~/.pi/agent/themes
 - `JAVA_HOME` follows the newest installed JDK (via `java_home` with a Homebrew fallback); keep a 21+ JDK installed for JDTLS.
 - Terraform LSP prefers the nearest Terraform module directory as its root so monorepo roots (and large folders like `node_modules/`) don’t get indexed unnecessarily.
 - Plugin specs follow lazy.nvim guidance: prefer `opts` for setup, and reserve `config` for custom/non-standard initialization.
-- `nvim-treesitter` is pinned to the rewrite (`main`) branch and uses `require('nvim-treesitter').setup(...)`; parser installation is now explicit via `:TSInstall ...`/`:TSUpdate`, and core treesitter features are enabled via a FileType autocommand (highlight/folds/indent).
+- `nvim-treesitter` is pinned to the rewrite (`main`) branch and uses `require('nvim-treesitter').setup(...)`; parser/query installs follow upstream guidance and require the `tree-sitter` CLI (`brew install tree-sitter-cli`). A curated set (`c`, `cpp`, `go`, `lua`, `vim`, `python`, `rust`, `typescript`, `vimdoc`, `java`, `kotlin`) is auto-installed, and core treesitter features are enabled via a FileType autocommand (highlight/folds/indent).
 - Regression checks for lazy loading and Terraform LSP behavior are documented in `nvim/REGRESSION_SPEC.md`.
 - Startup-heavy plugins are lazy-loaded (InsertEnter/BufRead/command triggers), and Telescope keymaps defer `require(...)` until invocation to keep empty-start startup fast.
 - The Markdown preview plugin (`iamcco/markdown-preview.nvim`) builds with `cd app && npm install` via Lazy, so run `:Lazy sync` after initial setup or when updating the plugin.
