@@ -1,6 +1,6 @@
 ---
 name: pr-summary
-description: Generate reviewer-ready PR bodies with high-level changes, rationale, session context, decisions, alternatives, trade-offs, and test impact. Use when summarizing an agent-authored PR.
+description: Generate reviewer-ready PR bodies with high-level changes, rationale, session context, decisions, alternatives, trade-offs, and test impact. Always use when creating or editing a PR body for agent-authored changes.
 license: Proprietary
 compatibility: Requires access to git/jj diff context and the agent session notes.
 metadata:
@@ -14,6 +14,8 @@ Create consistent, high-signal PR descriptions that help a reviewer understand n
 # When to use
 Use this skill when:
 - You are preparing a PR body from agent work.
+- You are creating a PR (`gh pr create`) or editing an existing PR body (`gh pr edit`) for agent-authored changes.
+- The user asks for "make a PR", "open a PR", or similar phrasing.
 - You need to explain implementation choices and alternatives considered.
 - You need to report test changes (added/changed/removed/not run).
 
@@ -56,6 +58,7 @@ Include explicit trade-offs, compatibility or migration impact, and any known ri
 3. Capture decisions, alternatives considered, and trade-offs.
 4. Capture test status: added/updated/removed and anything not run.
 5. Render the PR body in the exact section order above.
+6. If a PR was already created with a short/incomplete body, regenerate with this skill and immediately update via `gh pr edit --body-file`.
 
 # PR body template
 ```markdown
