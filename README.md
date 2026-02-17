@@ -22,7 +22,7 @@ My environment setup.
 
 ## Pi
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
-- Local agent skills are kept in `skills/` (for example `git-clone` and `excalidraw-mcp-app`).
+- Local agent skills are kept in `skills/` (for example `git-clone`, `excalidraw-mcp-app`, and `pr-summary`).
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds an `auto-qna` extension that detects multiple explicit user-directed clarification questions in final assistant responses (e.g. prompts containing “you/your” or “should I…”), opens an interactive Q&A TUI, and sends captured answers back as a structured JSON follow-up user message (`/auto-qna [on|off|status]`).
@@ -40,22 +40,32 @@ Run this after cloning (or anytime you need to re-point your global Pi config):
 Agent handoff snippet:
 
 ```text
-Task: Re-link global Pi resources to this dotfiles repo.
+Task: Re-link global Pi resources and local agent skills to this dotfiles repo.
 Run: ./pi-agent/setup-symlinks.sh
 Expected result:
-  ~/.pi/agent/extensions   -> <repo>/pi-agent/extensions
-  ~/.pi/agent/settings.json -> <repo>/pi-agent/settings.json
-  ~/.pi/agent/themes       -> <repo>/pi-agent/themes
+  ~/.pi/agent/extensions            -> <repo>/pi-agent/extensions
+  ~/.pi/agent/settings.json          -> <repo>/pi-agent/settings.json
+  ~/.pi/agent/themes                 -> <repo>/pi-agent/themes
+  ~/.agents/skills/<skill-name>      -> <repo>/skills/<skill-name> (for each skill dir with SKILL.md)
+  (removes stale ~/.agents/skills links that no longer exist in <repo>/skills/)
+
 ```
 
 Manual fallback:
 
 ```bash
 mkdir -p ~/.pi/agent
+mkdir -p ~/.agents/skills
 ln -sfn "$PWD/pi-agent/extensions" ~/.pi/agent/extensions
 ln -sfn "$PWD/pi-agent/settings.json" ~/.pi/agent/settings.json
 ln -sfn "$PWD/pi-agent/themes" ~/.pi/agent/themes
+for skill_dir in "$PWD/skills"/*/; do
+  [ -f "${skill_dir}SKILL.md" ] || continue
+  skill_name="$(basename "$skill_dir")"
+  ln -sfn "$skill_dir" "$HOME/.agents/skills/$skill_name"
+done
 ```
+
 
 ## Neovim
 - Kotlin LSP is auto-enabled via `mason-lspconfig` (`kotlin_lsp`) and decompiles `jar:`/`jrt:` sources on demand so go-to-definition opens readable buffers.
