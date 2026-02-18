@@ -25,9 +25,13 @@ auto-track-bookmarks = "glob:*"
 pager = "delta"
 diff-formatter = ":git"
 
+[include]
+path = "~/repos/github.com/pauldthomson/dotfiles/delta/themes.config"
+
 [delta]
 line-numbers = true
 side-by-side = true
+features = "catppuccin-mocha"
 
 [ui]
 diff-editor = ["nvim", "-c", "DiffEditor $left $right $output"]

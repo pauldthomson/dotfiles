@@ -139,7 +139,7 @@ alias ls='ls -G'
 alias grep='grep --colour=auto'
 alias fgrep='fgrep --colour=auto'
 alias egrep='egrep --colour=auto'
-alias ll='ls -la'
+alias ll='eza --icons -la'
 alias la='ls -A'
 alias l='ls -CF'
 alias p='ptmux'
@@ -270,3 +270,5 @@ if security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" >/dev/null 2>&
   export SONARQUBE_TOKEN="$(security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" -w)"
   export SONARQUBE_ORG="nurturecloud"
 fi
+
+export EZA_CONFIG_DIR="$HOME/.config/eza"
