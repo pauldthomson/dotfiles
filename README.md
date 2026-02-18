@@ -20,6 +20,9 @@ My environment setup.
 - `custom-shader-animation = always` keeps cursor shaders animating through focus/mode changes to avoid stuck cursor-outline artifacts.
 - Cursor shader stack uses `cursor_tail.glsl` then `ripple_cursor.glsl`; `cursor_tail.glsl` includes an animation-state guard to prevent a lower-left cursor-outline artifact seen when launching full-screen TUIs like `pi`.
 
+## Delta
+- Includes a Catppuccin Mocha theme at `delta/themes.config` (palette-aligned with https://catppuccin.com/palette/).
+
 ## Pi
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
 - Local agent skills are kept in `skills/` (for example `git-clone`, `excalidraw-mcp-app`, and `pr-summary`).
