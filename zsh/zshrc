@@ -247,6 +247,9 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm without auto-switching Node
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if command -v nvm >/dev/null 2>&1; then
+  nvm use --silent default >/dev/null 2>&1
+fi
 
 # IntelliJ
 export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
