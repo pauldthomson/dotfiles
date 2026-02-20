@@ -6,6 +6,7 @@ My environment setup.
 - Uses Powerlevel10k with custom `jj` status segment.
 - Prompt hides VCS prefix/icon and directory icon.
 - `zsh-async` enables async status updates; otherwise prompt uses a synchronous fallback.
+- Startup is tuned to avoid expensive per-shell work: `nvm.sh` is loaded with `--no-use`, kubectl completions are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh`, omz completion dumps are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}`, auto-update checks are disabled, and prompt config is sourced once.
 
 ## Tmux
 - Prefix is `C-Space`.

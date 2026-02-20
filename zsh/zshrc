@@ -42,8 +42,8 @@ PURE_CMD_MAX_EXEC_TIME=300
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+# Disable auto-update checks during shell startup (update manually when needed).
+DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to automatically update without prompting.
 # DISABLE_UPDATE_PROMPT="true"
@@ -100,6 +100,10 @@ plugins=(
     jj
     async
 )
+
+# Keep completion dump in a stable cache location to avoid host-specific churn.
+ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}"
+mkdir -p "${ZSH_COMPDUMP:h}"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -163,13 +167,7 @@ fi
 PATH=$PATH:/usr/local/go/bin
 export PATH="$PATH:${HOME}/go/bin"
 
-# Make bash completion work with zsh
-autoload -Uz compinit
-for dump in ~/.zcompdump(N.mh+24); do
-  compinit
-done
-compinit -C
-
+# Make bash completion work with zsh (oh-my-zsh already runs compinit)
 autoload -U +X bashcompinit && bashcompinit
 
 [ -f ${HOME}/.dotfiles/ptmux_completion ] && . ${HOME}/.dotfiles/ptmux_completion
@@ -196,11 +194,16 @@ export PATH="$HOME/.jenv/bin:$PATH"
 # krew
 export PATH="${PATH}:${HOME}/.krew/bin"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository:$PATH"
 
-source <(kubectl completion zsh)
+if command -v kubectl >/dev/null 2>&1; then
+  KUBECTL_COMPLETION_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh"
+  if [[ ! -s "$KUBECTL_COMPLETION_CACHE" ]]; then
+    mkdir -p "${KUBECTL_COMPLETION_CACHE:h}"
+    kubectl completion zsh >| "$KUBECTL_COMPLETION_CACHE" 2>/dev/null
+  fi
+  [[ -s "$KUBECTL_COMPLETION_CACHE" ]] && source "$KUBECTL_COMPLETION_CACHE"
+fi
 
 export JDTLS_HOME="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository"
 
@@ -242,7 +245,7 @@ fi
 
 #export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm without auto-switching Node
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # IntelliJ
@@ -250,8 +253,11 @@ export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
 
 # eval "$(atuin init zsh --disable-up-arrow)"
 
-[[ ! -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]] || source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
-[[ ! -f "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc" ]] || source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+if command -v brew >/dev/null 2>&1; then
+  brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+  [[ ! -f "$brew_prefix/share/google-cloud-sdk/path.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/path.zsh.inc"
+  [[ ! -f "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc"
+fi
 export GOOGLE_CLOUD_PROJECT="shared-infra-448603"
 export PATH="$HOME/.local/bin:$PATH"
 
@@ -266,9 +272,11 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 [[ ! -f ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh ]] || source ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh
 
 # sonarqube skill
-if security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" >/dev/null 2>&1; then
-  export SONARQUBE_TOKEN="$(security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" -w)"
+sonarqube_token="$(security find-generic-password -a "$USER" -s "SONARQUBE_TOKEN" -w 2>/dev/null)"
+if [[ -n "$sonarqube_token" ]]; then
+  export SONARQUBE_TOKEN="$sonarqube_token"
   export SONARQUBE_ORG="nurturecloud"
 fi
+unset sonarqube_token
 
 export EZA_CONFIG_DIR="$HOME/.config/eza"
