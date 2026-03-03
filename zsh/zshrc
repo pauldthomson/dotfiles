@@ -99,11 +99,16 @@ plugins=(
     httpie 
     jj
     async
+    nvm
 )
 
 # Keep completion dump in a stable cache location to avoid host-specific churn.
 ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}"
 mkdir -p "${ZSH_COMPDUMP:h}"
+
+# Lazy-load nvm on first node/npm/nvm/pi usage to avoid shell startup lag.
+zstyle ':omz:plugins:nvm' lazy yes
+zstyle ':omz:plugins:nvm' lazy-cmd pi
 
 source $ZSH/oh-my-zsh.sh
 
@@ -244,12 +249,6 @@ if [[ -f /Library/Certificates/allcerts.pem ]]; then
 fi
 
 #export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use # This loads nvm without auto-switching Node
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-if command -v nvm >/dev/null 2>&1; then
-  nvm use --silent default >/dev/null 2>&1
-fi
 
 # IntelliJ
 export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
