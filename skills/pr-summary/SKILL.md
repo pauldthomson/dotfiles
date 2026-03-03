@@ -5,7 +5,7 @@ license: Proprietary
 compatibility: Works in interactive Pi and non-interactive coding harnesses.
 metadata:
   author: paulthomson
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Purpose
@@ -22,14 +22,21 @@ If chat contains a JSON payload with:
 
 Then use that payload as the primary source of truth.
 
-## Mode B: No interview payload (autonomous fallback)
-If the payload is not available, continue without blocking:
-1. Infer changes from VCS diff output (for this repo, prefer `jj diff`) / changed files / commands run in session.
-2. Infer rationale from user request and implementation details.
-3. Fill all required sections below.
-4. If a detail cannot be determined, write `Not available` explicitly.
+## Mode B: No interview payload (interactive Q&A required)
+If the payload is not available, run a chat interview instead of guessing:
+1. Ask exactly **one** question at a time.
+2. Follow the required section order below.
+3. For each section, offer a short suggested default inferred from VCS diff output (for this repo, prefer `jj diff`), changed files, and session context.
+4. Wait for the user response before asking the next question.
+5. If the user says they don't know or wants to skip, record `Not available`.
+6. After collecting all sections, render the final PR body.
 
-Do not refuse solely because `/pr-summary` was not run.
+Never dump all interview questions in a single assistant response.
+
+### Interview turn contract (strict)
+- Until all sections are answered, each assistant turn must include **exactly one** section question.
+- Do not include additional questions for later sections in the same turn.
+- Do not render the PR body until every required section has an answer or explicit `Not available`.
 
 # Required output sections
 Fill **all** sections; if data is unavailable, state `Not available` explicitly.
@@ -66,7 +73,7 @@ Any caveats, follow-ups, or likely review hotspots.
 
 # Rendering rules
 - Keep section order exactly as defined above.
-- Prefer interview payload when present; otherwise use autonomous inference.
+- Prefer interview payload when present; otherwise collect answers via one-question-at-a-time interview.
 - Preserve explicit `Not available` values.
 - Keep language concise and reviewer-friendly.
 
