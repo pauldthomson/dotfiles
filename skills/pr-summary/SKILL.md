@@ -2,30 +2,34 @@
 name: pr-summary
 description: Generate reviewer-ready PR bodies with high-level changes, rationale, session context, decisions, alternatives, trade-offs, and test impact. Always use when creating or editing a PR body for agent-authored changes.
 license: Proprietary
-compatibility: Requires interactive Pi with the /pr-summary extension command.
+compatibility: Works in interactive Pi and non-interactive coding harnesses.
 metadata:
   author: paulthomson
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Purpose
 Create consistent, high-signal PR descriptions that explain what changed and why.
 
-# Mandatory workflow (no fallback)
-This skill requires structured interview input produced by the `/pr-summary` extension command.
+# Workflow
+Use this skill whenever creating or editing a PR body.
 
-1. User runs `/pr-summary` in interactive Pi.
-2. The extension interviews the user section-by-section with suggested defaults.
-3. The extension sends a JSON payload in chat with:
-   - `type: "pr_summary_interview_answers"`
-   - section answers under `sections`
-   - diff context under `diff_context`
-4. This skill renders the final PR body from that payload.
+## Mode A: Interview payload available (preferred)
+If chat contains a JSON payload with:
+- `type: "pr_summary_interview_answers"`
+- section answers under `sections`
+- diff context under `diff_context`
 
-If that payload is missing, stop and reply:
-`Please run /pr-summary in interactive Pi first.`
+Then use that payload as the primary source of truth.
 
-Do not run free-form fallback interviews in chat.
+## Mode B: No interview payload (autonomous fallback)
+If the payload is not available, continue without blocking:
+1. Infer changes from VCS diff output (for this repo, prefer `jj diff`) / changed files / commands run in session.
+2. Infer rationale from user request and implementation details.
+3. Fill all required sections below.
+4. If a detail cannot be determined, write `Not available` explicitly.
+
+Do not refuse solely because `/pr-summary` was not run.
 
 # Required output sections
 Fill **all** sections; if data is unavailable, state `Not available` explicitly.
@@ -61,8 +65,8 @@ Include explicit trade-offs, compatibility or migration impact, and known risks.
 Any caveats, follow-ups, or likely review hotspots.
 
 # Rendering rules
-- Use interview payload answers as authoritative source of truth.
 - Keep section order exactly as defined above.
+- Prefer interview payload when present; otherwise use autonomous inference.
 - Preserve explicit `Not available` values.
 - Keep language concise and reviewer-friendly.
 
