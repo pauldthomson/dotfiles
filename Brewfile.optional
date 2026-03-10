@@ -1,0 +1,11 @@
+# Optional/manual extras for workflows configured in this repo.
+# Install with: brew bundle --file="$PWD/Brewfile.optional"
+
+brew "gh"                       # Pi review / GitHub flows
+brew "lazygit"                  # :LazyGit, lg alias
+brew "kubernetes-cli"           # kubectl, kctx helper, kube tmux status
+brew "reattach-to-user-namespace" # macOS tmux clipboard workaround
+
+cask "gcloud-cli"               # gcloud shell/tmux integration
+cask "ghostty"                  # tracked Ghostty config
+cask "font-cascadia-code"       # Ghostty font configured in ghostty/config

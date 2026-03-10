@@ -2,6 +2,33 @@
 
 My environment setup.
 
+## Fresh machine bootstrap
+- Curated Homebrew manifests live at `Brewfile` (baseline) and `Brewfile.optional` (feature-specific extras).
+- They intentionally exclude tools managed by Neovim plugins/package managers such as Mason.nvim, Lazy.nvim, TPM, and Krew.
+- Install the baseline packages with:
+
+```bash
+brew bundle --file="$PWD/Brewfile"
+```
+
+- Install the optional extras with:
+
+```bash
+brew bundle --file="$PWD/Brewfile.optional"
+```
+
+- No npm globals are required for the tracked config itself. If you want the Pi CLI used by the tmux/agent workflow, install it with:
+
+```bash
+npm install -g @mariozechner/pi-coding-agent
+```
+
+- The local `ptmux` helper is referenced by tmux, zsh, and Neovim bindings; build/install it after Homebrew bootstrap:
+
+```bash
+(cd ptmux && go install .)
+```
+
 ## Zsh
 - Uses Powerlevel10k with custom `jj` status segment.
 - Prompt hides VCS prefix/icon and directory icon.
