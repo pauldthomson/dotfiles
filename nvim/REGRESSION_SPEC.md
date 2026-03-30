@@ -174,7 +174,8 @@ Note: historical lines may exist; evaluate only newly appended lines.
 ### D1. Terraform editing UX
 
 1. Open a real terraform file in a project module.
-2. Run `:LspInfo`.
+2. Run `:checkhealth vim.lsp`.
+   - Note: on Neovim 0.12+, this replaces the older `:LspInfo` workflow.
 3. Use `K`, `gd`, and format (`:Format` or save).
 
 **Expected**
