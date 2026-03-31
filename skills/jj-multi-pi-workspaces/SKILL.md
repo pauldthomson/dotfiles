@@ -22,7 +22,8 @@ Use this skill when the user asks to:
 2. **Shared repo history, separate working copies**
 3. **Workspace names should be stable and human-readable** (for example: `pi-a`, `pi-b`, `integration`)
 4. **Do not delete directories unless explicitly asked**
-5. **Warn that bookmarks are shared across workspaces**
+5. **When deleting a workspace, forget it in Jujutsu first, then remove the workspace directory**
+6. **Warn that bookmarks are shared across workspaces**
 
 ## Standard setup flow
 
@@ -86,7 +87,31 @@ To stop tracking a workspace mapping without deleting files:
 jj workspace forget <workspace-name>
 ```
 
-Only remove directories if the user explicitly asks.
+If the user explicitly asks to fully clean up a workspace, do both steps in this order:
+
+1. Find the workspace path from:
+
+```bash
+jj workspace list
+```
+
+2. Forget the workspace mapping:
+
+```bash
+jj workspace forget <workspace-name>
+```
+
+3. Remove the workspace directory that was created for that workspace:
+
+```bash
+rm -rf ../<repo>-pi-a
+```
+
+Notes:
+
+- Prefer using the exact path shown or implied by `jj workspace list` / the original `jj workspace add` command.
+- Double-check that the path is the workspace directory being removed, not the main repo checkout.
+- Never delete directories unless the user explicitly asked for cleanup/removal.
 
 ## Safety notes to always mention
 
