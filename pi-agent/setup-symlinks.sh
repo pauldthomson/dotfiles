@@ -13,7 +13,6 @@ AGENTS_SKILLS_DIR="${HOME}/.agents/skills"
 
 for required_path in \
   "${PI_AGENT_DIR}/extensions" \
-  "${PI_AGENT_DIR}/settings.json" \
   "${PI_AGENT_DIR}/themes" \
   "${SKILLS_DIR}"; do
   if [[ ! -e "${required_path}" ]]; then
@@ -26,8 +25,19 @@ mkdir -p "${TARGET_DIR}"
 mkdir -p "${AGENTS_SKILLS_DIR}"
 
 ln -sfn "${PI_AGENT_DIR}/extensions" "${TARGET_DIR}/extensions"
-ln -sfn "${PI_AGENT_DIR}/settings.json" "${TARGET_DIR}/settings.json"
 ln -sfn "${PI_AGENT_DIR}/themes" "${TARGET_DIR}/themes"
+
+stale_settings_link="${TARGET_DIR}/settings.json"
+if [[ -L "${stale_settings_link}" ]]; then
+  existing_target="$(readlink "${stale_settings_link}")"
+  if [[ "${existing_target}" != /* ]]; then
+    existing_target="$(cd -- "$(dirname -- "${stale_settings_link}")" && pwd)/${existing_target}"
+  fi
+
+  if [[ "${existing_target}" == "${PI_AGENT_DIR}/settings.json" ]]; then
+    rm -f "${stale_settings_link}"
+  fi
+fi
 
 linked_skills=()
 while IFS= read -r -d '' skill_path; do
@@ -60,7 +70,7 @@ while IFS= read -r -d '' existing_skill_path; do
 done < <(find "${AGENTS_SKILLS_DIR}" -mindepth 1 -maxdepth 1 -type l -print0 | sort -z)
 
 echo "Updated pi symlinks:"
-ls -ld "${TARGET_DIR}/extensions" "${TARGET_DIR}/settings.json" "${TARGET_DIR}/themes"
+ls -ld "${TARGET_DIR}/extensions" "${TARGET_DIR}/themes"
 
 echo "Linked local skills in ${AGENTS_SKILLS_DIR}:"
 if (( ${#linked_skills[@]} == 0 )); then

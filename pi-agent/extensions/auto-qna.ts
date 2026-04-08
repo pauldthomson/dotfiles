@@ -245,10 +245,6 @@ export default function autoQnaExtension(pi: ExtensionAPI) {
     applyState(ctx);
   });
 
-  pi.on("session_switch", (_event, ctx) => {
-    applyState(ctx);
-  });
-
   pi.on("session_tree", (_event, ctx) => {
     applyState(ctx);
   });

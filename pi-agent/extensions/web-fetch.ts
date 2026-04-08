@@ -27,6 +27,7 @@ export default function (pi: ExtensionAPI) {
     label: "Web Fetch",
     description:
       "Fetch text content from a URL via HTTP GET. Response is truncated to 50KB/2000 lines, with the full response saved to a temp file when truncated.",
+    promptSnippet: "Fetch text content from an HTTP or HTTPS URL when the user needs current web page or API response data.",
     parameters: fetchSchema,
     async execute(_toolCallId, params, signal) {
       const timeoutMs = params.timeoutMs ?? 10000;
@@ -35,29 +36,12 @@ export default function (pi: ExtensionAPI) {
       try {
         targetUrl = new URL(params.url);
       } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Invalid URL: ${params.url}`,
-            },
-          ],
-          details: { error: error instanceof Error ? error.message : String(error) },
-          isError: true,
-        };
+        const message = error instanceof Error ? error.message : String(error);
+        throw new Error(`Invalid URL: ${params.url} (${message})`);
       }
 
       if (targetUrl.protocol !== "http:" && targetUrl.protocol !== "https:") {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Unsupported URL protocol: ${targetUrl.protocol}`,
-            },
-          ],
-          details: { error: `Unsupported protocol: ${targetUrl.protocol}` },
-          isError: true,
-        };
+        throw new Error(`Unsupported URL protocol: ${targetUrl.protocol}`);
       }
 
       const timeoutController = new AbortController();
@@ -135,16 +119,7 @@ export default function (pi: ExtensionAPI) {
         };
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Web fetch failed: ${message}`,
-            },
-          ],
-          details: { error: message },
-          isError: true,
-        };
+        throw new Error(`Web fetch failed: ${message}`);
       } finally {
         clearTimeout(timeoutId);
       }
