@@ -64,5 +64,14 @@ return {
     {
         'sindrets/diffview.nvim',
         cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory' },
+        keys = {
+            {
+                '<leader>gd',
+                function()
+                    require('custom.git_review').diffview_toggle()
+                end,
+                desc = '[G]it PR [D]iff toggle',
+            },
+        },
     }
 }

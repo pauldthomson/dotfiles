@@ -37,6 +37,8 @@ require('lazy').setup({
     },
   })
 
+require('custom.git_review').setup_commands()
+
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
@@ -163,7 +165,7 @@ vim.keymap.set('n', '<leader>n', ':Neotree toggle reveal<CR>', { desc = 'Toggle 
 -- Close quickfix
 vim.keymap.set('n', '<leader>cc', ':ccl<CR>', { desc = 'Close quickfix list' })
 
--- Vim fugitive
+-- Vim fugitive / PR review
 vim.keymap.set('n', '<leader>gs', ':Git<CR>', { desc = '[G]it [S]tatus' })
 vim.keymap.set('n', '<leader>gt', ':diffget //2<CR>', { desc = '[G]et [T]arget branch' })
 vim.keymap.set('n', '<leader>gm', ':diffget //3<CR>', { desc = '[G]et [M]erge branch' })
