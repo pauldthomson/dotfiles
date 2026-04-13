@@ -27,18 +27,6 @@ mkdir -p "${AGENTS_SKILLS_DIR}"
 ln -sfn "${PI_AGENT_DIR}/extensions" "${TARGET_DIR}/extensions"
 ln -sfn "${PI_AGENT_DIR}/themes" "${TARGET_DIR}/themes"
 
-stale_settings_link="${TARGET_DIR}/settings.json"
-if [[ -L "${stale_settings_link}" ]]; then
-  existing_target="$(readlink "${stale_settings_link}")"
-  if [[ "${existing_target}" != /* ]]; then
-    existing_target="$(cd -- "$(dirname -- "${stale_settings_link}")" && pwd)/${existing_target}"
-  fi
-
-  if [[ "${existing_target}" == "${PI_AGENT_DIR}/settings.json" ]]; then
-    rm -f "${stale_settings_link}"
-  fi
-fi
-
 linked_skills=()
 while IFS= read -r -d '' skill_path; do
   skill_name="$(basename "${skill_path}")"

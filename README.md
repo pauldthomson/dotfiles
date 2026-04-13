@@ -80,7 +80,6 @@ Expected result:
   ~/.pi/agent/themes                -> <repo>/pi-agent/themes
   ~/.agents/skills/<skill-name>     -> <repo>/skills/<skill-name> (for each skill dir with SKILL.md)
   (removes stale ~/.agents/skills links that no longer exist in <repo>/skills/)
-  (removes an old ~/.pi/agent/settings.json symlink if it pointed at this repo)
 
 ```
 
@@ -91,7 +90,6 @@ mkdir -p ~/.pi/agent
 mkdir -p ~/.agents/skills
 ln -sfn "$PWD/pi-agent/extensions" ~/.pi/agent/extensions
 ln -sfn "$PWD/pi-agent/themes" ~/.pi/agent/themes
-rm -f ~/.pi/agent/settings.json
 for skill_dir in "$PWD/skills"/*/; do
   [ -f "${skill_dir}SKILL.md" ] || continue
   skill_name="$(basename "$skill_dir")"
