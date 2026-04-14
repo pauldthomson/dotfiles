@@ -54,12 +54,13 @@ npm install -g @mariozechner/pi-coding-agent
 
 ## Pi
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
-- Local agent skills are kept in `skills/` (for example `git-clone`, `excalidraw-mcp-app`, and `pr-summary`).
+- Local agent skills are kept in `skills/` (for example `git-clone`, `excalidraw-mcp-app`, `chrome-devtools-mcp`, and `pr-summary`).
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds an `auto-qna` extension that detects explicit user-directed clarification questions in final assistant responses (e.g. prompts containing “you/your” or “should I…”), groups numbered answer choices under the same question when present, opens an interactive Q&A TUI with selectable options or freeform overrides, and sends captured answers back as a structured JSON follow-up user message (`/auto-qna [on|off|status]`).
 - Includes regression tests for auto-qna question extraction in `pi-agent/extensions/auto-qna/question-extractor.test.ts` (run with `node --test pi-agent/extensions/auto-qna/question-extractor.test.ts`).
 - Adds a `pr-summary-interview` extension command (`/pr-summary`) that runs an interactive interview with suggested defaults for each PR section, then sends structured answers to `pr-summary` skill generation (the command itself requires interactive Pi UI; without payload, the skill falls back to one-question-at-a-time chat interview).
+- Includes a `chrome-devtools-mcp` skill that wraps `npx chrome-devtools-mcp@latest --autoConnect --channel=beta` for browser automation, inspection, and performance analysis from Pi.
 - Adds a `jj-footer` extension that replaces git `(detached)` branch display with jj-aware status (`jj:<bookmark>` or `jj:@<change-id>`) while keeping the default footer layout/metrics (session name, token/cache totals, cost, context usage, model, extension statuses).
 - Uses a custom `catppuccin` theme (Mocha palette) defined in `pi-agent/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
 
