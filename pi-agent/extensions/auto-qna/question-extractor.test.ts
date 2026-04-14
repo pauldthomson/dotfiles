@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 
-import { extractQuestions } from "./question-extractor.ts";
+import { extractQuestionPrompts, extractQuestions } from "./question-extractor.ts";
 
 describe("auto-qna question extraction", () => {
   it("does not extract rhetorical/non-user-directed questions", () => {
@@ -60,6 +60,45 @@ describe("auto-qna question extraction", () => {
       "Could you confirm bookmark name?",
       "Would you like me to split this commit?",
       "Should I include screenshots?",
+    ]);
+  });
+
+  it("strips question labels and leading markdown punctuation", () => {
+    const text = [
+      "`Question 1: What are you trying to optimize for?",
+      "Q2: Should I also update docs?",
+    ].join("\n");
+
+    assert.deepEqual(extractQuestions(text), ["What are you trying to optimize for?", "Should I also update docs?"]);
+  });
+
+  it("groups numbered answer options under a single prompt", () => {
+    const text = [
+      "Sure — we’ll do it step by step.",
+      "",
+      "Question 1: What are you trying to optimize for?",
+      "Pick the closest option, or describe your own:",
+      "",
+      "1. Keep queue wait time low",
+      "e.g. \"jobs should start within 2 minutes\"",
+      "2. Clear large backlogs quickly",
+      "e.g. \"clear 500 queued jobs within 30 minutes\"",
+      "3. Handle normal load efficiently at lowest cost",
+      "4. A mix of the above",
+      "",
+      "What’s your goal?",
+    ].join("\n");
+
+    assert.deepEqual(extractQuestionPrompts(text), [
+      {
+        question: "What are you trying to optimize for?",
+        options: [
+          'Keep queue wait time low e.g. "jobs should start within 2 minutes"',
+          'Clear large backlogs quickly e.g. "clear 500 queued jobs within 30 minutes"',
+          "Handle normal load efficiently at lowest cost",
+          "A mix of the above",
+        ],
+      },
     ]);
   });
 });

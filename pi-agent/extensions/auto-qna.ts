@@ -2,7 +2,7 @@ import type { AgentMessage } from "@mariozechner/pi-agent-core";
 import type { AssistantMessage, TextContent } from "@mariozechner/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@mariozechner/pi-tui";
-import { extractQuestions } from "./auto-qna/question-extractor.ts";
+import { extractQuestionPrompts, type QuestionPrompt } from "./auto-qna/question-extractor.ts";
 
 const AUTO_QNA_STATE_TYPE = "auto-qna-state";
 
@@ -21,11 +21,11 @@ function extractTextContent(message: AssistantMessage): string {
     .join("\n");
 }
 
-function buildAnswerMessage(questions: string[], answers: string[]): string | null {
-  const answered = questions
-    .map((question, index) => ({
+function buildAnswerMessage(prompts: QuestionPrompt[], answers: string[]): string | null {
+  const answered = prompts
+    .map((prompt, index) => ({
       index: index + 1,
-      question,
+      question: prompt.question,
       answer: answers[index]?.trim() ?? "",
     }))
     .filter((pair) => pair.answer.length > 0)
@@ -37,10 +37,10 @@ function buildAnswerMessage(questions: string[], answers: string[]): string | nu
 
   if (answered.length === 0) return null;
 
-  const unanswered = questions
-    .map((question, index) => ({
+  const unanswered = prompts
+    .map((prompt, index) => ({
       index: index + 1,
-      question,
+      question: prompt.question,
       answer: answers[index]?.trim() ?? "",
     }))
     .filter((pair) => pair.answer.length === 0)
@@ -78,12 +78,13 @@ function getAutoQnaState(ctx: ExtensionContext): AutoQnaState | undefined {
   return state;
 }
 
-async function collectAnswers(ctx: ExtensionContext, questions: string[]): Promise<string[] | null> {
+async function collectAnswers(ctx: ExtensionContext, prompts: QuestionPrompt[]): Promise<string[] | null> {
   if (!ctx.hasUI) return null;
 
   return ctx.ui.custom<string[] | null>((tui, theme, _kb, done) => {
     let currentIndex = 0;
-    const answers = questions.map(() => "");
+    const customAnswers = prompts.map(() => "");
+    const selectedOptions = prompts.map(() => null as number | null);
     let cachedLines: string[] | undefined;
 
     const editorTheme: EditorTheme = {
@@ -100,14 +101,37 @@ async function collectAnswers(ctx: ExtensionContext, questions: string[]): Promi
     const editor = new Editor(tui, editorTheme);
     editor.setText("");
 
+    const getSelectedOptionText = (index: number): string => {
+      const selected = selectedOptions[index];
+      if (selected === null || selected === undefined) return "";
+      return prompts[index]?.options[selected] ?? "";
+    };
+
+    const getAnswerValue = (index: number, draftOverride?: string): string => {
+      const draft = draftOverride ?? (index === currentIndex ? editor.getText().trim() : customAnswers[index] ?? "");
+      if (draft.trim().length > 0) return draft.trim();
+      return getSelectedOptionText(index).trim();
+    };
+
     const saveCurrentAnswer = () => {
-      answers[currentIndex] = editor.getText().trim();
+      customAnswers[currentIndex] = editor.getText().trim();
+    };
+
+    const finishOrAdvance = () => {
+      if (currentIndex < prompts.length - 1) {
+        currentIndex += 1;
+        editor.setText(customAnswers[currentIndex] ?? "");
+        refresh();
+        return;
+      }
+
+      done(prompts.map((_, index) => getAnswerValue(index)));
     };
 
     const switchTo = (index: number) => {
       saveCurrentAnswer();
       currentIndex = index;
-      editor.setText(answers[currentIndex] ?? "");
+      editor.setText(customAnswers[currentIndex] ?? "");
       refresh();
     };
 
@@ -117,19 +141,15 @@ async function collectAnswers(ctx: ExtensionContext, questions: string[]): Promi
     };
 
     editor.onSubmit = (value) => {
-      answers[currentIndex] = value.trim();
-
-      if (currentIndex < questions.length - 1) {
-        currentIndex += 1;
-        editor.setText(answers[currentIndex] ?? "");
-        refresh();
-        return;
-      }
-
-      done(answers.map((answer) => answer.trim()));
+      customAnswers[currentIndex] = value.trim();
+      finishOrAdvance();
     };
 
     function handleInput(data: string) {
+      const prompt = prompts[currentIndex]!;
+      const currentDraft = editor.getText().trim();
+      const digit = Number.parseInt(data, 10);
+
       if (matchesKey(data, Key.escape)) {
         done(null);
         return;
@@ -137,20 +157,51 @@ async function collectAnswers(ctx: ExtensionContext, questions: string[]): Promi
 
       if (matchesKey(data, Key.ctrl("s"))) {
         saveCurrentAnswer();
-        done(answers.map((answer) => answer.trim()));
+        done(prompts.map((_, index) => getAnswerValue(index)));
         return;
       }
 
       if (matchesKey(data, Key.tab) || matchesKey(data, Key.right) || matchesKey(data, Key.ctrl("n"))) {
-        const next = (currentIndex + 1) % questions.length;
+        const next = (currentIndex + 1) % prompts.length;
         switchTo(next);
         return;
       }
 
       if (matchesKey(data, Key.shift("tab")) || matchesKey(data, Key.left) || matchesKey(data, Key.ctrl("p"))) {
-        const previous = (currentIndex - 1 + questions.length) % questions.length;
+        const previous = (currentIndex - 1 + prompts.length) % prompts.length;
         switchTo(previous);
         return;
+      }
+
+      if (prompt.options.length > 0 && Number.isInteger(digit) && digit >= 1 && digit <= prompt.options.length && data.length === 1) {
+        selectedOptions[currentIndex] = digit - 1;
+        customAnswers[currentIndex] = "";
+        editor.setText("");
+        refresh();
+        return;
+      }
+
+      if (prompt.options.length > 0 && currentDraft.length === 0) {
+        if (matchesKey(data, Key.up) || data === "k") {
+          const currentSelection = selectedOptions[currentIndex] ?? 0;
+          selectedOptions[currentIndex] = selectedOptions[currentIndex] === null
+            ? prompt.options.length - 1
+            : currentSelection === 0 ? prompt.options.length - 1 : currentSelection - 1;
+          refresh();
+          return;
+        }
+
+        if (matchesKey(data, Key.down) || data === "j") {
+          const currentSelection = selectedOptions[currentIndex] ?? -1;
+          selectedOptions[currentIndex] = currentSelection === prompt.options.length - 1 ? 0 : currentSelection + 1;
+          refresh();
+          return;
+        }
+
+        if (matchesKey(data, Key.enter) && selectedOptions[currentIndex] !== null) {
+          finishOrAdvance();
+          return;
+        }
       }
 
       editor.handleInput(data);
@@ -163,23 +214,21 @@ async function collectAnswers(ctx: ExtensionContext, questions: string[]): Promi
       const lines: string[] = [];
       const horizontal = "─".repeat(Math.max(1, width));
       const currentDraft = editor.getText().trim();
-      const answeredCount = answers.filter((answer, index) => {
-        if (index === currentIndex) return currentDraft.length > 0;
-        return answer.trim().length > 0;
-      }).length;
+      const currentPrompt = prompts[currentIndex]!;
+      const answeredCount = prompts.filter((_, index) => getAnswerValue(index, index === currentIndex ? currentDraft : undefined).length > 0).length;
 
       const add = (text: string) => {
         lines.push(truncateToWidth(text, width));
       };
 
       add(theme.fg("accent", horizontal));
-      add(theme.fg("accent", theme.bold(` Answer questions (${currentIndex + 1}/${questions.length})`)));
+      add(theme.fg("accent", theme.bold(` Answer questions (${currentIndex + 1}/${prompts.length})`)));
       lines.push("");
 
-      const maxLabelLength = `Q${questions.length}`.length;
-      const chips = questions
+      const maxLabelLength = `Q${prompts.length}`.length;
+      const chips = prompts
         .map((_, index) => {
-          const answered = index === currentIndex ? currentDraft.length > 0 : answers[index].trim().length > 0;
+          const answered = getAnswerValue(index, index === currentIndex ? currentDraft : undefined).length > 0;
           const active = index === currentIndex;
           const label = `Q${index + 1}`.padEnd(maxLabelLength, " ");
           const chipCore = `${answered ? "✓" : " "} ${label}`;
@@ -194,21 +243,33 @@ async function collectAnswers(ctx: ExtensionContext, questions: string[]): Promi
 
       add(` ${chips}`);
       lines.push("");
-      add(theme.fg("text", ` Q${currentIndex + 1}: ${questions[currentIndex]}`));
+      add(theme.fg("text", ` Q${currentIndex + 1}: ${currentPrompt.question}`));
+
+      if (currentPrompt.options.length > 0) {
+        lines.push("");
+        add(theme.fg("muted", " Choose an option or type your own:"));
+
+        for (let index = 0; index < currentPrompt.options.length; index += 1) {
+          const option = currentPrompt.options[index]!;
+          const active = selectedOptions[currentIndex] === index && currentDraft.length === 0;
+          const prefix = active ? theme.fg("accent", "  →") : "   ";
+          const text = active ? theme.fg("accent", ` ${index + 1}. ${option}`) : theme.fg("text", ` ${index + 1}. ${option}`);
+          add(`${prefix}${text}`);
+        }
+      }
+
       lines.push("");
-      add(theme.fg("muted", " Your answer:"));
+      add(theme.fg("muted", currentPrompt.options.length > 0 ? " Your answer (optional override):" : " Your answer:"));
 
       for (const line of editor.render(Math.max(20, width - 2))) {
         add(` ${line}`);
       }
 
       lines.push("");
-      add(
-        theme.fg(
-          "dim",
-          ` Tab/Shift+Tab or ←/→ switch • Enter next/submit • Ctrl+S submit • Esc cancel (${answeredCount}/${questions.length} answered)`,
-        ),
-      );
+      const controls = currentPrompt.options.length > 0
+        ? " 1-9 choose option • ↑/↓ or j/k move option • Tab/Shift+Tab or ←/→ switch • Enter next/submit • Ctrl+S submit • Esc cancel"
+        : " Tab/Shift+Tab or ←/→ switch • Enter next/submit • Ctrl+S submit • Esc cancel";
+      add(theme.fg("dim", `${controls} (${answeredCount}/${prompts.length} answered)`));
       add(theme.fg("accent", horizontal));
 
       cachedLines = lines;
@@ -281,26 +342,28 @@ export default function autoQnaExtension(pi: ExtensionAPI) {
     const assistantText = extractTextContent(event.message);
     if (!assistantText.trim()) return;
 
-    const questions = extractQuestions(assistantText);
-    if (questions.length <= 1) return;
+    const prompts = extractQuestionPrompts(assistantText);
+    const hasInteractiveOptions = prompts.some((prompt) => prompt.options.length > 0);
+    if (prompts.length <= 1 && !hasInteractiveOptions) return;
 
     promptInProgress = true;
 
     try {
-      const choice = await ctx.ui.select(`Assistant asked ${questions.length} question${questions.length === 1 ? "" : "s"}.`, [
-        "Answer now",
-        "Skip",
-      ]);
+      const title =
+        prompts.length === 1 && hasInteractiveOptions
+          ? "Assistant asked 1 question with answer options."
+          : `Assistant asked ${prompts.length} question${prompts.length === 1 ? "" : "s"}.`;
+      const choice = await ctx.ui.select(title, ["Answer now", "Skip"]);
 
       if (choice !== "Answer now") return;
 
-      const answers = await collectAnswers(ctx, questions);
+      const answers = await collectAnswers(ctx, prompts);
       if (!answers) {
         ctx.ui.notify("Q&A cancelled", "info");
         return;
       }
 
-      const answerMessage = buildAnswerMessage(questions, answers);
+      const answerMessage = buildAnswerMessage(prompts, answers);
       if (!answerMessage) {
         ctx.ui.notify("No answers provided", "info");
         return;
