@@ -52,6 +52,9 @@ npm install -g @mariozechner/pi-coding-agent
 ## Delta
 - Includes a Catppuccin Mocha theme at `delta/themes.config` (palette-aligned with https://catppuccin.com/palette/).
 
+## Hunk
+- Tracks Hunk preferences in `hunk/config.toml` (`vcs = "jj"`). Symlink only `~/.config/hunk/config.toml` to this file; keep generated `~/.config/hunk/state.json` local and untracked.
+
 ## Pi
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
 - Local agent skills are kept in `skills/` (for example `git-clone`, `hunk-review`, `chrome-devtools-mcp`, and `pr-summary`).
