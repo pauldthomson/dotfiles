@@ -54,7 +54,7 @@ npm install -g @mariozechner/pi-coding-agent
 
 ## Pi
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
-- Local agent skills are kept in `skills/` (for example `git-clone`, `excalidraw-mcp-app`, `chrome-devtools-mcp`, and `pr-summary`).
+- Local agent skills are kept in `skills/` (for example `git-clone`, `hunk-review`, `chrome-devtools-mcp`, and `pr-summary`).
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds an `auto-qna` extension that detects explicit user-directed clarification questions in final assistant responses (e.g. prompts containing “you/your” or “should I…”), groups numbered answer choices under the same question when present, opens an interactive Q&A TUI with selectable options or freeform overrides, and sends captured answers back as a structured JSON follow-up user message (`/auto-qna [on|off|status]`).
