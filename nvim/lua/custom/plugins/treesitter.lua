@@ -14,7 +14,8 @@ return {
             -- Automatically ensure parsers/queries used by this config are installed.
             -- Installation is async; already-installed languages are a no-op.
             -- Note: nvim-treesitter requires `tree-sitter` CLI for parser installs/updates.
-            local managed_languages = { 'c', 'cpp', 'go', 'lua', 'vim', 'python', 'rust', 'typescript', 'vimdoc', 'java', 'kotlin' }
+            local managed_languages = { 'c', 'cpp', 'go', 'lua', 'vim', 'python', 'rust', 'typescript', 'vimdoc', 'java',
+                'kotlin', 'yaml' }
             nvim_treesitter.install(managed_languages)
 
             -- Enable treesitter-backed features only when the parser is available.
