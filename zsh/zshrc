@@ -155,6 +155,7 @@ alias p='ptmux'
 alias cat=bat
 alias rg='rg --smart-case'
 alias k='kubectl'
+alias kgy='kubectl get -o yaml'
 alias go='nocorrect go'
 alias lg='lazygit'
 alias gsp='gcloud-set-project'

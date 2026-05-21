@@ -61,6 +61,11 @@ return { -- LSP Configuration & Plugins
                     },
                 },
                 terraformls = {
+                    on_attach = function(client, _)
+                        -- terraform-ls semantic token refreshes are noisy/expensive in large modules
+                        -- and have repeatedly wedged Neovim in this repo.
+                        client.server_capabilities.semanticTokensProvider = nil
+                    end,
                     -- Prefer the nearest Terraform module directory over the repo root.
                     -- This avoids terraform-ls scanning huge monorepo roots (e.g. node_modules).
                     root_dir = function(bufnr, on_dir)
@@ -110,7 +115,17 @@ return { -- LSP Configuration & Plugins
                     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
                     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-                    nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+                    nmap('gd', function()
+                        -- terraform-ls can report "no reference origin found" for symbols it cannot
+                        -- resolve. In Telescope this can leave Neovim spinning at 100% CPU, so use the
+                        -- built-in LSP definition handler for Terraform buffers.
+                        if vim.bo.filetype == 'terraform' or vim.bo.filetype == 'terraform-vars' or vim.bo.filetype == 'hcl' then
+                            vim.lsp.buf.definition()
+                            return
+                        end
+
+                        require('telescope.builtin').lsp_definitions()
+                    end, '[G]oto [D]efinition')
                     nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
                     nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
                     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
