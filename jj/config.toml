@@ -7,10 +7,10 @@
 ]
 [--scope.user]
 email = "pthomson@nurturecloud.com"
-key = "BE1FE22322C71B79"
 [--scope.signing]
-behaviour = "own"
+behavior = "own"
 backend = "gpg"
+key = "BE1FE22322C71B79"
 
 [user]
 name = "Paul Thomson"
@@ -41,3 +41,6 @@ features = "catppuccin-mocha"
 [ui]
 pager = ["hunk", "pager"]
 diff-formatter = ":git"
+
+[signing]
+behavior = "own"
