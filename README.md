@@ -40,8 +40,8 @@ npm install -g @mariozechner/pi-coding-agent
 - Prefix is `C-Space`.
 - `prefix + j`: switch sessions (fzf popup).
 - `prefix + k`: switch windows (fzf popup).
-- `prefix + X`: kill one-or-many sessions (TAB multi-select).
-- `prefix + C-p`: run `ptmux` project/session launcher.
+- `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); cloned repo sessions are checked for unpushed/dirty changes and can remove the clone after the session is killed.
+- `prefix + C-p`: run `ptmux` project/session launcher. If the selected repo already has a session, `ptmux` can switch to it or clone a new copy under `~/repos/<git-host>/<org>/<repo>-<suffix>` and initialize it with `jj git init --colocate`.
 - OSC passthrough is disabled to prevent terminal responses showing in editors.
 
 ## Ghostty

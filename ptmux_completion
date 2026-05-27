@@ -7,13 +7,18 @@ _ptmux()
     current_word="${COMP_WORDS[COMP_CWORD]}"
     previous_word="${COMP_WORDS[COMP_CWORD-1]}"
 
-    [ -e ${HOME}/repos ] && code_directories_to_search="${HOME}/repos"
-
-    suggestions=$(find $code_directories_to_search -mindepth 3 -maxdepth 3 -type d | grep -o -E "[^/]*$")
+    suggestions="kill"
+    if [ -e ${HOME}/repos ]; then
+        code_directories_to_search="${HOME}/repos"
+        suggestions="${suggestions} $(find $code_directories_to_search -mindepth 3 -maxdepth 3 -type d | grep -o -E "[^/]*$")"
+    fi
 
     if [ "${previous_word}" == "ptmux" ]
     then
         COMPREPLY=( $(compgen -W "${suggestions}" -- ${current_word}) )
+    elif [ "${previous_word}" == "kill" ] && command -v tmux >/dev/null 2>&1
+    then
+        COMPREPLY=( $(compgen -W "$(tmux list-sessions -F '#S' 2>/dev/null)" -- ${current_word}) )
     fi
 }
 complete -F _ptmux ptmux
