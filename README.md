@@ -52,6 +52,10 @@ npm install -g @mariozechner/pi-coding-agent
 ## Delta
 - Includes a Catppuccin Mocha theme at `delta/themes.config` (palette-aligned with https://catppuccin.com/palette/).
 
+## Jujutsu
+- Uses `less -FRX -R` as the default `jj` pager so non-diff commands such as `jj log`/`jj status` keep jj's ANSI colors.
+- Scopes `hunk pager` to `jj diff`/`jj show`, where Hunk's diff UI is useful without stripping color from plain log/status output.
+
 ## Hunk
 - Tracks Hunk preferences in `hunk/config.toml` (`vcs = "jj"`, Catppuccin theme). Symlink only `~/.config/hunk/config.toml` to this file; keep generated `~/.config/hunk/state.json` local and untracked.
 

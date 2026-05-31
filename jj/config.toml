@@ -22,6 +22,7 @@ auto-track-bookmarks = "glob:*"
 [[--scope]]
 --when.commands = ["diff", "show"]
 [--scope.ui]
+pager = ["hunk", "pager"]
 # pager = "delta"
 # diff-formatter = ":git"
 
@@ -39,7 +40,7 @@ features = "catppuccin-mocha"
 #diff-formatter = ["difft", "--color=always", "--display=side-by-side-show-both", "$left", "$right"]
 
 [ui]
-pager = ["hunk", "pager"]
+pager = ["less", "-FRX", "-R"]
 diff-formatter = ":git"
 
 [signing]
