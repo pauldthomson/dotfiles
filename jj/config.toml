@@ -17,7 +17,7 @@ name = "Paul Thomson"
 email = "thomsonp83@gmail.com"
 
 [remotes.origin]
-auto-track-bookmarks = "glob:*"
+auto-track-bookmarks = "*"
 
 [[--scope]]
 --when.commands = ["diff", "show"]
