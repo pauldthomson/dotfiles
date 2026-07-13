@@ -23,10 +23,16 @@ brew bundle --file="$PWD/Brewfile.optional"
 npm install -g @mariozechner/pi-coding-agent
 ```
 
-- The local `ptmux` helper is referenced by tmux, zsh, and Neovim bindings; build/install it after Homebrew bootstrap:
+- The local `ptmux` helper targets Go 1.26.5 and is referenced by tmux, zsh, and Neovim bindings; build/install it after Homebrew bootstrap:
 
 ```bash
 (cd ptmux && go install .)
+```
+
+- `ptmux` keeps CLI orchestration, tmux integration, repository handling, VCS safety checks, and subprocess execution in separate Go files. Validate changes with:
+
+```bash
+(cd ptmux && go test -race ./... && go vet ./...)
 ```
 
 ## Zsh
@@ -40,7 +46,7 @@ npm install -g @mariozechner/pi-coding-agent
 - Prefix is `C-Space`.
 - `prefix + j`: switch sessions (fzf popup).
 - `prefix + k`: switch windows (fzf popup).
-- `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); cloned repo sessions are checked for unpushed/dirty changes and can remove the clone after the session is killed.
+- `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); session names are matched exactly, and cloned repo sessions are checked for unpushed/dirty changes before filesystem-confined clone removal.
 - `prefix + C-p`: run `ptmux` project/session launcher. If the selected repo already has a session, `ptmux` can switch to it or clone a new copy under `~/repos/<git-host>/<org>/<repo>-<suffix>` and initialize it with `jj git init --colocate`.
 - OSC passthrough is disabled to prevent terminal responses showing in editors.
 

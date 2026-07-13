@@ -38,7 +38,10 @@ func TestNextCloneSuffixSkipsExistingIndexedCopies(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	suffix := nextCloneSuffix(repo{Host: "github.com", Org: "example", Name: "project"})
+	suffix, err := nextCloneSuffix(repo{Host: "github.com", Org: "example", Name: "project"})
+	if err != nil {
+		t.Fatal(err)
+	}
 	if suffix != "3" {
 		t.Fatalf("expected suffix 3, got %q", suffix)
 	}
