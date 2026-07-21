@@ -36,7 +36,7 @@ nvim -n --headless '+qa'
 
 **Command**
 ```bash
-rg -n "config\s*=\s*\{" nvim/lua/custom/plugins
+rg -n "^    config\s*=\s*\{" nvim/lua/custom/plugins
 ```
 
 **Expected**
@@ -93,7 +93,21 @@ nvim -n --headless "$TMP" \
 
 ---
 
-### B3. FFF native backend initializes without process kill
+### B3. FFF loads at startup
+
+**Command**
+```bash
+nvim -n --headless \
+  '+lua local p=require("lazy.core.config").plugins["fff.nvim"]; print(p and p._.loaded and true or false)' \
+  '+qa'
+```
+
+**Expected**
+- Prints `true`
+
+---
+
+### B4. FFF native backend initializes without process kill
 
 **Command**
 ```bash
@@ -190,11 +204,23 @@ Note: historical lines may exist; evaluate only newly appended lines.
 1. `:Telescope find_files`
 2. `:Trouble`
 3. `:DBUI` (if DB plugins are installed)
-4. `:FFFFind`
 
 **Expected**
 - Command triggers plugin load
 - No missing-command or module errors
+
+---
+
+### D3. FFF keymaps work
+
+1. Press `ff` to find files.
+2. Press `fg` to live grep.
+3. Press `fz` to fuzzy grep.
+4. Press `fw` over a word in normal mode and with a visual selection.
+
+**Expected**
+- Each mapping opens the corresponding FFF picker.
+- No missing-module or native-backend errors occur.
 
 ---
 
