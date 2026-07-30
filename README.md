@@ -44,6 +44,8 @@ npm install -g @mariozechner/pi-coding-agent
 
 ## Tmux
 - Prefix is `C-Space`.
+- Focus hooks give inactive panes the terminal theme's ANSI black background and restore the default style on focus; application foreground and panel colours remain intact.
+- Neovim's Catppuccin background is transparent so the tmux focus styling remains visible behind the editor.
 - `prefix + j`: switch sessions (fzf popup).
 - `prefix + k`: switch windows (fzf popup).
 - `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); session names are matched exactly, and cloned repo sessions are checked for unpushed/dirty changes before filesystem-confined clone removal.
