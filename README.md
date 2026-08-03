@@ -48,7 +48,7 @@ brew bundle --file="$PWD/Brewfile.optional"
 - Neovim's Catppuccin background is transparent so the tmux focus styling remains visible behind the editor.
 - `prefix + j`: switch sessions (fzf popup).
 - `prefix + k`: switch windows (fzf popup).
-- `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); session names are matched exactly, and cloned repo sessions are checked for unpushed/dirty changes before filesystem-confined clone removal.
+- `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); session names are matched exactly, and cloned repo sessions are checked for unpushed/dirty changes before filesystem-confined clone removal. When removing the current session, cleanup runs in a detached process so destroying the session's popup cannot interrupt clone removal or affect unrelated tmux sessions.
 - `prefix + C-p`: run `ptmux` project/session launcher. If the selected repo already has a session, `ptmux` can switch to it or clone a new copy under `~/repos/<git-host>/<org>/<repo>-<suffix>` and initialize it with `jj git init --colocate`. New session shells are initialized serially to avoid contention over shared Powerlevel10k and completion caches.
 - OSC passthrough is disabled to prevent terminal responses showing in editors.
 

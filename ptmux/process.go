@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"syscall"
 )
 
 type commandRunner interface {
@@ -17,6 +18,20 @@ type commandRunner interface {
 type systemCommandRunner struct{}
 
 var commands commandRunner = systemCommandRunner{}
+var startDetachedProcess = startDetached
+
+func startDetached(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Dir = os.TempDir()
+	cmd.Stdin = nil
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
+	if err := cmd.Start(); err != nil {
+		return commandError(name, args, nil, err)
+	}
+	return cmd.Process.Release()
+}
 
 func (systemCommandRunner) Output(name string, args ...string) (string, error) {
 	cmd := exec.Command(name, args...)

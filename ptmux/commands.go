@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/ktr0731/go-fuzzyfinder"
 )
@@ -133,6 +135,10 @@ func killSession(session string) error {
 		return err
 	}
 
+	if removeRepo && sessionIsCurrent(session) {
+		return scheduleClonedSessionCleanup(session, repoPath)
+	}
+
 	if err := runCmd("tmux", "kill-session", "-t="+session); err != nil {
 		return err
 	}
@@ -149,6 +155,71 @@ func killSession(session string) error {
 	}
 
 	return nil
+}
+
+func sessionIsCurrent(session string) bool {
+	if os.Getenv("TMUX") == "" {
+		return false
+	}
+	current, err := outputCmd("tmux", "display-message", "-p", "#{client_session}")
+	return err == nil && strings.TrimSpace(current) == session
+}
+
+func scheduleClonedSessionCleanup(session, repoPath string) error {
+	executable, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("locate ptmux executable for clone cleanup: %w", err)
+	}
+	// A popup belongs to the session from which it was opened. Killing that
+	// session terminates the popup and ptmux before inline clone removal runs,
+	// so start a process in a separate OS session that can finish independently.
+	return startDetachedProcess(executable, "_cleanup-cloned-session", session, repoPath)
+}
+
+func cleanupClonedSessionCommand(session, expectedRepoPath string) error {
+	err := cleanupClonedSession(session, expectedRepoPath)
+	if err != nil {
+		_ = runSilent("tmux", "display-message", "ptmux cleanup failed: "+err.Error())
+		return err
+	}
+	message := fmt.Sprintf("Removed %s", expectedRepoPath)
+	fmt.Println(message)
+	_ = runSilent("tmux", "display-message", message)
+	return nil
+}
+
+func cleanupClonedSession(session, expectedRepoPath string) error {
+	repoPath, ok := sessionRepoPath(session)
+	if !ok || !samePath(repoPath, expectedRepoPath) {
+		return fmt.Errorf("refusing cleanup because session %s no longer points to %s", session, expectedRepoPath)
+	}
+
+	isCopy, err := tmuxOption(session, "@ptmux_is_copy")
+	knownCopy := err == nil && isCopy == "1"
+	inferredCopy := looksLikeClonedRepo(repoPath)
+	if !knownCopy && !inferredCopy {
+		return fmt.Errorf("refusing cleanup because session %s is no longer recognized as a cloned copy", session)
+	}
+
+	ready, reason := repoReadyForRemoval(repoPath)
+	if !ready {
+		return fmt.Errorf("refusing cleanup because cloned repo state changed: %s", reason)
+	}
+	if err := runCmd("tmux", "kill-session", "-t="+session); err != nil {
+		return err
+	}
+	ready, reason = repoReadyForRemoval(repoPath)
+	if !ready {
+		return fmt.Errorf("session %s was killed, but cloned repo %s was retained because its state changed or could not be revalidated: %s", session, repoPath, reason)
+	}
+	if err := removeClonedRepo(repoPath, knownCopy || inferredCopy); err != nil {
+		return fmt.Errorf("session %s was killed, but its cloned repo could not be removed: %w", session, err)
+	}
+	return nil
+}
+
+func cleanupClonedSessionUsageError() error {
+	return errors.New("internal clone cleanup requires a session and repository path")
 }
 
 func selectRepo(repos []repo) (repo, error) {

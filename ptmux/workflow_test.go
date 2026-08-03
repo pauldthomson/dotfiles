@@ -130,6 +130,49 @@ func TestKillSessionKillsTmuxBeforeRemovingClone(t *testing.T) {
 	}
 }
 
+func TestKillCurrentClonedSessionDelegatesCleanupToTmuxServer(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("TMUX", "/tmp/tmux-test/default,1,0")
+	repoPath := filepath.Join(home, "repos", "github.com", "example", "project-2")
+	if err := os.MkdirAll(repoPath, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	fake := cleanCloneRunner(repoPath)
+	cleanOutput := fake.outputFn
+	fake.outputFn = func(name string, args ...string) (string, error) {
+		if name == "tmux" && slices.Contains(args, "display-message") {
+			return "project-2", nil
+		}
+		return cleanOutput(name, args...)
+	}
+	useRunner(t, fake)
+	useStdin(t, "y\n")
+
+	previousStarter := startDetachedProcess
+	var startedName string
+	var startedArgs []string
+	startDetachedProcess = func(name string, args ...string) error {
+		startedName = name
+		startedArgs = slices.Clone(args)
+		return nil
+	}
+	t.Cleanup(func() { startDetachedProcess = previousStarter })
+
+	if err := killSession("project-2"); err != nil {
+		t.Fatal(err)
+	}
+
+	if startedName == "" {
+		t.Fatal("expected current-session cleanup to start a detached process")
+	}
+	wantArgs := []string{"_cleanup-cloned-session", "project-2", repoPath}
+	if !slices.Equal(startedArgs, wantArgs) {
+		t.Fatalf("expected detached cleanup args %v, got %v", wantArgs, startedArgs)
+	}
+}
+
 func TestCreateProjectSessionSerializesInteractiveShellStartup(t *testing.T) {
 	startDir := t.TempDir()
 	fake := &fakeCommandRunner{}

@@ -12,8 +12,16 @@ func main() {
 }
 
 func run(args []string) error {
-	if len(args) > 0 && args[0] == "kill" {
-		return killCommand(args[1:])
+	if len(args) > 0 {
+		switch args[0] {
+		case "kill":
+			return killCommand(args[1:])
+		case "_cleanup-cloned-session":
+			if len(args) != 3 {
+				return cleanupClonedSessionUsageError()
+			}
+			return cleanupClonedSessionCommand(args[1], args[2])
+		}
 	}
 	return openCommand(args)
 }
