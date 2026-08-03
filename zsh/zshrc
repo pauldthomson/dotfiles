@@ -106,9 +106,8 @@ plugins=(
 ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}"
 mkdir -p "${ZSH_COMPDUMP:h}"
 
-# Lazy-load nvm on first node/npm/nvm/pi usage to avoid shell startup lag.
+# Lazy-load nvm on first Node tool usage; Pi uses Homebrew's Node installation.
 zstyle ':omz:plugins:nvm' lazy yes
-zstyle ':omz:plugins:nvm' lazy-cmd pi
 
 source $ZSH/oh-my-zsh.sh
 

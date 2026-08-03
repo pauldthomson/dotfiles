@@ -130,6 +130,38 @@ func TestKillSessionKillsTmuxBeforeRemovingClone(t *testing.T) {
 	}
 }
 
+func TestCreateProjectSessionSerializesInteractiveShellStartup(t *testing.T) {
+	startDir := t.TempDir()
+	fake := &fakeCommandRunner{}
+	useRunner(t, fake)
+
+	if err := createProjectSession("project", startDir, false); err != nil {
+		t.Fatal(err)
+	}
+
+	firstChannel := fmt.Sprintf("ptmux-shell-ready-%d-1", os.Getpid())
+	secondChannel := fmt.Sprintf("ptmux-shell-ready-%d-2", os.Getpid())
+	want := [][]string{
+		{"new", "-d", "-s", "project", "-c", startDir},
+		{"set-option", "-t", "project", "@ptmux_repo_path", startDir},
+		{"send-keys", "-t=project:1", "tmux wait-for -S " + firstChannel + "; nvim", "C-m"},
+		{"wait-for", firstChannel},
+		{"new-window", "-n", "agent", "-t=project", "-c", startDir},
+		{"send-keys", "-t=project:2", "tmux wait-for -S " + secondChannel + "; pi", "C-m"},
+		{"wait-for", secondChannel},
+		{"new-window", "-n", "scratch", "-t=project", "-c", startDir},
+	}
+
+	if len(fake.calls) != len(want) {
+		t.Fatalf("expected %d tmux calls, got %d: %#v", len(want), len(fake.calls), fake.calls)
+	}
+	for i, call := range fake.calls {
+		if call.kind != "run" || call.name != "tmux" || !slices.Equal(call.args, want[i]) {
+			t.Fatalf("call %d: expected tmux %v, got %s %s %v", i, want[i], call.kind, call.name, call.args)
+		}
+	}
+}
+
 func TestCreateProjectSessionRollsBackOnSetupFailure(t *testing.T) {
 	setupFailure := errors.New("new window failed")
 	fake := &fakeCommandRunner{}

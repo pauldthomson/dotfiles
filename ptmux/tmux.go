@@ -29,20 +29,34 @@ func createProjectSession(sessionName, startDir string, isCopy bool) (err error)
 		}
 	}
 
+	// Start each interactive shell only after the previous one has finished its
+	// startup files. Powerlevel10k and completion caches are shared between
+	// shells, so launching all three at once creates avoidable lock contention.
+	if err = runAfterShellStartup(sessionName, 1, "nvim"); err != nil {
+		return err
+	}
+
 	if err = runCmd("tmux", "new-window", "-n", "agent", "-t="+sessionName, "-c", startDir); err != nil {
 		return err
 	}
 
-	if err = runCmd("tmux", "send-keys", "-t="+fmt.Sprintf("%s:2", sessionName), "pi", "C-m"); err != nil {
+	if err = runAfterShellStartup(sessionName, 2, "pi"); err != nil {
 		return err
 	}
 
-	if err = runCmd("tmux", "new-window", "-n", "scratch", "-t="+sessionName, "-c", startDir); err != nil {
-		return err
-	}
-
-	err = runCmd("tmux", "send-keys", "-t="+fmt.Sprintf("%s:1", sessionName), "nvim", "C-m")
+	err = runCmd("tmux", "new-window", "-n", "scratch", "-t="+sessionName, "-c", startDir)
 	return err
+}
+
+func runAfterShellStartup(sessionName string, window int, command string) error {
+	channel := fmt.Sprintf("ptmux-shell-ready-%d-%d", os.Getpid(), window)
+	target := fmt.Sprintf("%s:%d", sessionName, window)
+	paneCommand := fmt.Sprintf("tmux wait-for -S %s; %s", channel, command)
+
+	if err := runCmd("tmux", "send-keys", "-t="+target, paneCommand, "C-m"); err != nil {
+		return err
+	}
+	return runCmd("tmux", "wait-for", channel)
 }
 
 func switchToSession(sessionName string) error {

@@ -17,10 +17,10 @@ brew bundle --file="$PWD/Brewfile"
 brew bundle --file="$PWD/Brewfile.optional"
 ```
 
-- No npm globals are required for the tracked config itself. If you want the Pi CLI used by the tmux/agent workflow, install it with:
+- No npm globals are required for the tracked config itself. If you want the Pi CLI used by the tmux/agent workflow, install it with Homebrew's Node/npm so launching Pi does not need to initialize NVM:
 
 ```bash
-npm install -g @mariozechner/pi-coding-agent
+/opt/homebrew/bin/npm install -g @earendil-works/pi-coding-agent
 ```
 
 - The local `ptmux` helper targets Go 1.26.5 and is referenced by tmux, zsh, and Neovim bindings; build/install it after Homebrew bootstrap:
@@ -39,7 +39,7 @@ npm install -g @mariozechner/pi-coding-agent
 - Uses Powerlevel10k with custom `jj` status segment.
 - Prompt hides VCS prefix/icon and directory icon.
 - `zsh-async` enables async status updates; otherwise prompt uses a synchronous fallback.
-- Startup is tuned to avoid expensive per-shell work: the Oh My Zsh `nvm` plugin is lazy-loaded (including `pi` as an explicit lazy trigger), kubectl completions are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh`, omz completion dumps are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}`, auto-update checks are disabled, and prompt config is sourced once.
+- Startup is tuned to avoid expensive per-shell work: the Oh My Zsh `nvm` plugin is lazy-loaded for Node tools while Pi uses Homebrew's Node installation, kubectl completions are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh`, omz completion dumps are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}`, auto-update checks are disabled, and prompt config is sourced once.
 - `kctx` (defined in `zsh/kctx.zsh`) opens an `fzf` picker for kube contexts (marks current context with `*`) and runs `kubectl config use-context` on selection. It is loaded via Oh My Zsh custom config (`~/.oh-my-zsh/custom/kctx.zsh` symlink). You can also run `kctx <context-name>` directly. `kc` is an alias for `kctx`.
 
 ## Tmux
@@ -49,7 +49,7 @@ npm install -g @mariozechner/pi-coding-agent
 - `prefix + j`: switch sessions (fzf popup).
 - `prefix + k`: switch windows (fzf popup).
 - `prefix + X`: kill one-or-many sessions via `ptmux kill` (TAB multi-select); session names are matched exactly, and cloned repo sessions are checked for unpushed/dirty changes before filesystem-confined clone removal.
-- `prefix + C-p`: run `ptmux` project/session launcher. If the selected repo already has a session, `ptmux` can switch to it or clone a new copy under `~/repos/<git-host>/<org>/<repo>-<suffix>` and initialize it with `jj git init --colocate`.
+- `prefix + C-p`: run `ptmux` project/session launcher. If the selected repo already has a session, `ptmux` can switch to it or clone a new copy under `~/repos/<git-host>/<org>/<repo>-<suffix>` and initialize it with `jj git init --colocate`. New session shells are initialized serially to avoid contention over shared Powerlevel10k and completion caches.
 - OSC passthrough is disabled to prevent terminal responses showing in editors.
 
 ## Ghostty
