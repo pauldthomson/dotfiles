@@ -71,6 +71,7 @@ brew bundle --file="$PWD/Brewfile.optional"
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
 - Local agent skills are kept in `skills/` (for example `git-clone`, `hunk-review`, `chrome-devtools-mcp`, and `pr-summary`).
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
+- Adds a Codex account extension whose `/usage daily` view renders a responsive, color-graded 52-week token activity calendar; `/usage` also retains account totals, limit inspection, and usage-limit reset actions.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
 - Adds a `pr-summary-interview` extension command (`/pr-summary`) that runs an interactive interview with suggested defaults for each PR section, then sends structured answers to `pr-summary` skill generation (the command itself requires interactive Pi UI; without payload, the skill falls back to one-question-at-a-time chat interview).
 - Includes a `chrome-devtools-mcp` skill that wraps `npx chrome-devtools-mcp@latest --autoConnect --channel=beta` for browser automation, inspection, and performance analysis from Pi.

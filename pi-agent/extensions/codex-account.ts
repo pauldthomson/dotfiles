@@ -1,5 +1,5 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
-import { Box, Text } from "@earendil-works/pi-tui";
+import type { ExtensionAPI, ExtensionCommandContext, Theme } from "@earendil-works/pi-coding-agent";
+import { Box, type Component, Text, truncateToWidth } from "@earendil-works/pi-tui";
 import { randomUUID } from "node:crypto";
 
 const BACKEND_BASE_URL = "https://chatgpt.com/backend-api";
@@ -9,6 +9,12 @@ const MESSAGE_TYPE = "codex-account";
 const LIMIT_BAR_SEGMENTS = 20;
 const LIMIT_BAR_FILLED = "█";
 const LIMIT_BAR_EMPTY = "░";
+const ACTIVITY_WEEK_COUNT = 52;
+const ACTIVITY_DAY_COUNT = 7;
+const ACTIVITY_CELL_COUNT = ACTIVITY_WEEK_COUNT * ACTIVITY_DAY_COUNT;
+const ACTIVITY_LEFT_WIDTH = 4;
+const DAY_MS = 86_400_000;
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 type CodexAuth = {
   token: string;
@@ -45,29 +51,39 @@ type UsagePayload = {
   } | null;
 };
 
+type ProfileStats = {
+  lifetime_tokens?: number;
+  peak_daily_tokens?: number;
+  current_streak_days?: number;
+  longest_streak_days?: number;
+  total_threads?: number;
+  longest_running_turn_sec?: number;
+  fast_mode_usage_percentage?: number;
+  most_used_reasoning_effort?: string;
+  most_used_reasoning_effort_percentage?: number;
+  daily_usage_buckets?: Array<{ start_date: string; tokens: number }>;
+  weekly_usage_buckets?: Array<{ start_date: string; tokens: number }>;
+};
+
 type ProfilePayload = {
   profile?: {
     username?: string;
     display_name?: string;
   };
-  stats?: {
-    lifetime_tokens?: number;
-    peak_daily_tokens?: number;
-    current_streak_days?: number;
-    longest_streak_days?: number;
-    total_threads?: number;
-    longest_running_turn_sec?: number;
-    fast_mode_usage_percentage?: number;
-    most_used_reasoning_effort?: string;
-    most_used_reasoning_effort_percentage?: number;
-    daily_usage_buckets?: Array<{ start_date: string; tokens: number }>;
-    weekly_usage_buckets?: Array<{ start_date: string; tokens: number }>;
-  };
+  stats?: ProfileStats;
   metadata?: {
     stats_as_of?: string;
     generated_at?: string;
     stats_error?: string | null;
   };
+};
+
+type DailyUsageMessageDetails = {
+  kind: "daily-usage";
+  stats: ProfileStats;
+  statsAsOf?: string;
+  statsError?: string | null;
+  today: string;
 };
 
 type ResetResponse = {
@@ -76,11 +92,20 @@ type ResetResponse = {
 
 export default function (pi: ExtensionAPI) {
   pi.registerMessageRenderer(MESSAGE_TYPE, (message, _options, theme) => {
-    const details = message.details as { title?: string; level?: "info" | "success" | "warning" | "error" } | undefined;
-    const level = details?.level ?? "info";
-    const color = level === "error" ? "error" : level === "warning" ? "warning" : level === "success" ? "success" : "accent";
+    const details = message.details as
+      | DailyUsageMessageDetails
+      | { title?: string; level?: "info" | "success" | "warning" | "error" }
+      | undefined;
     const box = new Box(1, 1, (text) => theme.bg("customMessageBg", text));
-    const title = details?.title ?? "Codex account";
+    if (details && "kind" in details && details.kind === "daily-usage") {
+      box.addChild(new DailyUsageChart(details, theme));
+      return box;
+    }
+
+    const standardDetails = details as { title?: string; level?: "info" | "success" | "warning" | "error" } | undefined;
+    const level = standardDetails?.level ?? "info";
+    const color = level === "error" ? "error" : level === "warning" ? "warning" : level === "success" ? "success" : "accent";
+    const title = standardDetails?.title ?? "Codex account";
     box.addChild(new Text(`${theme.fg(color, theme.bold(title))}\n${message.content}`, 0, 0));
     return box;
   });
@@ -93,9 +118,9 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerCommand("usage", {
-    description: "View ChatGPT Codex account usage or redeem a usage-limit reset (usage: /usage [show|limits|reset])",
+    description: "View ChatGPT Codex token activity or usage limits (usage: /usage [daily|show|limits|reset])",
     getArgumentCompletions: (prefix: string) => {
-      const items = ["show", "limits", "reset"].map((value) => ({ value, label: value }));
+      const items = ["daily", "show", "limits", "reset"].map((value) => ({ value, label: value }));
       const filtered = items.filter((item) => item.value.startsWith(prefix.trim()));
       return filtered.length > 0 ? filtered : null;
     },
@@ -127,7 +152,9 @@ async function showStatus(pi: ExtensionAPI, ctx: ExtensionCommandContext) {
       if (usage.cost > 0) lines.push(`- Cost: $${usage.cost.toFixed(4)}`);
     }
     if (contextUsage) {
-      lines.push(`- Context: ${formatTokens(contextUsage.tokens)} / ${formatTokens(contextUsage.contextWindow)} (${contextUsage.percent.toFixed(1)}%)`);
+      const contextTokens = contextUsage.tokens === null ? "?" : formatTokens(contextUsage.tokens);
+      const contextPercent = contextUsage.percent === null ? "?" : `${contextUsage.percent.toFixed(1)}%`;
+      lines.push(`- Context: ${contextTokens} / ${formatTokens(contextUsage.contextWindow)} (${contextPercent})`);
     }
   }
 
@@ -162,6 +189,7 @@ async function showUsage(pi: ExtensionAPI, ctx: ExtensionCommandContext, arg: st
     const resetCount = usage.rate_limit_reset_credits?.available_count ?? 0;
     const resetLabel = resetCount === 1 ? "usage limit reset" : "usage limit resets";
     const choice = await ctx.ui.select("Usage", [
+      "Show daily token activity",
       "Show account token usage",
       resetCount > 0 ? `Redeem usage limit reset (${resetCount} ${resetLabel} available)` : "Redeem usage limit reset (none available)",
       "Show current usage limits",
@@ -169,6 +197,7 @@ async function showUsage(pi: ExtensionAPI, ctx: ExtensionCommandContext, arg: st
     if (!choice) return;
     if (choice.startsWith("Redeem")) action = "reset";
     else if (choice.startsWith("Show current")) action = "limits";
+    else if (choice.startsWith("Show daily")) action = "daily";
     else action = "show";
   }
 
@@ -184,6 +213,17 @@ async function showUsage(pi: ExtensionAPI, ctx: ExtensionCommandContext, arg: st
       sendMessage(pi, "Codex usage limits", [...formatLimits(usage), "", `Usage details: ${USAGE_URL}`], "info");
     } catch (error) {
       sendMessage(pi, "Codex usage limits", [formatError(error)], "warning");
+    }
+    return;
+  }
+
+  if (action === "daily" || action === "day") {
+    try {
+      const auth = await getCodexAuth(ctx);
+      const profile = await requestJson<ProfilePayload>("/wham/profiles/me", auth);
+      sendDailyUsageMessage(pi, profile);
+    } catch (error) {
+      sendMessage(pi, "Codex daily usage", [formatError(error)], "warning");
     }
     return;
   }
@@ -295,6 +335,257 @@ function extractAccountId(token: string): string {
     throw new Error("Could not find chatgpt_account_id in ChatGPT token.");
   }
   return accountId;
+}
+
+class DailyUsageChart implements Component {
+  constructor(
+    private readonly details: DailyUsageMessageDetails,
+    private readonly theme: Theme,
+  ) {}
+
+  render(width: number): string[] {
+    return renderDailyUsage(this.details, width, this.theme).map((line) => truncateToWidth(line, width, ""));
+  }
+
+  invalidate(): void {}
+}
+
+function sendDailyUsageMessage(pi: ExtensionAPI, profile: ProfilePayload) {
+  const sourceStats = profile.stats ?? {};
+  const details: DailyUsageMessageDetails = {
+    kind: "daily-usage",
+    stats: {
+      lifetime_tokens: sourceStats.lifetime_tokens,
+      peak_daily_tokens: sourceStats.peak_daily_tokens,
+      current_streak_days: sourceStats.current_streak_days,
+      longest_streak_days: sourceStats.longest_streak_days,
+      longest_running_turn_sec: sourceStats.longest_running_turn_sec,
+      daily_usage_buckets: sourceStats.daily_usage_buckets,
+    },
+    statsAsOf: profile.metadata?.stats_as_of,
+    statsError: profile.metadata?.stats_error,
+    today: new Date().toISOString().slice(0, 10),
+  };
+  const summary = formatActivitySummary(details.stats).map((field) => `${field.label} ${field.value}`).join(" · ");
+  pi.sendMessage({
+    customType: MESSAGE_TYPE,
+    content: [`Token activity — last 12 months`, summary, ...(details.statsAsOf ? [`Stats as of: ${details.statsAsOf}`] : []), `Usage details: ${USAGE_URL}`].join("\n"),
+    display: true,
+    details,
+  });
+}
+
+function renderDailyUsage(details: DailyUsageMessageDetails, width: number, theme: Theme): string[] {
+  const shownColumns = Math.min(
+    ACTIVITY_WEEK_COUNT,
+    Math.floor((Math.max(0, width - ACTIVITY_LEFT_WIDTH) + 1) / 2),
+  );
+  const graphWidth = shownColumns > 0 ? ACTIVITY_LEFT_WIDTH + shownColumns * 2 - 1 : width;
+  const lines = [
+    `${theme.bold("Token activity")}${theme.fg("dim", "   last 12 months")}`,
+    ...renderActivitySummary(details.stats, graphWidth, theme),
+    "",
+  ];
+
+  if (!details.stats.daily_usage_buckets) {
+    lines.push(theme.fg("dim", "  Token activity history unavailable"));
+    return lines;
+  }
+  if (shownColumns === 0) {
+    lines.push(theme.fg("dim", "  Widen terminal to show activity graph"));
+    return lines;
+  }
+
+  const today = parseDateDay(details.today) ?? Math.floor(Date.now() / DAY_MS);
+  const start = today - weekdayFromDay(today) - (ACTIVITY_WEEK_COUNT - 1) * ACTIVITY_DAY_COUNT;
+  const values = dailyActivityValues(details.stats.daily_usage_buckets, start, today);
+  const levels = gradedActivityLevels(values);
+  const palette = activityPalette(theme);
+  const firstColumn = ACTIVITY_WEEK_COUNT - shownColumns;
+  lines.push(renderMonthLabels(start, firstColumn, shownColumns, theme));
+
+  const weekdayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  for (let row = 0; row < ACTIVITY_DAY_COUNT; row++) {
+    let line = theme.fg("dim", ` ${weekdayLabels[row]} `);
+    for (let column = firstColumn; column < ACTIVITY_WEEK_COUNT; column++) {
+      if (column > firstColumn) line += " ";
+      const index = column * ACTIVITY_DAY_COUNT + row;
+      line += start + index > today ? " " : palette[levels[index]];
+    }
+    lines.push(line);
+  }
+
+  lines.push("");
+  let legend = theme.fg("dim", "  Less ");
+  for (let level = 0; level <= 4; level++) {
+    if (level > 0) legend += " ";
+    legend += palette[level];
+  }
+  legend += theme.fg("dim", " More");
+  lines.push(legend);
+  lines.push(`${theme.fg("syntaxNumber", theme.bold("  daily"))}`);
+  if (details.statsError) lines.push(theme.fg("warning", `  Stats warning: ${details.statsError}`));
+  return lines;
+}
+
+function formatActivitySummary(stats: ProfileStats): Array<{ label: string; value: string }> {
+  return [
+    { label: "Lifetime", value: formatOptionalActivityTokens(stats.lifetime_tokens) },
+    { label: "Peak", value: formatOptionalActivityTokens(stats.peak_daily_tokens) },
+    { label: "Streak", value: formatActivityStreak(stats.current_streak_days, stats.longest_streak_days) },
+    { label: "Longest task", value: formatOptionalActivityDuration(stats.longest_running_turn_sec) },
+  ];
+}
+
+function renderActivitySummary(stats: ProfileStats, width: number, theme: Theme): string[] {
+  const fields = formatActivitySummary(stats);
+  const groups: Array<Array<{ label: string; value: string }>> = [];
+  let current: Array<{ label: string; value: string }> = [];
+  for (const field of fields) {
+    const candidate = [...current, field];
+    const candidateWidth = 1 + candidate.map(({ label, value }) => `${label} ${value}`).join(" · ").length;
+    if (current.length > 0 && candidateWidth > width) {
+      groups.push(current);
+      current = [field];
+    } else {
+      current = candidate;
+    }
+  }
+  if (current.length > 0) groups.push(current);
+
+  return groups.map((group) => {
+    const rendered = group.map(({ label, value }) => `${theme.fg("dim", `${label} `)}${theme.fg("syntaxNumber", value)}`);
+    return ` ${rendered.join(theme.fg("dim", " · "))}`;
+  });
+}
+
+function dailyActivityValues(
+  buckets: Array<{ start_date: string; tokens: number }>,
+  start: number,
+  today: number,
+): number[] {
+  const values = Array<number>(ACTIVITY_CELL_COUNT).fill(0);
+  for (const bucket of buckets) {
+    const day = parseDateDay(bucket.start_date);
+    if (day === undefined || day < start || day >= start + ACTIVITY_CELL_COUNT || day > today) continue;
+    values[day - start] += Math.max(0, bucket.tokens);
+  }
+  return values;
+}
+
+function gradedActivityLevels(values: number[]): number[] {
+  const max = Math.max(0, ...values);
+  return values.map((value) => {
+    if (value <= 0 || max <= 0) return 0;
+    if (value * 4 > max * 3) return 4;
+    if (value * 2 > max) return 3;
+    if (value * 4 > max) return 2;
+    return 1;
+  });
+}
+
+function renderMonthLabels(start: number, firstColumn: number, shownColumns: number, theme: Theme): string {
+  const cells = Array<string>(shownColumns * 2 - 1).fill(" ");
+  let lastEnd = 0;
+  for (let column = firstColumn; column < ACTIVITY_WEEK_COUNT; column++) {
+    const date = new Date((start + column * ACTIVITY_DAY_COUNT) * DAY_MS);
+    if (date.getUTCDate() > 7) continue;
+    const label = MONTH_LABELS[date.getUTCMonth()];
+    const offset = (column - firstColumn) * 2;
+    if (offset < lastEnd || offset + label.length > cells.length) continue;
+    for (let index = 0; index < label.length; index++) cells[offset + index] = label[index];
+    lastEnd = offset + label.length + 1;
+  }
+  return `    ${theme.fg("dim", cells.join(""))}`;
+}
+
+function activityPalette(theme: Theme): [string, string, string, string, string] {
+  const fallback: [string, string, string, string, string] = [
+    theme.fg("dim", "□"),
+    theme.fg("accent", "■"),
+    theme.fg("accent", "■"),
+    theme.fg("accent", "■"),
+    theme.fg("accent", "■"),
+  ];
+  if (theme.getColorMode() !== "truecolor") return fallback;
+
+  const background = parseAnsiRgb(theme.bg("customMessageBg", " "), 48);
+  const anchor = parseAnsiRgb(theme.getFgAnsi("accent"), 38);
+  const emptyAnchor = parseAnsiRgb(theme.getFgAnsi("muted"), 38);
+  if (!background || !anchor || !emptyAnchor) return fallback;
+
+  const colors = [
+    blendRgb(emptyAnchor, background, 0.14),
+    blendRgb(anchor, background, 0.22),
+    blendRgb(anchor, background, 0.42),
+    blendRgb(anchor, background, 0.68),
+    anchor,
+  ];
+  return colors.map(([red, green, blue]) => `\x1b[38;2;${red};${green};${blue}m■\x1b[39m`) as [string, string, string, string, string];
+}
+
+function parseAnsiRgb(ansi: string, channel: 38 | 48): [number, number, number] | undefined {
+  const match = ansi.match(new RegExp(`\\x1b\\[${channel};2;(\\d+);(\\d+);(\\d+)m`));
+  if (!match) return undefined;
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function blendRgb(
+  foreground: [number, number, number],
+  background: [number, number, number],
+  alpha: number,
+): [number, number, number] {
+  return foreground.map((value, index) => Math.round(value * alpha + background[index] * (1 - alpha))) as [number, number, number];
+}
+
+function parseDateDay(value: string): number | undefined {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return undefined;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const date = Number(match[3]);
+  const timestamp = Date.UTC(year, month - 1, date);
+  const parsed = new Date(timestamp);
+  if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== date) return undefined;
+  return Math.floor(timestamp / DAY_MS);
+}
+
+function weekdayFromDay(day: number): number {
+  return new Date(day * DAY_MS).getUTCDay();
+}
+
+function formatOptionalActivityTokens(value: number | undefined): string {
+  return typeof value === "number" ? formatTokensCompact(value) : "-";
+}
+
+function formatTokensCompact(value: number): string {
+  const abs = Math.abs(value);
+  for (const [size, suffix] of [[1_000_000_000_000, "T"], [1_000_000_000, "B"], [1_000_000, "M"], [1_000, "k"]] as const) {
+    if (abs < size) continue;
+    const scaled = value / size;
+    return `${scaled.toFixed(Math.abs(scaled) < 10 ? 1 : 0).replace(/\.0$/, "")}${suffix}`;
+  }
+  return Math.round(value).toString();
+}
+
+function formatActivityStreak(current: number | undefined, longest: number | undefined): string {
+  if (typeof current === "number" && typeof longest === "number") {
+    return current === longest ? `${current}d` : `${current}d (best ${longest}d)`;
+  }
+  if (typeof current === "number") return `${current}d`;
+  if (typeof longest === "number") return `- (best ${longest}d)`;
+  return "-";
+}
+
+function formatOptionalActivityDuration(value: number | undefined): string {
+  if (typeof value !== "number") return "-";
+  const seconds = Math.max(0, Math.floor(value));
+  const hours = Math.floor(seconds / 3_600);
+  const minutes = Math.floor((seconds % 3_600) / 60);
+  if (hours === 0 && minutes === 0) return `${seconds}s`;
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
 }
 
 function formatProfileAndLimits(profile: ProfilePayload, usage: UsagePayload): string[] {
