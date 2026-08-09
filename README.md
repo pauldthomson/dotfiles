@@ -42,6 +42,10 @@ brew bundle --file="$PWD/Brewfile.optional"
 - Startup is tuned to avoid expensive per-shell work: the Oh My Zsh `nvm` plugin is lazy-loaded for Node tools while Pi uses Homebrew's Node installation, kubectl completions are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh`, omz completion dumps are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}`, auto-update checks are disabled, and prompt config is sourced once.
 - `kctx` (defined in `zsh/kctx.zsh`) opens an `fzf` picker for kube contexts (marks current context with `*`) and runs `kubectl config use-context` on selection. It is loaded via Oh My Zsh custom config (`~/.oh-my-zsh/custom/kctx.zsh` symlink). You can also run `kctx <context-name>` directly. `kc` is an alias for `kctx`.
 
+## Herdr
+- Tracks its shared configuration in `.herdr/config.toml`. Symlink it to `~/.config/herdr/config.toml` and apply changes to a running server with `herdr server reload-config`.
+- Uses the Catppuccin theme and `Ctrl+Space` prefix to preserve the established terminal appearance and muscle memory during the tmux migration.
+
 ## Tmux
 - Prefix is `C-Space`.
 - Focus hooks give inactive panes the terminal theme's ANSI black background and restore the default style on focus; application foreground and panel colours remain intact.

@@ -1,0 +1,9 @@
+# Herdr settings shared by this dotfiles repository.
+# Symlink to ~/.config/herdr/config.toml, then reload with:
+#   herdr server reload-config
+
+[theme]
+name = "catppuccin"
+
+[keys]
+prefix = "ctrl+space"
