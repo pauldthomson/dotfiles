@@ -44,7 +44,8 @@ brew bundle --file="$PWD/Brewfile.optional"
 
 ## Herdr
 - Tracks its shared configuration in `.herdr/config.toml`. Symlink it to `~/.config/herdr/config.toml` and apply changes to a running server with `herdr server reload-config`.
-- Uses the Catppuccin theme and `Ctrl+Space` prefix to preserve the established terminal appearance and muscle memory during the tmux migration.
+- `prefix + Ctrl-p` opens an `fzf` popup for repositories under `~/repos/<host>/<org>/<repo>`, then creates and focuses a workspace rooted at the selected project. Like ptmux, the workspace starts with `nvim`, `agent`, and `scratch` tabs; the first two launch Neovim and Pi, and focus returns to `nvim`.
+- Uses the Catppuccin theme with higher-contrast separators, plus a `Ctrl+Space` prefix to preserve the established terminal appearance and muscle memory during the tmux migration. Pane splits also match tmux: `prefix + -` splits horizontally and `prefix + |` splits vertically.
 
 ## Tmux
 - Prefix is `C-Space`.

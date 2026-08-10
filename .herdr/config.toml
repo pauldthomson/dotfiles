@@ -5,5 +5,79 @@
 [theme]
 name = "catppuccin"
 
+# Keep sidebar and pane separators visible against Catppuccin terminal panes.
+[theme.custom]
+surface_dim = "#313244"
+
 [keys]
 prefix = "ctrl+space"
+split_horizontal = "prefix+minus"
+split_vertical = "prefix+|"
+
+# Pick a repository under ~/repos/<host>/<org>/<repo> and create a focused
+# workspace rooted there, mirroring the ptmux project launcher.
+[[keys.command]]
+key = "prefix+ctrl+p"
+type = "popup"
+description = "create workspace from project"
+command = '''
+root="$HOME/repos"
+[ -d "$root" ] || exit 0
+selected=$(
+  cd "$root" &&
+    find . -mindepth 3 -maxdepth 3 -type d -print |
+    sed 's#^\./##' |
+    sort |
+    fzf --prompt='project> '
+) || exit 0
+[ -n "$selected" ] || exit 0
+
+project="$root/$selected"
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+workspace_id=""
+cleanup_incomplete_workspace() {
+  status=$?
+  trap - EXIT
+  if [ "$status" -ne 0 ] && [ -n "$workspace_id" ]; then
+    "$herdr_bin" workspace close "$workspace_id" >/dev/null 2>&1 || true
+  fi
+  exit "$status"
+}
+trap cleanup_incomplete_workspace EXIT
+trap 'exit 1' HUP INT TERM
+set -eu
+
+workspace=$(
+  "$herdr_bin" workspace create \
+    --cwd "$project" \
+    --label "${selected##*/}" \
+    --no-focus
+)
+workspace_id=$(printf '%s\n' "$workspace" | jq -er '.result.workspace.workspace_id')
+nvim_tab_id=$(printf '%s\n' "$workspace" | jq -er '.result.tab.tab_id')
+nvim_pane_id=$(printf '%s\n' "$workspace" | jq -er '.result.root_pane.pane_id')
+"$herdr_bin" tab rename "$nvim_tab_id" nvim >/dev/null
+"$herdr_bin" pane run "$nvim_pane_id" nvim >/dev/null
+
+agent=$(
+  "$herdr_bin" tab create \
+    --workspace "$workspace_id" \
+    --cwd "$project" \
+    --label agent \
+    --no-focus
+)
+agent_pane_id=$(printf '%s\n' "$agent" | jq -er '.result.root_pane.pane_id')
+"$herdr_bin" pane run "$agent_pane_id" pi >/dev/null
+
+"$herdr_bin" tab create \
+  --workspace "$workspace_id" \
+  --cwd "$project" \
+  --label scratch \
+  --no-focus >/dev/null
+
+"$herdr_bin" workspace focus "$workspace_id" >/dev/null
+"$herdr_bin" tab focus "$nvim_tab_id" >/dev/null
+trap - EXIT HUP INT TERM
+'''
+width = "80%"
+height = "80%"
