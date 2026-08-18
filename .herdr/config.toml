@@ -13,13 +13,51 @@ surface_dim = "#313244"
 [keys]
 prefix = "ctrl+space"
 detach = "prefix+d"
-workspace_picker = "prefix+j"
 focus_pane_left = "ctrl+h"
 focus_pane_down = "ctrl+j"
 focus_pane_up = "ctrl+k"
 focus_pane_right = "ctrl+l"
 split_horizontal = "prefix+minus"
 split_vertical = "prefix+|"
+
+# Match the tmux session picker: fuzzy-search workspaces by name.
+[[keys.command]]
+key = "prefix+j"
+type = "popup"
+description = "switch workspace"
+command = '''
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+selected=$(
+  "$herdr_bin" workspace list |
+    jq -r '.result.workspaces[] | [.label, .workspace_id] | @tsv' |
+    fzf --reverse --cycle --delimiter='\t' --nth=1 --with-nth=1 --prompt='workspace> '
+) || exit 0
+[ -n "$selected" ] || exit 0
+workspace_id=$(printf '%s\n' "$selected" | awk -F '\t' '{print $NF}')
+"$herdr_bin" workspace focus "$workspace_id" >/dev/null
+'''
+width = "50%"
+height = "50%"
+
+# Match the tmux window picker: fuzzy-search tabs in the active workspace.
+[[keys.command]]
+key = "prefix+k"
+type = "popup"
+description = "switch tab"
+command = '''
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+[ -n "${HERDR_ACTIVE_WORKSPACE_ID:-}" ] || exit 0
+selected=$(
+  "$herdr_bin" tab list --workspace "$HERDR_ACTIVE_WORKSPACE_ID" |
+    jq -r '.result.tabs[] | [.label, .tab_id] | @tsv' |
+    fzf --reverse --delimiter='\t' --nth=1 --with-nth=1 --prompt='tab> '
+) || exit 0
+[ -n "$selected" ] || exit 0
+tab_id=$(printf '%s\n' "$selected" | awk -F '\t' '{print $NF}')
+"$herdr_bin" tab focus "$tab_id" >/dev/null
+'''
+width = "50%"
+height = "50%"
 
 # Pick a repository under ~/repos/<host>/<org>/<repo> and create a focused
 # workspace rooted there, mirroring the ptmux project launcher.
