@@ -13,6 +13,7 @@ surface_dim = "#313244"
 [keys]
 prefix = "ctrl+space"
 detach = "prefix+d"
+reload_config = "prefix+r"
 focus_pane_left = "ctrl+h"
 focus_pane_down = "ctrl+j"
 focus_pane_up = "ctrl+k"
@@ -129,3 +130,4 @@ height = "80%"
 
 [ui]
 show_agent_labels_on_pane_borders = true
+agent_panel_sort = "spaces"
