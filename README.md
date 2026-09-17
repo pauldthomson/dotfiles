@@ -36,6 +36,8 @@ brew bundle --file="$PWD/Brewfile.optional"
 ```
 
 ## Zsh
+
+- Shell startup does not look up SonarQube credentials in Keychain; configure them explicitly when needed.
 - Uses Powerlevel10k with custom `jj` status segment.
 - Prompt hides VCS prefix/icon and directory icon.
 - `zsh-async` enables async status updates; otherwise prompt uses a synchronous fallback.
