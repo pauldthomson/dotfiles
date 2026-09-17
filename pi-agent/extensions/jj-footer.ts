@@ -85,6 +85,9 @@ export default function (pi: ExtensionAPI) {
           if (usage.output) statsParts.push(`↓${formatTokens(usage.output)}`);
           if (usage.cacheRead) statsParts.push(`R${formatTokens(usage.cacheRead)}`);
           if (usage.cacheWrite) statsParts.push(`W${formatTokens(usage.cacheWrite)}`);
+          if ((usage.cacheRead > 0 || usage.cacheWrite > 0) && usage.latestCacheHitRate !== undefined) {
+            statsParts.push(`CH${usage.latestCacheHitRate.toFixed(1)}%`);
+          }
 
           const usingSubscription = ctx.model ? ctx.modelRegistry.isUsingOAuth(ctx.model) : false;
           if (usage.cost || usingSubscription) {
@@ -211,12 +214,14 @@ function getUsage(ctx: { sessionManager: { getEntries: () => Array<any> } }): {
   cacheRead: number;
   cacheWrite: number;
   cost: number;
+  latestCacheHitRate: number | undefined;
 } {
   let input = 0;
   let output = 0;
   let cacheRead = 0;
   let cacheWrite = 0;
   let cost = 0;
+  let latestCacheHitRate: number | undefined;
 
   for (const entry of ctx.sessionManager.getEntries()) {
     if (entry.type === "message" && entry.message.role === "assistant") {
@@ -225,10 +230,14 @@ function getUsage(ctx: { sessionManager: { getEntries: () => Array<any> } }): {
       cacheRead += entry.message.usage.cacheRead ?? 0;
       cacheWrite += entry.message.usage.cacheWrite ?? 0;
       cost += entry.message.usage.cost.total ?? 0;
+
+      const promptTokens =
+        entry.message.usage.input + entry.message.usage.cacheRead + entry.message.usage.cacheWrite;
+      latestCacheHitRate = promptTokens > 0 ? (entry.message.usage.cacheRead / promptTokens) * 100 : undefined;
     }
   }
 
-  return { input, output, cacheRead, cacheWrite, cost };
+  return { input, output, cacheRead, cacheWrite, cost, latestCacheHitRate };
 }
 
 function getThinkingLevel(ctx: { sessionManager: { getBranch: () => Array<any> } }): string {
