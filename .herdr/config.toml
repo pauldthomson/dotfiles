@@ -14,6 +14,8 @@ surface_dim = "#313244"
 prefix = "ctrl+space"
 detach = "prefix+d"
 reload_config = "prefix+r"
+# The built-in resize-mode shortcut also uses prefix+r; move it to avoid a collision.
+resize_mode = "prefix+shift+r"
 focus_pane_left = "ctrl+h"
 focus_pane_down = "ctrl+j"
 focus_pane_up = "ctrl+k"
