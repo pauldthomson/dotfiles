@@ -21,6 +21,17 @@ focus_pane_right = "ctrl+l"
 split_horizontal = "prefix+minus"
 split_vertical = "prefix+|"
 
+# Match tmux's prefix+Ctrl+L: forward Ctrl+L to the focused pane.
+[[keys.command]]
+key = "prefix+ctrl+l"
+type = "shell"
+description = "clear screen"
+command = '''
+herdr_bin="${HERDR_BIN_PATH:-herdr}"
+pane_id=$("$herdr_bin" pane current | jq -er '.result.pane.pane_id') || exit 1
+"$herdr_bin" pane send-keys "$pane_id" ctrl+l
+'''
+
 # Match the tmux session picker: fuzzy-search workspaces by name.
 [[keys.command]]
 key = "prefix+j"
