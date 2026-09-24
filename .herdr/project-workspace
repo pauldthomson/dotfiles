@@ -1,0 +1,153 @@
+#!/bin/bash
+# Launcher for project checkouts in Herdr. Cleanup requires an explicit path confirmation.
+set -euo pipefail
+herdr_bin=${HERDR_BIN_PATH:-herdr}
+repos="$HOME/repos"
+
+fail() { printf 'project-workspace: %s\n' "$*" >&2; exit 1; }
+# Resolve the root even when a pane has cd'd into a subdirectory.
+root_for() { jj -R "$1" root 2>/dev/null; }
+# A workspace has no cwd of its own in Herdr; its initial pane retains the launcher cwd.
+workspace_root() {
+  local cwd
+  cwd=$("$herdr_bin" pane list --workspace "$1" |
+    jq -er '.result.panes[0].cwd') || return 1
+  root_for "$cwd" || printf '%s\n' "$cwd"
+}
+used_by_other_herdr_workspace() {
+  local id path
+  while IFS= read -r id; do
+    [ "$id" != "${1:-}" ] || continue
+    path=$(workspace_root "$id") || continue
+    [ "$path" != "$2" ] || return 0
+  done < <("$herdr_bin" workspace list | jq -r '.result.workspaces[].workspace_id')
+  return 1
+}
+launch() {
+  local project=$1 label=$2 workspace workspace_id nvim_tab_id nvim_pane_id agent agent_pane_id
+  workspace=$("$herdr_bin" workspace create --cwd "$project" --label "$label" --no-focus)
+  workspace_id=$(jq -er '.result.workspace.workspace_id' <<<"$workspace")
+  nvim_tab_id=$(jq -er '.result.tab.tab_id' <<<"$workspace")
+  nvim_pane_id=$(jq -er '.result.root_pane.pane_id' <<<"$workspace")
+  # On failure close only the Herdr workspace made by this invocation; keep the checkout.
+  trap '"$herdr_bin" workspace close "$workspace_id" >/dev/null 2>&1 || true' ERR
+  "$herdr_bin" tab rename "$nvim_tab_id" nvim >/dev/null
+  "$herdr_bin" pane run "$nvim_pane_id" nvim >/dev/null
+  agent=$("$herdr_bin" tab create --workspace "$workspace_id" --cwd "$project" --label agent --no-focus)
+  agent_pane_id=$(jq -er '.result.root_pane.pane_id' <<<"$agent")
+  "$herdr_bin" pane run "$agent_pane_id" pi >/dev/null
+  "$herdr_bin" tab create --workspace "$workspace_id" --cwd "$project" --label scratch --no-focus >/dev/null
+  "$herdr_bin" workspace focus "$workspace_id" >/dev/null
+  "$herdr_bin" tab focus "$nvim_tab_id" >/dev/null
+  trap - ERR
+}
+open_project() {
+  local selected project path id existing=0 suffix name
+  [ -d "$repos" ] || exit 0
+  selected=$(cd "$repos" && find . -mindepth 3 -maxdepth 3 -type d -print |
+    while IFS= read -r dir; do
+      [ -d "$dir/.git" ] || [ -d "$dir/.jj/repo" ] || continue
+      printf '%s\n' "${dir#./}"
+    done | sort | fzf --prompt='project> ') || exit 0
+  [ -n "$selected" ] || exit 0
+  project="$repos/$selected"
+  # Compare actual JJ roots, not labels (different repositories may share a name).
+  if [ -d "$project/.jj/repo" ]; then
+    while IFS= read -r id; do
+      path=$(workspace_root "$id") || continue
+      if [ "$path" = "$project" ] || jj -R "$project" workspace list -T 'root ++ "\n"' | grep -Fxq "$path"; then
+        existing=1
+        break
+      fi
+    done < <("$herdr_bin" workspace list | jq -r '.result.workspaces[].workspace_id')
+  fi
+  if [ "$existing" -eq 1 ]; then
+    printf 'Checkout name (letters, numbers, hyphens): '
+    IFS= read -r suffix || exit 0
+    [[ "$suffix" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]] || fail 'invalid checkout name'
+    name="${project##*/}-herdr-$suffix"
+    path="${project%/*}/$name"
+    [ ! -e "$path" ] || fail "already exists: $path"
+    if jj -R "$project" bookmark list -T 'name ++ "\n"' | grep -Fxq master; then
+      jj -R "$project" workspace add "$path" --name "$name" -r master
+    else
+      jj -R "$project" workspace add "$path" --name "$name"
+    fi
+    launch "$path" "${project##*/} · $suffix"
+  else
+    launch "$project" "${project##*/}"
+  fi
+}
+close_project() {
+  local id=${HERDR_ACTIVE_WORKSPACE_ID:-} project origin='' root name choice confirmation
+  [ -n "$id" ] || fail 'no active Herdr workspace'
+  project=$(workspace_root "$id") || fail 'cannot determine workspace path'
+  # The canonical checkout owns .jj/repo; secondary workspaces have a .jj pointer.
+  if [ -d "$project/.jj/repo" ] || [ ! -e "$project/.jj" ]; then
+    "$herdr_bin" workspace close "$id" >/dev/null
+    return
+  fi
+  while IFS= read -r root; do
+    if [ -d "$root/.jj/repo" ]; then origin=$root; break; fi
+  done < <(jj -R "$project" workspace list -T 'root ++ "\n"')
+  name=$(jj -R "$project" workspace list -T 'name ++ "\t" ++ root ++ "\n"' |
+    awk -F '\t' -v root="$project" '$2 == root {print $1}')
+  [ -n "$name" ] || fail 'cannot identify JJ workspace; refusing to close'
+  if used_by_other_herdr_workspace "$id" "$project"; then
+    "$herdr_bin" workspace close "$id" >/dev/null
+    printf 'Checkout is still open in another Herdr workspace; keeping %s\n' "$project"
+    return
+  fi
+  # Never delete an arbitrary checkout outside the canonical checkout's parent.
+  if [ -z "$origin" ] || [ "${origin%/*}" != "${project%/*}" ]; then
+    "$herdr_bin" workspace close "$id" >/dev/null
+    printf 'Keeping %s (no safe canonical sibling found)\n' "$project"
+    return
+  fi
+  choice=$(printf 'Keep checkout\nDelete checkout and forget JJ workspace\n' |
+    fzf --prompt="Close $name; cleanup? > " --no-sort) || return 0
+  if [ "$choice" != 'Delete checkout and forget JJ workspace' ]; then
+    "$herdr_bin" workspace close "$id" >/dev/null
+    return
+  fi
+  printf 'Type %s to delete %s: ' "$name" "$project"
+  IFS= read -r confirmation || { "$herdr_bin" workspace close "$id" >/dev/null; return 0; }
+  if [ "$confirmation" != "$name" ]; then
+    "$herdr_bin" workspace close "$id" >/dev/null
+    printf 'Kept %s\n' "$project"
+    return
+  fi
+  # Closing the current workspace kills its popup. Detach the close + cleanup so
+  # the process survives that close; never delete until Herdr reports success.
+  python3 - "$0" "$origin" "$project" "$name" "$id" <<'PY'
+import os, subprocess, sys
+log = open(os.path.expanduser('~/.config/herdr/workspace-cleanup.log'), 'a')
+subprocess.Popen(['bash', *sys.argv[1:2], 'cleanup', *sys.argv[2:]],
+                 stdin=subprocess.DEVNULL, stdout=log, stderr=log,
+                 start_new_session=True)
+PY
+  printf 'Closing %s; cleanup results: ~/.config/herdr/workspace-cleanup.log\n' "$name"
+}
+cleanup() {
+  local origin=$1 project=$2 name=$3 id=$4 root
+  # Recheck before deletion, even if the user switched workspaces after confirming.
+  [ -d "$origin/.jj/repo" ] && [ "${origin%/*}" = "${project%/*}" ] &&
+    [ -d "$project/.jj" ] && [[ "$name" = "${project##*/}" ]] ||
+    fail 'unsafe checkout; refusing deletion'
+  root=$(jj -R "$project" root)
+  [ "$root" = "$project" ] &&
+    jj -R "$origin" workspace list -T 'name ++ "\t" ++ root ++ "\n"' |
+      grep -Fxq "$(printf '%s\t%s' "$name" "$project")" ||
+    fail 'JJ workspace mapping changed; refusing deletion'
+  used_by_other_herdr_workspace "$id" "$project" && fail 'checkout still in use'
+  "$herdr_bin" workspace close "$id" >/dev/null
+  jj -R "$origin" workspace forget "$name"
+  rm -rf -- "$project"
+  printf 'Removed %s\n' "$project"
+}
+case "${1:-}" in
+  open) open_project ;;
+  close) close_project ;;
+  cleanup) shift; cleanup "$@" ;;
+  *) fail 'usage: project-workspace open|close' ;;
+esac

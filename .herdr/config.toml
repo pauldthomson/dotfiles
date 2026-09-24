@@ -16,6 +16,8 @@ detach = "prefix+d"
 reload_config = "prefix+r"
 # The built-in resize-mode shortcut also uses prefix+r; move it to avoid a collision.
 resize_mode = "prefix+shift+r"
+# Route the close shortcut through the checkout cleanup prompt.
+close_workspace = ""
 focus_pane_left = "ctrl+h"
 focus_pane_down = "ctrl+j"
 focus_pane_up = "ctrl+k"
@@ -73,73 +75,26 @@ tab_id=$(printf '%s\n' "$selected" | awk -F '\t' '{print $NF}')
 width = "50%"
 height = "50%"
 
-# Pick a repository under ~/repos/<host>/<org>/<repo> and create a focused
-# workspace rooted there, mirroring the ptmux project launcher.
+# Resolve the script through the symlinked config file, not the popup's cwd.
 [[keys.command]]
 key = "prefix+ctrl+p"
 type = "popup"
-description = "create workspace from project"
+description = "open project or new JJ checkout"
 command = '''
-root="$HOME/repos"
-[ -d "$root" ] || exit 0
-selected=$(
-  cd "$root" &&
-    find . -mindepth 3 -maxdepth 3 -type d -print |
-    sed 's#^\./##' |
-    sort |
-    fzf --prompt='project> '
-) || exit 0
-[ -n "$selected" ] || exit 0
-
-project="$root/$selected"
-herdr_bin="${HERDR_BIN_PATH:-herdr}"
-workspace_id=""
-cleanup_incomplete_workspace() {
-  status=$?
-  trap - EXIT
-  if [ "$status" -ne 0 ] && [ -n "$workspace_id" ]; then
-    "$herdr_bin" workspace close "$workspace_id" >/dev/null 2>&1 || true
-  fi
-  exit "$status"
-}
-trap cleanup_incomplete_workspace EXIT
-trap 'exit 1' HUP INT TERM
-set -eu
-
-workspace=$(
-  "$herdr_bin" workspace create \
-    --cwd "$project" \
-    --label "${selected##*/}" \
-    --no-focus
-)
-workspace_id=$(printf '%s\n' "$workspace" | jq -er '.result.workspace.workspace_id')
-nvim_tab_id=$(printf '%s\n' "$workspace" | jq -er '.result.tab.tab_id')
-nvim_pane_id=$(printf '%s\n' "$workspace" | jq -er '.result.root_pane.pane_id')
-"$herdr_bin" tab rename "$nvim_tab_id" nvim >/dev/null
-"$herdr_bin" pane run "$nvim_pane_id" nvim >/dev/null
-
-agent=$(
-  "$herdr_bin" tab create \
-    --workspace "$workspace_id" \
-    --cwd "$project" \
-    --label agent \
-    --no-focus
-)
-agent_pane_id=$(printf '%s\n' "$agent" | jq -er '.result.root_pane.pane_id')
-"$herdr_bin" pane run "$agent_pane_id" pi >/dev/null
-
-"$herdr_bin" tab create \
-  --workspace "$workspace_id" \
-  --cwd "$project" \
-  --label scratch \
-  --no-focus >/dev/null
-
-"$herdr_bin" workspace focus "$workspace_id" >/dev/null
-"$herdr_bin" tab focus "$nvim_tab_id" >/dev/null
-trap - EXIT HUP INT TERM
+bash "$(dirname "$(realpath "${HERDR_CONFIG_PATH:-$HOME/.config/herdr/config.toml}")")/project-workspace" open
 '''
 width = "80%"
 height = "80%"
+
+[[keys.command]]
+key = "prefix+shift+d"
+type = "popup"
+description = "close workspace and offer JJ checkout cleanup"
+command = '''
+bash "$(dirname "$(realpath "${HERDR_CONFIG_PATH:-$HOME/.config/herdr/config.toml}")")/project-workspace" close
+'''
+width = "80%"
+height = "40%"
 
 # Herdr Annotate: terminal annotations and Plannotator TUI document review.
 [[keys.command]]
