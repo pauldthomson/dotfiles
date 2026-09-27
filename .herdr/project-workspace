@@ -7,12 +7,32 @@ repos="$HOME/repos"
 fail() { printf 'project-workspace: %s\n' "$*" >&2; exit 1; }
 # Resolve the root even when a pane has cd'd into a subdirectory.
 root_for() { jj -R "$1" root 2>/dev/null; }
+# JJ omits the canonical workspace root from `jj workspace list` on some repos.
+# A linked checkout's .jj/repo file points directly to the canonical .jj/repo.
+canonical_for() {
+  local project=$1 link repo_dir origin
+  [ -f "$project/.jj/repo" ] || return 1
+  link=$(<"$project/.jj/repo")
+  case "$link" in
+    /*) repo_dir=$(realpath "$link") || return 1 ;;
+    *) repo_dir=$(realpath "$project/.jj/$link") || return 1 ;;
+  esac
+  [ "${repo_dir##*/}" = repo ] || return 1
+  origin=$(dirname "$(dirname "$repo_dir")")
+  [ -d "$origin/.jj/repo" ] || return 1
+  printf '%s\n' "$origin"
+}
 # A workspace has no cwd of its own in Herdr; its initial pane retains the launcher cwd.
 workspace_root() {
   local cwd
   cwd=$("$herdr_bin" pane list --workspace "$1" |
     jq -er '.result.panes[0].cwd') || return 1
   root_for "$cwd" || printf '%s\n' "$cwd"
+}
+checkout_clean() {
+  # JJ's working-copy commit can be dirty even when the filesystem has no
+  # unsnapshotted changes. Also reject unresolved conflicts.
+  [ "$(jj -R "$1" log -r @ --no-graph -T 'if(empty && !conflict, "clean", "dirty")')" = clean ]
 }
 used_by_other_herdr_workspace() {
   local id path
@@ -79,7 +99,7 @@ open_project() {
   fi
 }
 close_project() {
-  local id=${HERDR_ACTIVE_WORKSPACE_ID:-} project origin='' root name choice confirmation
+  local id=${HERDR_ACTIVE_WORKSPACE_ID:-} project origin='' name choice
   [ -n "$id" ] || fail 'no active Herdr workspace'
   project=$(workspace_root "$id") || fail 'cannot determine workspace path'
   # The canonical checkout owns .jj/repo; secondary workspaces have a .jj pointer.
@@ -87,9 +107,7 @@ close_project() {
     "$herdr_bin" workspace close "$id" >/dev/null
     return
   fi
-  while IFS= read -r root; do
-    if [ -d "$root/.jj/repo" ]; then origin=$root; break; fi
-  done < <(jj -R "$project" workspace list -T 'root ++ "\n"')
+  origin=$(canonical_for "$project") || origin=''
   name=$(jj -R "$project" workspace list -T 'name ++ "\t" ++ root ++ "\n"' |
     awk -F '\t' -v root="$project" '$2 == root {print $1}')
   [ -n "$name" ] || fail 'cannot identify JJ workspace; refusing to close'
@@ -104,18 +122,22 @@ close_project() {
     printf 'Keeping %s (no safe canonical sibling found)\n' "$project"
     return
   fi
-  choice=$(printf 'Keep checkout\nDelete checkout and forget JJ workspace\n' |
-    fzf --prompt="Close $name; cleanup? > " --no-sort) || return 0
+  if checkout_clean "$project"; then
+    choice=$(printf 'Keep checkout\nDelete checkout and forget JJ workspace\n' |
+      fzf --prompt="Close $name; cleanup? > " --no-sort) || return 0
+  else
+    choice=$(printf 'Keep checkout (dirty; deletion disabled)\n' |
+      fzf --prompt="Close $name; JJ working copy is dirty > " --no-sort) || return 0
+  fi
   if [ "$choice" != 'Delete checkout and forget JJ workspace' ]; then
     "$herdr_bin" workspace close "$id" >/dev/null
     return
   fi
-  printf 'Type %s to delete %s: ' "$name" "$project"
-  IFS= read -r confirmation || { "$herdr_bin" workspace close "$id" >/dev/null; return 0; }
-  if [ "$confirmation" != "$name" ]; then
-    "$herdr_bin" workspace close "$id" >/dev/null
-    printf 'Kept %s\n' "$project"
-    return
+  # Check again after the choice in case the agent was editing in parallel.
+  if ! checkout_clean "$project"; then
+    printf 'JJ working copy changed; keeping %s\n' "$project"
+    jj -R "$project" status
+    return 1
   fi
   # Closing the current workspace kills its popup. Detach the close + cleanup so
   # the process survives that close; never delete until Herdr reports success.
@@ -135,12 +157,14 @@ cleanup() {
     [ -d "$project/.jj" ] && [[ "$name" = "${project##*/}" ]] ||
     fail 'unsafe checkout; refusing deletion'
   root=$(jj -R "$project" root)
-  [ "$root" = "$project" ] &&
+  [ "$root" = "$project" ] && [ "$(canonical_for "$project")" = "$origin" ] &&
     jj -R "$origin" workspace list -T 'name ++ "\t" ++ root ++ "\n"' |
       grep -Fxq "$(printf '%s\t%s' "$name" "$project")" ||
     fail 'JJ workspace mapping changed; refusing deletion'
   used_by_other_herdr_workspace "$id" "$project" && fail 'checkout still in use'
+  checkout_clean "$project" || fail 'JJ working copy is dirty; leaving workspace open'
   "$herdr_bin" workspace close "$id" >/dev/null
+  checkout_clean "$project" || fail 'JJ working copy became dirty; keeping checkout'
   jj -R "$origin" workspace forget "$name"
   rm -rf -- "$project"
   printf 'Removed %s\n' "$project"
