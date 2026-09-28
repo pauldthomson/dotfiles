@@ -97,6 +97,8 @@ Run this after cloning (or anytime you need to re-point your global Pi config):
 ./pi-agent/setup-symlinks.sh
 ```
 
+For Herdr integration, run `herdr integration install pi` after setting up the symlinks. Herdr owns and overwrites `pi-agent/extensions/herdr-agent-state.ts`, so that installed file is ignored by version control; keep custom extensions in separate files.
+
 Agent handoff snippet:
 
 ```text
