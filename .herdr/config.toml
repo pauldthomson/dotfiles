@@ -45,8 +45,8 @@ command = '''
 herdr_bin="${HERDR_BIN_PATH:-herdr}"
 selected=$(
   "$herdr_bin" workspace list |
-    jq -r '.result.workspaces[] | [.label, .workspace_id] | @tsv' |
-    fzf --reverse --cycle --delimiter='\t' --nth=1 --with-nth=1 --prompt='workspace> '
+    jq -r -f "$(dirname "$(realpath "${HERDR_CONFIG_PATH:-$HOME/.config/herdr/config.toml}")")/switcher-rows.jq" |
+    fzf --ansi --reverse --cycle --delimiter='\t' --nth=1 --with-nth=1 --prompt='workspace> '
 ) || exit 0
 [ -n "$selected" ] || exit 0
 workspace_id=$(printf '%s\n' "$selected" | awk -F '\t' '{print $NF}')
@@ -65,8 +65,8 @@ herdr_bin="${HERDR_BIN_PATH:-herdr}"
 [ -n "${HERDR_ACTIVE_WORKSPACE_ID:-}" ] || exit 0
 selected=$(
   "$herdr_bin" tab list --workspace "$HERDR_ACTIVE_WORKSPACE_ID" |
-    jq -r '.result.tabs[] | [.label, .tab_id] | @tsv' |
-    fzf --reverse --delimiter='\t' --nth=1 --with-nth=1 --prompt='tab> '
+    jq -r -f "$(dirname "$(realpath "${HERDR_CONFIG_PATH:-$HOME/.config/herdr/config.toml}")")/switcher-rows.jq" |
+    fzf --ansi --reverse --delimiter='\t' --nth=1 --with-nth=1 --prompt='tab> '
 ) || exit 0
 [ -n "$selected" ] || exit 0
 tab_id=$(printf '%s\n' "$selected" | awk -F '\t' '{print $NF}')
