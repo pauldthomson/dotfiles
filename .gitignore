@@ -12,3 +12,5 @@ logo-ls_Darwin_x86_64/
 ptmux/ptmux
 jj/repos/
 hunk/state.json
+# Generated and overwritten by Herdr's integration installer.
+/pi-agent/extensions/herdr-agent-state.ts

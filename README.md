@@ -45,6 +45,7 @@ brew bundle --file="$PWD/Brewfile.optional"
 - `kctx` (defined in `zsh/kctx.zsh`) opens an `fzf` picker for kube contexts (marks current context with `*`) and runs `kubectl config use-context` on selection. It is loaded via Oh My Zsh custom config (`~/.oh-my-zsh/custom/kctx.zsh` symlink). You can also run `kctx <context-name>` directly. `kc` is an alias for `kctx`.
 
 ## Herdr
+- Herdr's generated Pi integration (`pi-agent/extensions/herdr-agent-state.ts`) is ignored; Herdr manages and overwrites it when installing or updating the integration.
 - Tracks its shared configuration in `.herdr/config.toml`. Symlink it to `~/.config/herdr/config.toml` and apply changes to a running server with `herdr server reload-config`.
 - The workspace (`prefix + j`) and tab (`prefix + k`) fuzzy pickers show the agents panel's default status dots in Catppuccin colours: yellow `●` working, red `●` blocked, teal `●` done, green `○` idle, and grey `·` unknown. Status is a snapshot when the picker opens; workspace status is Herdr's aggregate across its agents. The shared formatter is `.herdr/switcher-rows.jq` (keep it beside the config's real target). Run `bash .herdr/test-switcher.sh` for formatter regressions.
 - Press `Ctrl+Space`, then `Ctrl+L` to forward `Ctrl+L` to the focused pane and clear its screen, as in tmux. Bare `Ctrl+L` navigates right.
