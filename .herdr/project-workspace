@@ -1,10 +1,30 @@
 #!/bin/bash
 # Launcher for project checkouts in Herdr. Cleanup requires an explicit path confirmation.
-set -euo pipefail
+set -Eeuo pipefail
 herdr_bin=${HERDR_BIN_PATH:-herdr}
 repos="$HOME/repos"
+created_workspace_id=''
+error_log="$HOME/.config/herdr/workspace-launcher.log"
 
-fail() { printf 'project-workspace: %s\n' "$*" >&2; exit 1; }
+report_failure() {
+  local status=$1 message=$2
+  trap - ERR
+  if [ -n "$created_workspace_id" ]; then
+    "$herdr_bin" workspace close "$created_workspace_id" >/dev/null 2>&1 || true
+  fi
+  printf 'project-workspace: %s\n' "$message" >&2
+  printf 'Details: %s\n' "$error_log" >&2
+  if [ -t 0 ]; then
+    printf 'Press Enter to close this popup. ' >&2
+    IFS= read -r _ || true
+  fi
+  exit "$status"
+}
+fail() { report_failure 1 "$*"; }
+# Preserve command errors after the popup closes, and keep interactive failures visible.
+mkdir -p "${error_log%/*}"
+exec 2> >(tee -a "$error_log" >&2)
+trap 'report_failure "$?" "command failed: $BASH_COMMAND"' ERR
 # Resolve the root even when a pane has cd'd into a subdirectory.
 root_for() { jj -R "$1" root 2>/dev/null; }
 # JJ omits the canonical workspace root from `jj workspace list` on some repos.
@@ -50,7 +70,7 @@ launch() {
   nvim_tab_id=$(jq -er '.result.tab.tab_id' <<<"$workspace")
   nvim_pane_id=$(jq -er '.result.root_pane.pane_id' <<<"$workspace")
   # On failure close only the Herdr workspace made by this invocation; keep the checkout.
-  trap '"$herdr_bin" workspace close "$workspace_id" >/dev/null 2>&1 || true' ERR
+  created_workspace_id=$workspace_id
   "$herdr_bin" tab rename "$nvim_tab_id" nvim >/dev/null
   "$herdr_bin" pane run "$nvim_pane_id" nvim >/dev/null
   agent=$("$herdr_bin" tab create --workspace "$workspace_id" --cwd "$project" --label agent --no-focus)
@@ -59,7 +79,7 @@ launch() {
   "$herdr_bin" tab create --workspace "$workspace_id" --cwd "$project" --label scratch --no-focus >/dev/null
   "$herdr_bin" workspace focus "$workspace_id" >/dev/null
   "$herdr_bin" tab focus "$nvim_tab_id" >/dev/null
-  trap - ERR
+  created_workspace_id=''
 }
 open_project() {
   local selected project path id existing=0 suffix name
@@ -84,8 +104,10 @@ open_project() {
   if [ "$existing" -eq 1 ]; then
     printf 'Checkout name (letters, numbers, hyphens): '
     IFS= read -r suffix || exit 0
-    [[ "$suffix" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]] || fail 'invalid checkout name'
-    name="${project##*/}-herdr-$suffix"
+    # Accept a suffix written with its separator, e.g. -evals or evals.
+    suffix=${suffix#-}
+    [[ "$suffix" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*$ ]] || fail 'invalid checkout name (use letters, numbers, and hyphens)'
+    name="${project##*/}-$suffix"
     path="${project%/*}/$name"
     [ ! -e "$path" ] || fail "already exists: $path"
     if jj -R "$project" bookmark list -T 'name ++ "\n"' | grep -Fxq master; then
