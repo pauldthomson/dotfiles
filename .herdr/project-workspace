@@ -95,7 +95,7 @@ open_project() {
   if [ -d "$project/.jj/repo" ]; then
     while IFS= read -r id; do
       path=$(workspace_root "$id") || continue
-      if [ "$path" = "$project" ] || jj -R "$project" workspace list -T 'root ++ "\n"' | grep -Fxq "$path"; then
+      if [ "$path" = "$project" ] || jj -R "$project" workspace list -T 'root ++ "\n"' | grep -Fx "$path" >/dev/null; then
         existing=1
         break
       fi
@@ -110,7 +110,7 @@ open_project() {
     name="${project##*/}-$suffix"
     path="${project%/*}/$name"
     [ ! -e "$path" ] || fail "already exists: $path"
-    if jj -R "$project" bookmark list -T 'name ++ "\n"' | grep -Fxq master; then
+    if jj -R "$project" bookmark list -T 'name ++ "\n"' | grep -Fx master >/dev/null; then
       jj -R "$project" workspace add "$path" --name "$name" -r master
     else
       jj -R "$project" workspace add "$path" --name "$name"
@@ -179,9 +179,11 @@ cleanup() {
     [ -d "$project/.jj" ] && [[ "$name" = "${project##*/}" ]] ||
     fail 'unsafe checkout; refusing deletion'
   root=$(jj -R "$project" root)
+  # Drain JJ's output: grep -q can close early, causing a broken-pipe failure
+  # under pipefail when more workspaces follow the matching row.
   [ "$root" = "$project" ] && [ "$(canonical_for "$project")" = "$origin" ] &&
     jj -R "$origin" workspace list -T 'name ++ "\t" ++ root ++ "\n"' |
-      grep -Fxq "$(printf '%s\t%s' "$name" "$project")" ||
+      grep -Fx "$(printf '%s\t%s' "$name" "$project")" >/dev/null ||
     fail 'JJ workspace mapping changed; refusing deletion'
   used_by_other_herdr_workspace "$id" "$project" && fail 'checkout still in use'
   checkout_clean "$project" || fail 'JJ working copy is dirty; leaving workspace open'

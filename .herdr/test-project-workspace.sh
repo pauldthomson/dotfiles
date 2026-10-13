@@ -3,6 +3,7 @@
 set -euo pipefail
 script_dir=$(cd "$(dirname "$0")" && pwd)
 tmp=$(mktemp -d)
+tmp=$(cd "$tmp" && pwd -P)
 trap 'rm -rf -- "$tmp"' EXIT
 jj git init --colocate "$tmp/main" >/dev/null
 jj -R "$tmp/main" workspace add "$tmp/main-herdr-test" --name main-herdr-test >/dev/null
@@ -11,8 +12,18 @@ mkdir "$tmp/bin"
 export REAL_JJ=$(command -v jj)
 cat >"$tmp/bin/jj" <<'SH'
 #!/bin/bash
+set -eo pipefail
 if [[ " $* " = *' workspace list '* ]]; then
   "$REAL_JJ" "$@" | awk -F '\t' 'BEGIN {OFS="\t"} $1 == "default" {$2=""} {print}'
+  if [ "${TEST_TRAILING_ROWS:-0}" = 1 ]; then
+    # Force a broken pipe if the consumer exits after the matching row.
+    python3 - <<'PY'
+import signal
+import sys
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+sys.stdout.write('other-workspace\t/unused\n' * 100000)
+PY
+  fi
 else
   "$REAL_JJ" "$@"
 fi
@@ -59,4 +70,16 @@ if bash "$script_dir/project-workspace" cleanup "$TEST_MAIN" "$TEST_SECONDARY" m
   exit 1
 fi
 [ ! -s "$TEST_LOG" ] && [ -f "$TEST_SECONDARY/important.txt" ]
-printf 'Cleanup prompt and dirty-check regression: OK\n'
+# Successful deletion must consume rows after the match, not trigger pipefail.
+# Use a fresh disposable workspace; keep the dirty-check fixture untouched.
+jj -R "$TEST_MAIN" workspace add "$tmp/main-clean" --name main-clean >/dev/null
+export TEST_SECONDARY="$tmp/main-clean" TEST_TRAILING_ROWS=1
+: >"$TEST_LOG"
+bash "$script_dir/project-workspace" cleanup "$TEST_MAIN" "$TEST_SECONDARY" main-clean wTest
+grep -Fxq 'close:wTest' "$TEST_LOG"
+[ ! -e "$TEST_SECONDARY" ]
+if jj -R "$TEST_MAIN" workspace list -T 'name ++ "\n"' | grep -Fx main-clean >/dev/null; then
+  echo 'Deleted checkout is still registered with JJ' >&2
+  exit 1
+fi
+printf 'Cleanup prompt, dirty-check, and trailing-output regressions: OK\n'
