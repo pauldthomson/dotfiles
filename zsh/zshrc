@@ -248,8 +248,6 @@ if [[ -f /Library/Certificates/allcerts.pem ]]; then
     export NODE_EXTRA_CA_CERTS=/Library/Certificates/allcerts.pem
 fi
 
-#export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
-
 # IntelliJ
 export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
 
@@ -260,7 +258,7 @@ if command -v brew >/dev/null 2>&1; then
   [[ ! -f "$brew_prefix/share/google-cloud-sdk/path.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/path.zsh.inc"
   [[ ! -f "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc"
 fi
-export GOOGLE_CLOUD_PROJECT="shared-infra-448603"
+
 export PATH="$HOME/.local/bin:$PATH"
 
 # bun completions
