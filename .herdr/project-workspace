@@ -82,7 +82,7 @@ launch() {
   created_workspace_id=''
 }
 open_project() {
-  local selected project path id existing=0 suffix name
+  local selected project path id existing=0 suffix name choice
   [ -d "$repos" ] || exit 0
   selected=$(cd "$repos" && find . -mindepth 3 -maxdepth 3 -type d -print |
     while IFS= read -r dir; do
@@ -102,6 +102,15 @@ open_project() {
     done < <("$herdr_bin" workspace list | jq -r '.result.workspaces[].workspace_id')
   fi
   if [ "$existing" -eq 1 ]; then
+    choice=$(printf 'Switch to existing session\nCreate a new clone\n' |
+      fzf --prompt="${project##*/}: session exists> " --no-sort) || return 0
+    case "$choice" in
+      'Switch to existing session')
+        "$herdr_bin" workspace focus "$id" >/dev/null
+        return ;;
+      'Create a new clone') : ;;
+      *) return 0 ;;
+    esac
     printf 'Checkout name (letters, numbers, hyphens): '
     IFS= read -r suffix || exit 0
     # Accept a suffix written with its separator, e.g. -evals or evals.

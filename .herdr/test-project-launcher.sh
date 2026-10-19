@@ -14,7 +14,16 @@ cat >"$tmp/bin/fzf" <<'SH'
 #!/bin/bash
 # Consume the whole input, like real fzf.
 while IFS= read -r line; do :; done
-printf 'example.test/org/project\n'
+case "$*" in
+  *'session exists>'*)
+    [ "${TEST_ACTION:-clone}" != cancel ] || exit 130
+    if [ "${TEST_ACTION:-clone}" = switch ]; then
+      printf 'Switch to existing session\n'
+    else
+      printf 'Create a new clone\n'
+    fi ;;
+  *) printf 'example.test/org/project\n' ;;
+esac
 SH
 cat >"$tmp/bin/herdr" <<'SH'
 #!/bin/bash
@@ -33,6 +42,15 @@ case "$1 $2" in
 esac
 SH
 chmod +x "$tmp/bin/"*
+# Switching and cancellation must not ask for a suffix or create a checkout.
+TEST_ACTION=switch bash "$script_dir/project-workspace" open </dev/null >"$tmp/output"
+grep -Fxq 'workspace focus existing' "$TEST_LOG"
+! grep -q '^workspace create' "$TEST_LOG"
+! grep -q 'Checkout name' "$tmp/output"
+: >"$TEST_LOG"
+TEST_ACTION=cancel bash "$script_dir/project-workspace" open </dev/null >"$tmp/output"
+! grep -q '^workspace focus\|^workspace create' "$TEST_LOG"
+! grep -q 'Checkout name' "$tmp/output"
 printf -- '-evals\n' | bash "$script_dir/project-workspace" open
 [ -d "$TEST_PROJECT-evals/.jj" ]
 [ ! -e "$TEST_PROJECT--evals" ]
