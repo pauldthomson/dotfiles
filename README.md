@@ -35,6 +35,14 @@ brew bundle --file="$PWD/Brewfile.optional"
 (cd ptmux && go test -race ./... && go vet ./...)
 ```
 
+## Rex / prex
+
+- `prex/` is a standalone Go project launcher for a local Rex server: **one Pi agent tab**, with editors/shells added later through Rex. Sessions are named `org/repo`, omitting the host to keep labels short. Existing empty sessions restart Pi; nonempty sessions are displayed without restarting programs or rearranging tabs. Exiting Pi keeps the repository; Rex.app can remove the displayed session when its last tab closes, in which case selecting the project creates a new session.
+- Install with `(cd prex && go install .)`. Enable **Rex Settings → Rex Server → Remote Control** for app switching. The zsh alias is `prx`; `p=ptmux` and existing tmux/Neovim bindings are unchanged.
+- Offers switch/reopen versus a new colocated JJ clone. `prex kill` (or **Cmd+Option+X**) closes only the current Rex session, with confirmed, ownership-bound clone removal, VCS/open-file checks, and detached cleanup. Normal Pi/Rex exits never delete clones.
+- Optional native Rex picker actions and shortcuts live in `prex/rex.lua`; load them explicitly from your Rex `init.lua`. Setup, environment requirements, recovery, and safety limitations are in [prex/README.md](prex/README.md).
+- Validate with `(cd prex && go test -race ./... && go vet ./...)` and `rex config check "$PWD/prex/rex.lua"`.
+
 ## Zsh
 
 - Shell startup does not look up SonarQube credentials in Keychain; configure them explicitly when needed.

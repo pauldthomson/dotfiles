@@ -151,6 +151,7 @@ alias ll='eza --icons -la'
 alias la='ls -A'
 alias l='ls -CF'
 alias p='ptmux'
+alias prx='prex'
 alias cat=bat
 alias rg='rg --smart-case'
 alias k='kubectl'
@@ -176,6 +177,7 @@ export PATH="$PATH:${HOME}/go/bin"
 autoload -U +X bashcompinit && bashcompinit
 
 [ -f ${HOME}/.dotfiles/ptmux_completion ] && . ${HOME}/.dotfiles/ptmux_completion
+[ -f ${HOME}/.dotfiles/prex/completion.zsh ] && source ${HOME}/.dotfiles/prex/completion.zsh
 
 # For pure theme. Tab completion overwriting prompt.
 # See https://github.com/sindresorhus/pure/issues/300
