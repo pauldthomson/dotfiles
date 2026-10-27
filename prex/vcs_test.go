@@ -120,10 +120,10 @@ func TestSafetyRemovalRealRepositories(t *testing.T) {
 		{"clean", func(*testing.T, string) {}, true},
 		{"tracked edit", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "tracked.txt"), "changed\n") }, false},
 		{"untracked", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "new.txt"), "local\n") }, false},
-		{"ignored file", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "secret.txt"), "local\n") }, false},
-		{"ignored directory", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, ".cache", "data"), "local\n") }, false},
+		{"ignored file", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "secret.txt"), "local\n") }, true},
+		{"ignored directory", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, ".cache", "data"), "local\n") }, true},
 		{"nested administration name", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "nested", ".jj", "data"), "local\n") }, false},
-		{"newline filename", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "secret\n!! .jj"), "local\n") }, false},
+		{"newline filename", func(t *testing.T, p string) { safetyWrite(t, filepath.Join(p, "new\n!! .jj"), "local\n") }, false},
 		{"staged edit", func(t *testing.T, p string) {
 			safetyWrite(t, filepath.Join(p, "tracked.txt"), "staged\n")
 			safetyGit(t, p, "add", "tracked.txt")

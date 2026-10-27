@@ -114,7 +114,7 @@ func prepareCleanup(r *rexClient, s *stateStore, target session) (cleanupTask, e
 		}
 		task.Path = path
 		task.Clone = &c
-		remove, err := confirm(fmt.Sprintf("Remove owned clone %s after closing %s? All other writers (including other Rex servers) must be stopped. Ignored files block removal. [y/N]: ", path, target.Label))
+		remove, err := confirm(fmt.Sprintf("Remove owned clone %s after closing %s? All other writers (including other Rex servers) must be stopped. Ignored files will also be deleted. [y/N]: ", path, target.Label))
 		if err != nil {
 			return task, err
 		}

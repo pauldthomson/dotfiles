@@ -97,7 +97,7 @@ func gitWorktreeReadyForRemoval(repoPath string, jj bool) (bool, string) {
 			return false, "Git index has skip-worktree or assume-unchanged entries that could hide local changes."
 		}
 	}
-	status, err := gitOutput(repoPath, "status", "--porcelain=v1", "-z", "--untracked-files=all", "--ignored=matching", "--ignore-submodules=none")
+	status, err := gitOutput(repoPath, "status", "--porcelain=v1", "-z", "--untracked-files=all", "--ignore-submodules=none")
 	if err != nil {
 		return false, fmt.Sprintf("Unable to read Git status: %v", err)
 	}
@@ -107,10 +107,10 @@ func gitWorktreeReadyForRemoval(repoPath string, jj bool) (bool, string) {
 		}
 		// Only root JJ administration is exempt, never nested .jj directories
 		// or a tracked path. Git itself excludes its .git administration.
-		if jj && (strings.HasPrefix(entry, "!! .jj/") || strings.HasPrefix(entry, "?? .jj/")) {
+		if jj && strings.HasPrefix(entry, "?? .jj/") {
 			continue
 		}
-		return false, "The cloned repo has uncommitted, untracked, or ignored files."
+		return false, "The cloned repo has uncommitted or untracked files."
 	}
 	return true, ""
 }
