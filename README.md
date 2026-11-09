@@ -95,7 +95,6 @@ brew bundle --file="$PWD/Brewfile.optional"
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a Codex account extension whose `/usage daily` view renders a responsive, color-graded 52-week token activity calendar; `/usage` also retains account totals, limit inspection, and usage-limit reset actions.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
-- Adds a `pr-summary-interview` extension command (`/pr-summary`) that runs an interactive interview with suggested defaults for each PR section, then sends structured answers to `pr-summary` skill generation (the command itself requires interactive Pi UI; without payload, the skill falls back to one-question-at-a-time chat interview).
 - Includes a `chrome-devtools-mcp` skill that wraps `npx chrome-devtools-mcp@latest --autoConnect --channel=beta` for browser automation, inspection, and performance analysis from Pi.
 - Adds a `jj-footer` extension that replaces git `(detached)` branch display with jj-aware status (`jj:<bookmark>` or `jj:@<change-id>`) while keeping the default footer layout/metrics (session name, token/cache totals, cost, context usage, model, extension statuses).
 - Uses a custom `catppuccin` theme (Mocha palette) defined in `pi-agent/themes/catppuccin.json`, with neutral tool-call card backgrounds and softer diff colors to better match the palette.
