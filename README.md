@@ -49,6 +49,7 @@ brew bundle --file="$PWD/Brewfile.optional"
 - Uses Powerlevel10k with custom `jj` status segment.
 - Prompt hides VCS prefix/icon and directory icon.
 - `zsh-async` enables async status updates; otherwise prompt uses a synchronous fallback.
+- `zsh/zshrc` resolves its symlink to load the prompt and `ptmux`/`prex` completions from this checkout; no `~/.dotfiles` alias is required. Keep `bashcompinit` for ptmux's Bash completion. PATH entries are deduplicated when the configuration is sourced again.
 - Startup is tuned to avoid expensive per-shell work: the Oh My Zsh `nvm` plugin is lazy-loaded for Node tools while Pi uses Homebrew's Node installation, kubectl completions are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh`, omz completion dumps are cached at `${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}`, auto-update checks are disabled, and prompt config is sourced once.
 - `kctx` (defined in `zsh/kctx.zsh`) opens an `fzf` picker for kube contexts (marks current context with `*`) and runs `kubectl config use-context` on selection. It is loaded via Oh My Zsh custom config (`~/.oh-my-zsh/custom/kctx.zsh` symlink). You can also run `kctx <context-name>` directly. `kc` is an alias for `kctx`.
 

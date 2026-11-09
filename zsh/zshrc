@@ -1,147 +1,51 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
+# Powerlevel10k instant prompt must precede initialization that prints output.
+# Anything that needs console input must go above this block.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Vi keybindings
+# Resolve this file's symlink so completions work wherever the checkout lives.
+dotfiles_root="${${(%):-%x}:A:h:h}"
+
+# Keep PATH entries unique, including when this file is sourced again.
+typeset -U PATH path
+
+# Vi keybindings; allow backspace after returning to insert mode.
 bindkey -v
-# Make backspace work after leaving normal
-# mode (going back to insert mode)
 bindkey '^?' backward-delete-char
 
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Path to your oh-my-zsh installation.
-export ZSH="/Users/$USER/.oh-my-zsh"
-
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-
-autoload -U promptinit; promptinit
-
-# Pure theme customisation
-PURE_PROMPT_SYMBOL="λ"
-PURE_CMD_MAX_EXEC_TIME=300
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Disable auto-update checks during shell startup (update manually when needed).
 DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS=true
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
 ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
 
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Path to FZF install
-export FZF_BASE=/usr/local/opt/fzf
-
-# Which plugins would you like to load?
-# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(
     zsh-autosuggestions
-    # Keep this before fzf for vim keybindings
+    # Keep this before fzf for vim keybindings.
     vi-mode
     fzf
-    git 
-    httpie 
+    git
+    httpie
     jj
+    # Used by the custom JJ prompt in p10k.zsh.
     async
     nvm
 )
 
-# Keep completion dump in a stable cache location to avoid host-specific churn.
+# Stable completion cache; Oh My Zsh runs compinit.
 ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh/.zcompdump-${ZSH_VERSION}"
 mkdir -p "${ZSH_COMPDUMP:h}"
 
 # Lazy-load nvm on first Node tool usage; Pi uses Homebrew's Node installation.
 zstyle ':omz:plugins:nvm' lazy yes
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
+source "$ZSH/oh-my-zsh.sh"
 
 export EDITOR="nvim"
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export EZA_CONFIG_DIR="$HOME/.config/eza"
 
-# Use GNU versions of bash programs
-PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
-PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
-MANPATH="/usr/local/opt/gnu-sed/libexec/gnuman:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-# Work
 alias c=corectl
 alias ls='ls -G'
 alias grep='grep --colour=auto'
@@ -160,48 +64,26 @@ alias go='nocorrect go'
 alias lg='lazygit'
 alias gsp='gcloud-set-project'
 
-# FZF
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_COMMAND='rg --no-ignore --files --hidden --follow --glob "!.git/*"'
-# export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-# export FZF_TMUX=1
+export PATH="$PATH:$HOME/go/bin"
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
-if ! source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null ; then
-    source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ptmux uses Bash completion; prex uses native Zsh completion.
+if [[ -f "$dotfiles_root/ptmux_completion" ]]; then
+  autoload -U +X bashcompinit && bashcompinit
+  source "$dotfiles_root/ptmux_completion"
+fi
+[[ ! -f "$dotfiles_root/prex/completion.zsh" ]] || source "$dotfiles_root/prex/completion.zsh"
+
+# Terminal pinentry for GPG signing.
+if [[ -t 0 ]]; then
+  export GPG_TTY="$(tty)"
 fi
 
-PATH=$PATH:/usr/local/go/bin
-export PATH="$PATH:${HOME}/go/bin"
-
-# Make bash completion work with zsh (oh-my-zsh already runs compinit)
-autoload -U +X bashcompinit && bashcompinit
-
-[ -f ${HOME}/.dotfiles/ptmux_completion ] && . ${HOME}/.dotfiles/ptmux_completion
-[ -f ${HOME}/.dotfiles/prex/completion.zsh ] && source ${HOME}/.dotfiles/prex/completion.zsh
-
-# For pure theme. Tab completion overwriting prompt.
-# See https://github.com/sindresorhus/pure/issues/300
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-
-# Added by Krypton
-export GPG_TTY=$(tty)
-
-# Handle private go modules
+# Private Go modules.
 export GOPRIVATE="github.com/tyro-private"
-
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-# [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-export PATH="/Users/$USER/repos/github.com/bigH/git-fuzzy/bin:$PATH"
-
-# jenv
-export PATH="$HOME/.jenv/bin:$PATH"
-
-# krew
-export PATH="${PATH}:${HOME}/.krew/bin"
-
-export PATH="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository:$PATH"
 
 if command -v kubectl >/dev/null 2>&1; then
   KUBECTL_COMPLETION_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh"
@@ -212,9 +94,7 @@ if command -v kubectl >/dev/null 2>&1; then
   [[ -s "$KUBECTL_COMPLETION_CACHE" ]] && source "$KUBECTL_COMPLETION_CACHE"
 fi
 
-export JDTLS_HOME="$HOME/repos/github.com/eclipse/eclipse.ls.jdt/org.eclipse.jdt.ls.product/target/repository"
-
-# Java (Homebrew) - keep JAVA_HOME on newest installed JDK
+# Java (Homebrew) - keep JAVA_HOME on newest installed JDK.
 if [[ -x /usr/libexec/java_home ]]; then
   JAVA_HOME="$(/usr/libexec/java_home 2>/dev/null)"
 fi
@@ -238,22 +118,11 @@ if [[ -n "$JAVA_HOME" ]]; then
   export PATH="$JAVA_HOME/bin:$PATH"
 fi
 
-# .Net/Csharp Lang Server
-export PATH="$PATH:/Users/pthomson/.dotnet/tools"
-
-# Krew
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
-# DLP Proxy
+# Corporate proxy CA trust for Python and Node.
 if [[ -f /Library/Certificates/allcerts.pem ]]; then
-    export REQUESTS_CA_BUNDLE=/Library/Certificates/allcerts.pem
-    export NODE_EXTRA_CA_CERTS=/Library/Certificates/allcerts.pem
+  export REQUESTS_CA_BUNDLE=/Library/Certificates/allcerts.pem
+  export NODE_EXTRA_CA_CERTS=/Library/Certificates/allcerts.pem
 fi
-
-# IntelliJ
-export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
-
-# eval "$(atuin init zsh --disable-up-arrow)"
 
 if command -v brew >/dev/null 2>&1; then
   brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix)}"
@@ -261,16 +130,17 @@ if command -v brew >/dev/null 2>&1; then
   [[ ! -f "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc"
 fi
 
-export PATH="$HOME/.local/bin:$PATH"
-
-# bun completions
-[ -s "/Users/paul/.bun/_bun" ] && source "/Users/paul/.bun/_bun"
-
-# bun
 export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+[[ ! -d "$BUN_INSTALL/bin" ]] || export PATH="$BUN_INSTALL/bin:$PATH"
+[[ ! -s "$BUN_INSTALL/_bun" ]] || source "$BUN_INSTALL/_bun"
 
-# To customize prompt, run `p10k configure` or edit ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh.
-[[ ! -f ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh ]] || source ~/repos/github.com/pauldthomson/dotfiles/zsh/p10k.zsh
+# To customize the prompt, run `p10k configure` or edit zsh/p10k.zsh.
+[[ ! -f "$dotfiles_root/zsh/p10k.zsh" ]] || source "$dotfiles_root/zsh/p10k.zsh"
+unset dotfiles_root
 
-export EZA_CONFIG_DIR="$HOME/.config/eza"
+# Load last so highlighting wraps widgets installed by plugins/completions.
+if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+elif [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi

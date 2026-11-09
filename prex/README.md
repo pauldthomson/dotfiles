@@ -90,7 +90,7 @@ A worker crash can leave a `running` result. Inspect Rex, the reported clone/qua
 
 ## Shell and Rex integration
 
-The tracked zsh config adds `prx=prex` and loads `prex/completion.zsh` from `~/.dotfiles` after completion initialization. `p=ptmux` and existing tmux/Neovim bindings remain unchanged.
+The tracked zsh config adds `prx=prex` and loads `prex/completion.zsh` from its own dotfiles checkout after completion initialization (resolving the `~/.zshrc` symlink). `p=ptmux` and existing tmux/Neovim bindings remain unchanged.
 
 Optional native Rex actions: add this to `~/.config/rex/init.lua` (adjust the checkout path):
 
