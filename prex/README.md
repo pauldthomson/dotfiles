@@ -4,7 +4,7 @@ Project-oriented Rex sessions, starting with **one Pi agent** rather than a pred
 
 ## Install
 
-Requires macOS/Linux, Go 1.26.5+, Rex, Pi, Git, Jujutsu, `fzf` for picker tabs (already in the root Brewfile), and `lsof` for clone removal.
+Requires macOS/Linux, Go 1.26.5+, Rex with `--interactive` support for `new` and `window new`, Pi, Git, Jujutsu, `fzf` for picker tabs (already in the root Brewfile), and `lsof` for clone removal.
 
 ```sh
 (cd prex && go install .)
@@ -39,11 +39,11 @@ After selecting a project, **switch/reopen**, **clone another copy**, and **canc
 
 Sessions are named `org/repo`, e.g. `nc-helix/helix` or `nc-helix/helix-2` for a clone. The host is omitted to keep names short; repository discovery and ownership still use the full path. New sessions receive that label, and existing sessions selected through prex have it reapplied (including previously generic or manually changed names). Unrelated sessions are not renamed. Long labels retain the end of the path plus a stable hash to fit Rex's limit. Labels are presentation; operations use full IDs, so renaming doesn't lose the recorded project association. Unmanaged sessions can be discovered through **local-host terminal process CWDs**; CWD discovery never grants clone ownership. An uninspectable unmanaged session is skipped with a warning, not treated as a verified match.
 
-Rex runs `pi` through its login-shell environment, **not interactive `.zshrc`**. Pi exits normally → its pane/tab closes. In the tested Rex.app version, a displayed session is also removed when its last tab closes. An undisplayed/server-only session can remain empty; prex supports reopening it if it still exists. No replacement shell is started and no repository is deleted. Quick failures remain visible under Rex's default terminal policy. Add terminals/editors later using Rex itself.
+Rex runs `pi` with `--interactive` for both new sessions and reopened empty sessions, loading the login environment and interactive shell startup files such as `.zshrc`. Picker tabs and cleanup helpers retain their existing startup behavior. Pi exits normally → its pane/tab closes. In the tested Rex.app version, a displayed session is also removed when its last tab closes. An undisplayed/server-only session can remain empty; prex supports reopening it if it still exists. No replacement shell is started and no repository is deleted. Quick failures remain visible under Rex's default terminal policy. Add terminals/editors later using Rex itself.
 
 ### Environment
 
-Install Pi/Node so they work without interactive NVM initialization. Configuration needed by Pi's tools (PATH, private-module settings, Java, certificate variables, etc.) must be available through the server/login environment. `prex` does not source `.zshrc`, copy secrets, or try to reproduce your interactive shell. Verify project-specific tools before relying on unattended agent work.
+Pi inherits exported configuration from your interactive shell startup (PATH, private-module settings, Java, certificate variables, etc.). Shell aliases and functions do not generally carry into Pi's subprocesses; lazy version-manager functions may still need explicit activation to select a project-specific runtime. Rex loads the shell configuration; `prex` does not copy secrets or reproduce it manually. Keep startup files free of prompts and other side effects that would block a command launch. Picker tabs still need `prex` and its helper tools available through the server/login environment. Verify project-specific tools before relying on unattended agent work.
 
 The live smoke tests cover Pi starting with the currently running local server's environment and exiting with Ctrl+D, followed by reopening an empty session or creating a replacement if Rex.app removed it. The earlier test with Remote Control disabled only exercised the undisplayed/empty-session case; it did not establish the displayed app's lifecycle. A real detached worker also closed its own caller session and wrote a durable completion result. This is not a guarantee that every project's SDK/credential environment is configured, or that a fresh GUI login has identical environment.
 
@@ -125,4 +125,6 @@ Optional live smoke (creates/removes disposable sessions and may change the sele
 (cd prex && PREX_LIVE=1 PREX_LIVE_SERVER="$REX_SERVER" go test -run '^TestLive' -v)
 ```
 
-Pass `PREX_LIVE_CLIENT` when several apps are connected. With Remote Control disabled, the test reports that app switching remains unverified while checking server-side lifecycle.
+For a launch-only check without switching the app's selected session, use `-run '^TestLiveInteractiveAgentLaunch$'` instead. It starts Pi in a disposable session, waits for raw terminal input mode, exits with Ctrl+D, and repeats after reopening the empty session; no prompts are sent to Pi.
+
+Pass `PREX_LIVE_CLIENT` when several apps are connected. With Remote Control disabled, the app lifecycle test reports that app switching remains unverified while checking server-side lifecycle.

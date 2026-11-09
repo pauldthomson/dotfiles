@@ -118,7 +118,7 @@ func TestLaunchRecordsIntentAndNativeCommand(t *testing.T) {
 			if saved.Pending == nil || saved.Pending.Path != path {
 				t.Fatal("intent not durable before launch")
 			}
-			want := []string{"new", "project", "--window", "agent", "-c", path, "--json", "--", "pi"}
+			want := []string{"new", "project", "--window", "agent", "-c", path, "--interactive", "--json", "--", "pi"}
 			if !reflect.DeepEqual(tail, want) {
 				t.Fatalf("launch %v, want %v", tail, want)
 			}
@@ -213,6 +213,10 @@ func TestExistingSessionLifecycle(t *testing.T) {
 				}
 				if len(tail) > 1 && tail[0] == "window" && tail[1] == "new" {
 					launched = true
+					want := []string{"window", "new", "-s", "session:old", "agent", "-c", path, "--interactive", "--json", "--", "pi"}
+					if !reflect.DeepEqual(tail, want) {
+						t.Fatalf("reopen %v, want %v", tail, want)
+					}
 					return `{"window_id":"window:new","block_ids":["block:new"]}`, nil
 				}
 				return base(a)

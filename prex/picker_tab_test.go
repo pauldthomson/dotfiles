@@ -31,6 +31,9 @@ func TestProjectPickerTabUsesNativeWindowAndOrigin(t *testing.T) {
 	if strings.Contains(joined, "new_layer") {
 		t.Fatal("picker still uses floating layer")
 	}
+	if strings.Contains(joined, "--interactive") {
+		t.Fatal("picker should retain the login-shell environment")
+	}
 	selected := strings.Join(rexTail(f.calls[2]), " ")
 	if selected != "-C client:app do session.select session_id=session:caller window_id=window:new-picker" {
 		t.Fatalf("app did not select returned picker tab: %s", selected)

@@ -281,7 +281,8 @@ func (r *rexClient) launch(path, label, sid string) (string, error) {
 	if sid != "" {
 		args = []string{"window", "new", "-s", sid, "agent"}
 	}
-	args = append(args, "-c", path, "--json", "--", "pi")
+	// Match the interactive shell environment used by normal Rex terminals.
+	args = append(args, "-c", path, "--interactive", "--json", "--", "pi")
 	var result struct {
 		ID      string   `json:"session_id"`
 		Blocks  []string `json:"block_ids"`
