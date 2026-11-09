@@ -21,16 +21,26 @@ prex                         # fuzzy project picker
 prex my-project              # exact directory name (picker if ambiguous)
 prex --client 'my-mac' my-project
 prex kill                    # close only the current Rex session
-prex picker                  # temporary native Rex picker tab
+prex picker                  # centred floating Rex picker
+prex picker tab              # full-tab fallback
 prex picker kill             # close current session; helper tab for clone prompts
 prex popup                   # compatibility alias for prex picker
 prex recover                 # reconcile/acknowledge an uncertain launch
 prex orphans                 # read-only report of recorded clone/session use
 ```
 
-Projects are directories under `~/repos/<host>/<org>/<repo>`. Symlinked project directories are excluded. Picker rows include host/org/repo. Unlike `ptmux`, an unknown project is an error, not a placeholder session.
+Projects are directories under `~/repos/<host>/<org>/<repo>`. Symlinked project directories are excluded. Picker rows include host/org/repo. In the native picker, repository names are highlighted, hosts are muted, and green counts mark existing sessions; projects without sessions have no suffix. Unlike `ptmux`, an unknown project is an error, not a placeholder session.
 
-After selecting a project, **switch/reopen**, **clone another copy**, and **cancel** appear only if that project still has a Rex session. If Rex.app removed the session after Pi exited, selecting the project directly creates a new Pi session in the same repository—there is no switch/reopen menu. Multiple matching sessions get a session picker first. Cancellation performs no launch or clone.
+In ordinary terminal invocation, **switch/reopen**, **clone another copy**, and **cancel** appear after selecting a project that still has a Rex session. If Rex.app removed the session after Pi exited, selecting the project directly creates a new Pi session in the same repository. Multiple matching sessions get a session picker first.
+
+The floating picker (`prex picker` or **Cmd+Option+P**) adds a preview and optional shortcuts:
+
+- **Enter:** select a project. If it already has a session, automatically offer **switch/reopen**, **clone a new copy**, or **cancel**. Multiple matches get a session chooser first. If none matches, start Pi in the original repository.
+- **Ctrl+N:** clone the highlighted project, then ask for a suffix before creating the copy. This optional shortcut is available even when the original has no session; you do not need it to discover the clone option for an existing session.
+- **Tab:** hide/show the preview. It shows the repository path, matching session names/IDs, and available actions; narrow terminals put it below the list.
+- **Esc:** cancel. Cancellation performs no launch or clone.
+
+Previews are snapshots, not agent activity indicators. Session matches are refreshed after selection; if Enter's target set or inspection warnings changed, the picker asks you to review and confirm again. Previewing never launches Pi or clones a repository.
 
 | State | Result |
 | --- | --- |
@@ -40,7 +50,7 @@ After selecting a project, **switch/reopen**, **clone another copy**, and **canc
 
 Sessions are named `org/repo`, e.g. `nc-helix/helix` or `nc-helix/helix-2` for a clone. The host is omitted to keep names short; repository discovery and ownership still use the full path. New sessions receive that label, and existing sessions selected through prex have it reapplied (including previously generic or manually changed names). Unrelated sessions are not renamed. Long labels retain the end of the path plus a stable hash to fit Rex's limit. Labels are presentation; operations use full IDs, so renaming doesn't lose the recorded project association. Unmanaged sessions can be discovered through **local-host terminal process CWDs**; CWD discovery never grants clone ownership. An uninspectable unmanaged session is skipped with a warning, not treated as a verified match.
 
-Project discovery lists sessions and collects unmanaged sessions' terminal directories in one `rex do` invocation, including detached panes. Go determines which recorded associations are valid for the current server instance and sends only their IDs so Lua can skip unnecessary inspections. Lua remains a read-only Rex adapter; it does not read the registry or decide repository matches. Go still validates local-host terminal data and resolves filesystem paths before matching repositories; results retain session-list order. Individual inspection failures skip that session with a warning. A failed collection, incomplete session set, or changed server identity aborts opening rather than risking a duplicate launch. This collection is not reused by recovery or clone-deletion checks.
+Each project-discovery snapshot lists sessions and collects unmanaged sessions' terminal directories in one `rex do` invocation, including detached panes. Go determines which recorded associations are valid for the current server instance and sends only their IDs so Lua can skip unnecessary inspections. Lua remains a read-only Rex adapter; it does not read the registry or decide repository matches. Go still validates local-host terminal data and resolves filesystem paths before matching repositories; results retain session-list order. Individual inspection failures skip that session with a warning. A failed collection, incomplete session set, or changed server identity aborts opening rather than risking a duplicate launch. This collection is not reused by recovery or clone-deletion checks.
 
 Rex runs `pi` with `--interactive` for both new sessions and reopened empty sessions, loading the login environment and interactive shell startup files such as `.zshrc`. Picker tabs and cleanup helpers retain their existing startup behavior. Pi exits normally → its pane/tab closes. In the tested Rex.app version, a displayed session is also removed when its last tab closes. An undisplayed/server-only session can remain empty; prex supports reopening it if it still exists. No replacement shell is started and no repository is deleted. Quick failures remain visible under Rex's default terminal policy. Add terminals/editors later using Rex itself.
 
@@ -123,7 +133,7 @@ rex config check
 rex config reload
 ```
 
-The file registers **Open Project Agent** / **Close Current Session** and binds **Cmd+Option+P** / **Cmd+Option+X** directly (no leader). The project action opens a temporary native picker **tab**, avoiding the clipping observed with Rex.app's floating layers. The close action targets the current session immediately, without a session picker; a temporary helper tab hosts any clone-removal confirmation or safety errors. Picker tabs use `fzf` with Catppuccin colors, a rounded border, title, and navigation hints; plain prompts use the same background. Personal `FZF_DEFAULT_OPTS`/options files are ignored for these embedded pickers. Ordinary `prex` in a terminal retains its Go fuzzy picker. Both project-picker and close-helper processes explicitly select their own window ID in Rex.app (`session.select`) before reading input. This does not depend on the Lua action's queued client actions or server-side `focus`. The picker tab closes normally on cancellation or completion. Before exiting, it restores the originating tab if the picker still has focus and that tab still exists. It does not switch away from the selected project or override focus on a newly launched agent. Keyboard/palette actions pass the initiating app client ID explicitly. When invoked from the CLI, the transient CLI connection is not used as an app target; the picker resolves an unambiguous app instead. Errors wait for Enter; if a failed launch already selected its new session, the picker returns to its own tab to show the error while retaining the diagnostic pane. Edit `binary` in `rex.lua` if `prex` isn't installed in `~/go/bin`.
+The file registers **Open Project Agent** / **Close Current Session** and binds **Cmd+Option+P** / **Cmd+Option+X** directly (no leader). The project action opens a centred **floating picker** over the current tab. Use `prex picker tab` for the full-tab fallback if a Rex app renders floating layers incorrectly. Creation failures are not automatically retried: inspect for an existing picker before using the fallback. The close action targets the current session immediately, without a session picker; a temporary helper tab hosts any clone-removal confirmation or safety errors. Pickers use `fzf` with Catppuccin colors, a rounded border, title, and navigation hints; plain prompts use the same background. Personal `FZF_DEFAULT_OPTS`/options files are ignored for these embedded pickers. Ordinary `prex` in a terminal retains its Go fuzzy picker. Both project-picker and close-helper processes explicitly select their own window ID in Rex.app (`session.select`) before reading input. This does not depend on the Lua action's queued client actions or server-side `focus`. The temporary picker closes normally on cancellation or completion, leaving the underlying tab intact. Before exiting, it restores the originating tab if the picker still has focus and that tab still exists. It does not switch away from the selected project or override focus on a newly launched agent. Keyboard/palette actions pass the initiating app client ID explicitly. When invoked from the CLI, the transient CLI connection is not used as an app target; the picker resolves an unambiguous app instead. Errors wait for Enter; if a failed launch already selected its new session, the picker returns to its own tab to show the error while retaining the diagnostic pane. Edit `binary` in `rex.lua` if `prex` isn't installed in `~/go/bin`.
 
 These actions are opt-in; installing the binary does not overwrite or reload your Rex configuration. Native shortcuts work from Neovim too, without replacing its existing tmux launcher binding.
 
@@ -136,6 +146,14 @@ zsh -n prex/completion.zsh zsh/zshrc
 ```
 
 Tests use mocked Rex calls and disposable real Git/JJ repositories; they do not change your sessions. Reliability coverage includes early exits versus unknown startup outcomes, read-only orphan reporting, and revalidation against simulated stale server-instance associations. Coverage includes native launch/reopen/switch, failures and uncertain outcomes, exact IDs, stale/corrupt/concurrent state, clone generation/replacement/quarantine, ignored files, stashes, meaningful empty JJ changes, caller-last cleanup, and a subprocess regression for parent death without unlocking.
+
+For real fzf keyboard and wide/narrow layout checks without launching Pi or changing app selection:
+
+```sh
+(cd prex && PREX_LIVE_PICKER=1 PREX_LIVE_SERVER="$REX_SERVER" go test -run '^TestLiveProjectPicker$' -v)
+```
+
+This uses fixture previews in disposable Rex sessions; it checks filtering, Enter, Ctrl+N, Tab, and Esc. Unit tests cover action routing, changed session snapshots, cancellation, clone ownership, and safe preview rendering.
 
 Optional live smoke (creates/removes disposable sessions and may change the selected app session; sends Pi no prompts):
 

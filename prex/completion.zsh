@@ -6,7 +6,7 @@ _prex() {
     return
   fi
   if [[ ${words[2]} == picker || ${words[2]} == popup ]]; then
-    compadd -- kill
+    compadd -- tab kill
     return
   fi
   _arguments \

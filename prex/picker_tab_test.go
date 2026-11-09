@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
@@ -15,7 +16,7 @@ func TestProjectPickerTabUsesNativeWindowAndOrigin(t *testing.T) {
 		}
 		return base(a)
 	}
-	if err := pickerTab(r, nil); err != nil {
+	if err := pickerTab(r, []string{"tab"}); err != nil {
 		t.Fatal(err)
 	}
 	if len(f.calls) != 3 {
@@ -39,10 +40,72 @@ func TestProjectPickerTabUsesNativeWindowAndOrigin(t *testing.T) {
 		t.Fatalf("app did not select returned picker tab: %s", selected)
 	}
 }
+func TestProjectPickerDefaultsToFloatingLayer(t *testing.T) {
+	r, f := fakeRex(t)
+	base := f.output
+	f.output = func(a []string) (string, error) {
+		args := rexTail(a)
+		if args[0] == "api" {
+			if len(args) != 6 || args[4] != "session.new_layer" {
+				t.Fatalf("unexpected creation: %v", args)
+			}
+			var request struct {
+				Session string `json:"session_id"`
+				Window  string `json:"window_id"`
+				Focus   bool   `json:"focus"`
+				Layout  struct {
+					Block struct {
+						Options struct {
+							Command []string `json:"command"`
+						} `json:"options"`
+					} `json:"block"`
+				} `json:"layout"`
+			}
+			if err := json.Unmarshal([]byte(args[5]), &request); err != nil {
+				t.Fatal(err)
+			}
+			if request.Session != r.Session || request.Window != r.Window || !request.Focus {
+				t.Fatal("picker does not overlay the caller's tab")
+			}
+			if !strings.Contains(strings.Join(request.Layout.Block.Options.Command, " "), "--client client:app --_picker") {
+				t.Fatal("missing picker/app routing")
+			}
+			return `{"layer_id":"layer:picker","block_ids":["block:picker"]}`, nil
+		}
+		return base(a)
+	}
+	if err := pickerTab(r, nil); err != nil {
+		t.Fatal(err)
+	}
+	if len(f.calls) != 3 || !strings.Contains(strings.Join(rexTail(f.calls[2]), " "), "window_id=window:caller") {
+		t.Fatal("floating picker did not select its source tab")
+	}
+}
+
+func TestFloatingPickerUncertainCreationNeverFallsBack(t *testing.T) {
+	for _, fail := range []bool{false, true} {
+		t.Run(fmt.Sprint(fail), func(t *testing.T) {
+			r, f := fakeRex(t)
+			f.output = func([]string) (string, error) {
+				if fail {
+					return "", fmt.Errorf("connection lost")
+				}
+				return "{}", nil
+			}
+			if err := pickerTab(r, nil); err == nil {
+				t.Fatal("accepted unknown creation outcome")
+			}
+			if len(f.calls) != 1 {
+				t.Fatal("retried or selected an unverified picker")
+			}
+		})
+	}
+}
+
 func TestPickerMissingTabIDDoesNotSelectApp(t *testing.T) {
 	r, f := fakeRex(t)
 	f.output = func([]string) (string, error) { return `{}`, nil }
-	if err := pickerTab(r, nil); err == nil {
+	if err := pickerTab(r, []string{"tab"}); err == nil {
 		t.Fatal("accepted missing tab ID")
 	}
 	if len(f.calls) != 1 {

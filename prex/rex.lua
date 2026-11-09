@@ -1,5 +1,6 @@
 -- Optional Rex actions. Load with dofile(...) from ~/.config/rex/init.lua.
--- Uses temporary native tabs; floating layers currently clip in Rex.app.
+-- Projects use a centred floating layer; close prompts use a helper tab.
+-- Run prex picker tab for the full-tab fallback.
 local binary = os.getenv("HOME") .. "/go/bin/prex"
 
 local function picker(ctx, kill)
@@ -32,15 +33,25 @@ local function picker(ctx, kill)
       -- No interactive shell, and no wait inside this action.
     },
   }
-  -- Normal exit removes the temporary tab. The picker restores the source
-  -- tab if it still has focus, but leaves a newly launched agent focused.
+  -- Normal exit removes the temporary picker. Do not retry creation on an
+  -- error: an uncertain response must not create a duplicate picker.
   local result
-  result, err = rex.session.new_window{
-    session_id = ctx.session_id,
-    window_label = kill and "Close current session" or "Projects",
-    layout = layout,
-    focus = true,
-  }
+  if kill then
+    result, err = rex.session.new_window{
+      session_id = ctx.session_id,
+      window_label = "Close current session",
+      layout = layout,
+      focus = true,
+    }
+  else
+    result, err = rex.call("session.new_layer", {
+      session_id = ctx.session_id,
+      window_id = view.active_window_id,
+      bounds = {0.1, 0.15, 0.8, 0.7},
+      layout = layout,
+      focus = true,
+    })
+  end
   if err then error(err, 0) end
   -- Both picker commands explicitly select their own app tab on startup.
   -- Do not rely on a queued client action or server-side focus alone.

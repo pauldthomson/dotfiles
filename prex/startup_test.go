@@ -10,6 +10,11 @@ import (
 )
 
 func TestPickerSurfacesStartupFailureInOrigin(t *testing.T) {
+	oldPicker := chooseProject
+	chooseProject = func([]projectChoice, int, string, string) (projectSelection, error) {
+		return projectSelection{Index: 0}, nil
+	}
+	t.Cleanup(func() { chooseProject = oldPicker })
 	s := isolatedState(t)
 	projectDir(t)
 	s.Close() // run acquires its own state lock.

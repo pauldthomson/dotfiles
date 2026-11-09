@@ -57,16 +57,20 @@ func pickerRows(count int, label func(int) string) string {
 	for i := 0; i < count; i++ {
 		// IDs are separate from presentation. Names containing tabs/newlines or
 		// escape characters cannot inject rows, terminal sequences, or selections.
-		text := strings.Map(func(r rune) rune {
-			if unicode.IsControl(r) {
-				return ' '
-			}
-			return r
-		}, label(i))
+		text := pickerText(label(i))
 		fmt.Fprintf(&rows, "%d\t%s\x00", i, text)
 	}
 	return rows.String()
 }
+func pickerText(text string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) || unicode.Is(unicode.Cf, r) {
+			return ' '
+		}
+		return r
+	}, text)
+}
+
 func pickerSelection(output []byte, count int, multi bool) ([]int, error) {
 	var selected []int
 	seen := map[int]bool{}
@@ -93,8 +97,16 @@ func pickerSelection(output []byte, count int, multi bool) ([]int, error) {
 	return selected, nil
 }
 func styledPicker(count int, label func(int) string, multi bool, prompt, title string) ([]int, error) {
-	cmd := exec.Command("fzf", pickerArgs(multi, prompt, title)...)
-	cmd.Stdin = strings.NewReader(pickerRows(count, label))
+	out, err := runStyledFZF(pickerArgs(multi, prompt, title), pickerRows(count, label))
+	if err != nil {
+		return nil, err
+	}
+	return pickerSelection(out, count, multi)
+}
+
+func runStyledFZF(args []string, rows string) ([]byte, error) {
+	cmd := exec.Command("fzf", args...)
+	cmd.Stdin = strings.NewReader(rows)
 	cmd.Stderr = os.Stderr
 	// Personal fzf bindings/options can run commands or change output format.
 	// Keep this embedded picker deterministic, including its opaque background.
@@ -113,5 +125,5 @@ func styledPicker(count int, label func(int) string, multi bool, prompt, title s
 		}
 		return nil, fmt.Errorf("picker tab requires fzf (brew install fzf): %w", err)
 	}
-	return pickerSelection(out, count, multi)
+	return out, nil
 }

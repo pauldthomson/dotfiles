@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -15,13 +16,15 @@ const usage = `prex — project sessions with one Pi agent in Rex
 
 Usage: prex [--client CLIENT] [--server LOCAL-ENDPOINT] [PROJECT]
        prex [options] kill
-       prex [options] picker [kill]   (popup is a compatibility alias)
+       prex [options] picker [tab|kill]   (popup is a compatibility alias)
        prex [options] recover
        prex [options] orphans
        prex completion
 
 No project: choose a repository under ~/repos/<host>/<org>/<repo>.
-Existing session: switch/reopen, clone a new copy, or cancel.
+Terminal: switch/reopen, clone a new copy, or cancel for existing sessions.
+Picker tab: Enter select (actions for existing sessions), Ctrl+N clone,
+Tab preview, Esc cancel.
 Empty sessions get a new Pi tab; existing programs are not restarted.
 kill: closes only the current Rex session. Only recorded prex clones
 can be removed, with explicit confirmation and conservative safety checks.
@@ -179,6 +182,9 @@ func openCommand(r *rexClient, s *stateStore, name string) error {
 	if len(repos) == 0 {
 		return fmt.Errorf("no repositories match %q under %s (prex does not create placeholder projects)", name, reposRoot())
 	}
+	if r.Picker {
+		return openProjectPicker(r, s, repos)
+	}
 	selected := repos[0]
 	if len(repos) > 1 {
 		i, err := chooseOne(r, repos, func(i int) string { return repoDisplayName(repos[i]) }, "project> ", "Projects")
@@ -219,14 +225,7 @@ func openCommand(r *rexClient, s *stateStore, name string) error {
 		case 2:
 			return nil
 		}
-		cloned, err := cloneRepo(selected)
-		if err != nil {
-			return err
-		}
-		selected = cloned
-		if err := s.ownClone(selected.Path, r.Host, selected); err != nil {
-			return fmt.Errorf("clone retained at %s; cannot record ownership: %w", selected.Path, err)
-		}
+		return cloneAndLaunch(r, s, selected, sessions)
 	}
 	label := uniqueLabel(repoSessionLabel(selected), sessions)
 	return launchAndShow(r, s, selected.Path, label, "")
@@ -373,8 +372,8 @@ func recoverCommand(r *rexClient, s *stateStore) error {
 	return s.save()
 }
 func pickerTab(r *rexClient, args []string) error {
-	if len(args) > 1 || (len(args) == 1 && args[0] != "kill") {
-		return fmt.Errorf("usage: prex picker [kill]")
+	if len(args) > 1 || (len(args) == 1 && args[0] != "kill" && args[0] != "tab") {
+		return fmt.Errorf("usage: prex picker [tab|kill]")
 	}
 	if r.Session == "" || r.Window == "" {
 		return fmt.Errorf("picker must be launched from a Rex terminal; use prex directly otherwise")
@@ -387,7 +386,35 @@ func pickerTab(r *rexClient, args []string) error {
 	if err != nil {
 		return err
 	}
+	floating := len(args) == 0
+	if len(args) == 1 && args[0] == "tab" {
+		args = nil
+	}
 	command := append([]string{executable, "--server", r.Endpoint, "--client", r.Client, "--_picker", "--_return-window", r.Window}, args...)
+	if floating {
+		request, err := json.Marshal(map[string]any{
+			"session_id": r.Session, "window_id": r.Window,
+			"bounds": []float64{0.1, 0.15, 0.8, 0.7}, "focus": true,
+			"layout": map[string]any{"block": map[string]any{
+				"flavor": "com.superlogical.terminal.shell", "label": "Projects",
+				"options": map[string]any{"command": command, "cwd": os.Getenv("HOME")},
+			}},
+		})
+		if err != nil {
+			return err
+		}
+		var created struct {
+			LayerID string   `json:"layer_id"`
+			Blocks  []string `json:"block_ids"`
+		}
+		if err := r.json(&created, "api", "call", "-s", r.Session, "session.new_layer", string(request)); err != nil {
+			return fmt.Errorf("floating picker creation outcome may be unknown; inspect Rex before retrying with prex picker tab: %w", err)
+		}
+		if !strings.HasPrefix(created.LayerID, "layer:") || len(created.Blocks) != 1 || !strings.HasPrefix(created.Blocks[0], "block:") {
+			return fmt.Errorf("Rex omitted floating picker IDs; inspect Rex before retrying")
+		}
+		return r.showWindow(r.Session, r.Window)
+	}
 	label := "Projects"
 	if len(args) > 0 {
 		label = "Close current session"
