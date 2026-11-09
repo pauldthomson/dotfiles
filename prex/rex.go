@@ -274,12 +274,12 @@ func (r *rexClient) showWindow(sid, wid string) error {
 	}
 	return nil
 }
-func (r *rexClient) launch(path, label, sid string) (string, error) {
+func (r *rexClient) launch(path, label, sid string) (launchedTerminal, error) {
 	if err := r.verify(); err != nil {
-		return "", err
+		return launchedTerminal{}, err
 	}
 	if info, err := os.Stat(path); err != nil || !info.IsDir() {
-		return "", fmt.Errorf("repository directory unavailable: %s", path)
+		return launchedTerminal{}, fmt.Errorf("repository directory unavailable: %s", path)
 	}
 	args := []string{"new", label, "--window", "agent"}
 	if sid != "" {
@@ -295,15 +295,25 @@ func (r *rexClient) launch(path, label, sid string) (string, error) {
 		} `json:"initial_windows"`
 	}
 	if err := r.json(&result, args...); err != nil {
-		return "", fmt.Errorf("launch outcome may be unknown; intent retained for recovery: %w", err)
+		return launchedTerminal{}, fmt.Errorf("launch outcome may be unknown; intent retained for recovery: %w", err)
 	}
 	if sid == "" {
 		sid = result.ID
 	}
 	if !strings.HasPrefix(sid, "session:") {
-		return "", fmt.Errorf("Rex returned no full session ID; launch intent retained")
+		return launchedTerminal{}, fmt.Errorf("Rex returned no full session ID; launch intent retained")
 	}
-	return sid, nil
+	blocks := result.Blocks
+	if len(result.Initial) == 1 {
+		blocks = result.Initial[0].Blocks
+	}
+	terminal := launchedTerminal{Session: sid}
+	if len(blocks) == 1 && strings.HasPrefix(blocks[0], "block:") {
+		terminal.Block = blocks[0]
+	}
+	// A missing block ID does not make known session creation uncertain. Save
+	// its association first, then report startup as unverified without retrying.
+	return terminal, nil
 }
 
 // Rex labels are limited to 128 characters. Keep long paths recognizable by

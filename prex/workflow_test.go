@@ -64,6 +64,10 @@ func fakeRex(t *testing.T) (*rexClient, *fakeRunner) {
 		if rexTail(a)[0] == "-C" {
 			return "", nil
 		}
+		args := rexTail(a)
+		if len(args) > 2 && args[0] == "do" && args[1] == "-e" && args[2] == startupScript {
+			return jsonTest(map[string]any{"host_id": r.Host, "instance_id": r.Instance, "state": "observed"}), nil
+		}
 		if strings.Contains(strings.Join(a, " "), "whoami --json") {
 			return jsonTest(r.identity), nil
 		}
@@ -122,7 +126,7 @@ func TestLaunchRecordsIntentAndNativeCommand(t *testing.T) {
 			if !reflect.DeepEqual(tail, want) {
 				t.Fatalf("launch %v, want %v", tail, want)
 			}
-			return `{"session_id":"session:new"}`, nil
+			return `{"session_id":"session:new","initial_windows":[{"block_ids":["block:new"]}]}`, nil
 		}
 		return base(a)
 	}
@@ -132,9 +136,14 @@ func TestLaunchRecordsIntentAndNativeCommand(t *testing.T) {
 	if s.Data.Pending != nil || s.pathFor(r, "session:new") != path {
 		t.Fatal("session not recorded")
 	}
-	last := rexTail(f.calls[len(f.calls)-1])
-	if !reflect.DeepEqual(last, []string{"-C", "client:app", "do", "session.select", "session_id=session:new"}) {
-		t.Fatalf("wrong app switch: %v", last)
+	switched := false
+	for _, call := range f.calls {
+		if reflect.DeepEqual(rexTail(call), []string{"-C", "client:app", "do", "session.select", "session_id=session:new"}) {
+			switched = true
+		}
+	}
+	if !switched {
+		t.Fatal("created session was not displayed")
 	}
 }
 func TestLaunchTimeoutRetainsIntentAndClone(t *testing.T) {
@@ -173,7 +182,7 @@ func TestSwitchFailurePreservesCreatedSession(t *testing.T) {
 	base := f.output
 	f.output = func(a []string) (string, error) {
 		if rexTail(a)[0] == "new" {
-			return `{"session_id":"session:new"}`, nil
+			return `{"session_id":"session:new","initial_windows":[{"block_ids":["block:new"]}]}`, nil
 		}
 		if rexTail(a)[0] == "-C" {
 			return "", errors.New("app disconnected")

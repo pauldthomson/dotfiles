@@ -41,7 +41,7 @@ func TestOpenNewSessionUsesRepoPathLabel(t *testing.T) {
 	created := false
 	f.output = func(a []string) (string, error) {
 		args := rexTail(a)
-		if args[0] == "do" {
+		if len(args) > 2 && args[0] == "do" && args[2] == lookupScript {
 			return lookupResult(r, nil, nil), nil
 		}
 		if args[0] == "new" {
@@ -49,7 +49,7 @@ func TestOpenNewSessionUsesRepoPathLabel(t *testing.T) {
 			if args[1] != "org/project" {
 				t.Fatalf("wrong session label: %v", args)
 			}
-			return `{"session_id":"session:new"}`, nil
+			return `{"session_id":"session:new","initial_windows":[{"block_ids":["block:new"]}]}`, nil
 		}
 		return base(a)
 	}
@@ -80,7 +80,7 @@ func TestExistingSessionRenamedToRepoPath(t *testing.T) {
 					return `{"blocks":[]}`, nil
 				}
 				if args[0] == "window" {
-					return `{"window_id":"window:agent"}`, nil
+					return `{"window_id":"window:agent","block_ids":["block:agent"]}`, nil
 				}
 				return base(a)
 			}

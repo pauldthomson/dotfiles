@@ -22,10 +22,11 @@ func TestLiveInteractiveAgentLaunch(t *testing.T) {
 		t.Fatal(err)
 	}
 	path := t.TempDir()
-	sid, err := r.launch(path, "prex-interactive-smoke", "")
+	terminal, err := r.launch(path, "prex-interactive-smoke", "")
 	if err != nil {
 		t.Fatal(err)
 	}
+	sid := terminal.Session
 	t.Cleanup(func() {
 		if err := r.run("kill", sid); err != nil {
 			t.Errorf("close disposable session %s: %v", sid, err)
@@ -45,9 +46,13 @@ func TestLiveInteractiveAgentLaunch(t *testing.T) {
 	for _, phase := range []string{"new", "reopen"} {
 		if phase == "reopen" {
 			reopened, err := r.launch(path, "prex-interactive-smoke", sid)
-			if err != nil || reopened != sid {
-				t.Fatalf("reopen: session=%s error=%v", reopened, err)
+			if err != nil || reopened.Session != sid {
+				t.Fatalf("reopen: session=%s error=%v", reopened.Session, err)
 			}
+			terminal = reopened
+		}
+		if err := r.checkStartup(terminal); err != nil {
+			t.Fatal(err)
 		}
 		var bid string
 		waitFor(func() bool {

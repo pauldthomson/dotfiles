@@ -2,7 +2,7 @@
 _prex() {
   local -a values
   local state
-  if [[ ${words[2]} == kill ]]; then
+  if [[ ${words[2]} == kill || ${words[2]} == orphans ]]; then
     return
   fi
   if [[ ${words[2]} == picker || ${words[2]} == popup ]]; then
@@ -16,7 +16,7 @@ _prex() {
     '*:project or command:->projects'
   if [[ $state == projects ]]; then
     values=("${(@f)$(command prex completion 2>/dev/null)}")
-    compadd -- kill picker popup recover "${values[@]}"
+    compadd -- kill picker popup recover orphans "${values[@]}"
   fi
 }
 compdef _prex prex prx

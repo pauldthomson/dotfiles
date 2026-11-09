@@ -17,6 +17,7 @@ Usage: prex [--client CLIENT] [--server LOCAL-ENDPOINT] [PROJECT]
        prex [options] kill
        prex [options] picker [kill]   (popup is a compatibility alias)
        prex [options] recover
+       prex [options] orphans
        prex completion
 
 No project: choose a repository under ~/repos/<host>/<org>/<repo>.
@@ -25,7 +26,9 @@ Empty sessions get a new Pi tab; existing programs are not restarted.
 kill: closes only the current Rex session. Only recorded prex clones
 can be removed, with explicit confirmation and conservative safety checks.
 recover: inspect/acknowledge a pending launch before allowing another one.
-Requires a local Rex server and connected app. Flags precede the command.
+orphans: read-only report of recorded clones and observed session use.
+Requires a local Rex server; opening projects also needs a connected app.
+Flags precede the command.
 `
 
 func main() {
@@ -71,7 +74,7 @@ func run(args []string) error {
 	command := "open"
 	if len(args) > 0 {
 		switch args[0] {
-		case "kill", "picker", "popup", "recover":
+		case "kill", "picker", "popup", "recover", "orphans":
 			command = args[0]
 			args = args[1:]
 		}
@@ -92,6 +95,16 @@ func run(args []string) error {
 	}
 	if command == "picker" {
 		return pickerTab(r, args)
+	}
+	if command == "orphans" {
+		if len(args) != 0 {
+			return fmt.Errorf("usage: prex orphans (read-only; no deletion options)")
+		}
+		s, err := readStateSnapshot()
+		if err != nil {
+			return err
+		}
+		return orphansCommand(r, s, args, os.Stdout)
 	}
 	s, err := lockState(false)
 	if err != nil {
@@ -117,6 +130,11 @@ func run(args []string) error {
 		return nil
 	}
 	if err != nil && *picker {
+		// A new agent may already be selected. Surface the error in this
+		// picker instead of leaving an unseen Enter prompt in the old session.
+		if displayErr := r.showWindow(r.Session, r.Window); displayErr != nil {
+			fmt.Fprintln(os.Stderr, "Could not display picker error:", displayErr)
+		}
 		fmt.Fprintln(os.Stderr, err)
 		_, _ = promptLine("Press Enter to close...")
 		return nil
@@ -172,6 +190,13 @@ func openCommand(r *rexClient, s *stateStore, name string) error {
 	sessions, lookup, err := r.lookupSessions(s)
 	if err != nil {
 		return err
+	}
+	refreshed, err := s.revalidateAssociations(r, sessions, lookup)
+	if err != nil {
+		return err
+	}
+	if refreshed > 0 {
+		fmt.Printf("Revalidated %d project association(s) after Rex restart.\n", refreshed)
 	}
 	matches := sessionsForRepo(r, s, sessions, lookup, selected.Path)
 	if len(matches) > 0 {
@@ -267,17 +292,26 @@ func launchAndShow(r *rexClient, s *stateStore, path, label, id string) error {
 	if err := s.save(); err != nil {
 		return err
 	}
-	sid, err := r.launch(path, label, id)
+	terminal, err := r.launch(path, label, id)
 	if err != nil {
 		return fmt.Errorf("repository retained at %s: %w", path, err)
 	}
+	sid := terminal.Session
 	s.associate(r, sid, path)
 	s.Data.Pending = nil
 	if err := s.save(); err != nil {
 		return fmt.Errorf("session %s exists but registry could not be saved: %w", sid, err)
 	}
-	fmt.Printf("Session %s — %s\n", sid, path)
-	return r.show(sid)
+	// Display immediately while the short observation window runs. Even a
+	// failed/unknown startup keeps the confirmed association; prex never closes
+	// the diagnostic pane.
+	showErr := r.show(sid)
+	startupErr := r.checkStartup(terminal)
+	if err := errors.Join(startupErr, showErr); err != nil {
+		return err
+	}
+	fmt.Printf("Session %s — %s (no immediate exit observed)\n", sid, path)
+	return nil
 }
 func recoverCommand(r *rexClient, s *stateStore) error {
 	p := s.Data.Pending
