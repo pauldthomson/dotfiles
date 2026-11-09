@@ -169,14 +169,11 @@ func openCommand(r *rexClient, s *stateStore, name string) error {
 		}
 		selected = repos[i]
 	}
-	sessions, err := r.sessions()
+	sessions, lookup, err := r.lookupSessions(s)
 	if err != nil {
 		return err
 	}
-	matches, err := sessionsForRepo(r, s, sessions, selected.Path)
-	if err != nil {
-		return err
-	}
+	matches := sessionsForRepo(r, s, sessions, lookup, selected.Path)
 	if len(matches) > 0 {
 		target := matches[0]
 		if len(matches) > 1 {
@@ -209,7 +206,7 @@ func openCommand(r *rexClient, s *stateStore, name string) error {
 	label := uniqueLabel(repoSessionLabel(selected), sessions)
 	return launchAndShow(r, s, selected.Path, label, "")
 }
-func sessionsForRepo(r *rexClient, s *stateStore, sessions []session, path string) ([]session, error) {
+func sessionsForRepo(r *rexClient, s *stateStore, sessions []session, lookup map[string]lookupSession, path string) []session {
 	var matches []session
 	for _, item := range sessions {
 		recorded := s.pathFor(r, item.ID)
@@ -219,7 +216,7 @@ func sessionsForRepo(r *rexClient, s *stateStore, sessions []session, path strin
 			}
 			continue
 		}
-		paths, err := r.repoPaths(item.ID)
+		paths, err := r.lookupRepoPaths(item.ID, lookup[item.ID])
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Skipping unmanaged session", item.ID, ":", err)
 			continue
@@ -231,7 +228,7 @@ func sessionsForRepo(r *rexClient, s *stateStore, sessions []session, path strin
 			}
 		}
 	}
-	return matches, nil
+	return matches
 }
 func sessionDisplay(s session) string { return s.Label + " (" + s.ID + ")" }
 func openExisting(r *rexClient, s *stateStore, target session, path string) error {

@@ -41,8 +41,8 @@ func TestOpenNewSessionUsesRepoPathLabel(t *testing.T) {
 	created := false
 	f.output = func(a []string) (string, error) {
 		args := rexTail(a)
-		if strings.Join(args, " ") == "ls --json" {
-			return `{"sessions":[]}`, nil
+		if args[0] == "do" {
+			return lookupResult(r, nil, nil), nil
 		}
 		if args[0] == "new" {
 			created = true

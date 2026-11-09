@@ -4,7 +4,7 @@ Project-oriented Rex sessions, starting with **one Pi agent** rather than a pred
 
 ## Install
 
-Requires macOS/Linux, Go 1.26.5+, Rex with `--interactive` support for `new` and `window new`, Pi, Git, Jujutsu, `fzf` for picker tabs (already in the root Brewfile), and `lsof` for clone removal.
+Requires macOS/Linux, Go 1.26.5+, Rex with `--interactive` support for `new` and `window new` and Lua scripts via `rex do -e`, Pi, Git, Jujutsu, `fzf` for picker tabs (already in the root Brewfile), and `lsof` for clone removal.
 
 ```sh
 (cd prex && go install .)
@@ -38,6 +38,8 @@ After selecting a project, **switch/reopen**, **clone another copy**, and **canc
 | Existing session with tabs/blocks | Display it without restarting programs or rearranging anything |
 
 Sessions are named `org/repo`, e.g. `nc-helix/helix` or `nc-helix/helix-2` for a clone. The host is omitted to keep names short; repository discovery and ownership still use the full path. New sessions receive that label, and existing sessions selected through prex have it reapplied (including previously generic or manually changed names). Unrelated sessions are not renamed. Long labels retain the end of the path plus a stable hash to fit Rex's limit. Labels are presentation; operations use full IDs, so renaming doesn't lose the recorded project association. Unmanaged sessions can be discovered through **local-host terminal process CWDs**; CWD discovery never grants clone ownership. An uninspectable unmanaged session is skipped with a warning, not treated as a verified match.
+
+Project discovery lists sessions and collects unmanaged sessions' terminal directories in one `rex do` invocation, including detached panes. Go determines which recorded associations are valid for the current server instance and sends only their IDs so Lua can skip unnecessary inspections. Lua remains a read-only Rex adapter; it does not read the registry or decide repository matches. Go still validates local-host terminal data and resolves filesystem paths before matching repositories; results retain session-list order. Individual inspection failures skip that session with a warning. A failed collection, incomplete session set, or changed server identity aborts opening rather than risking a duplicate launch. This collection is not reused by recovery or clone-deletion checks.
 
 Rex runs `pi` with `--interactive` for both new sessions and reopened empty sessions, loading the login environment and interactive shell startup files such as `.zshrc`. Picker tabs and cleanup helpers retain their existing startup behavior. Pi exits normally → its pane/tab closes. In the tested Rex.app version, a displayed session is also removed when its last tab closes. An undisplayed/server-only session can remain empty; prex supports reopening it if it still exists. No replacement shell is started and no repository is deleted. Quick failures remain visible under Rex's default terminal policy. Add terminals/editors later using Rex itself.
 
@@ -126,5 +128,11 @@ Optional live smoke (creates/removes disposable sessions and may change the sele
 ```
 
 For a launch-only check without switching the app's selected session, use `-run '^TestLiveInteractiveAgentLaunch$'` instead. It starts Pi in a disposable session, waits for raw terminal input mode, exits with Ctrl+D, and repeats after reopening the empty session; no prompts are sent to Pi.
+
+A separate read-only check compares the collected session list and paths with individual Rex inspections, and verifies that recorded sessions skip process collection (run while terminal working directories are stable):
+
+```sh
+(cd prex && PREX_LIVE_LOOKUP=1 PREX_LIVE_SERVER="$REX_SERVER" go test -run '^TestLiveLookupCollection$' -v)
+```
 
 Pass `PREX_LIVE_CLIENT` when several apps are connected. With Remote Control disabled, the app lifecycle test reports that app switching remains unverified while checking server-side lifecycle.

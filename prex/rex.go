@@ -203,6 +203,10 @@ func (r *rexClient) repoPaths(sid string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	return r.repoPathsWithProcess(sid, blocks, r.process)
+}
+
+func (r *rexClient) repoPathsWithProcess(sid string, blocks []block, process func(string, string) (processInfo, error)) ([]string, error) {
 	var paths []string
 	for _, b := range blocks {
 		if b.Host != r.Host {
@@ -211,7 +215,7 @@ func (r *rexClient) repoPaths(sid string) ([]string, error) {
 		if b.Creator != "com.superlogical.terminal" {
 			return nil, fmt.Errorf("cannot inspect non-terminal block %s", b.ID)
 		}
-		p, err := r.process(sid, b.ID)
+		p, err := process(sid, b.ID)
 		if err != nil {
 			return nil, err
 		}
