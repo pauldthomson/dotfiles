@@ -34,9 +34,25 @@ Examples—not a mandatory checklist:
 | Runtime/operations | Failure recovery, resource lifecycle, observability, rollout risks |
 | UI/accessibility | User flows, keyboard access, accessibility, responsive behavior |
 | Tests/tooling | Behavioral coverage, realistic failures, CI execution and portability |
+| Simplicity/maintainability | Unnecessary complexity, duplication, misleading names/docs, test readability and failure diagnostics |
 
 Give each reviewer a concrete charter with questions relevant to this diff.
 Avoid several generic “review everything” agents. Announce the selected charters.
+
+### Include a bounded simplicity pass
+
+Unless the user explicitly narrows the review, assign simplicity/maintainability
+coverage to an existing reviewer or the coordinator and name that owner. Do not
+add an agent solely to satisfy this requirement for a small change. Give the owner
+concrete questions: can the same behavior be expressed more directly; are names,
+comments and docs accurate; do tests communicate their scenarios and failures?
+
+Keep this pass separate from defect hunting. Recommend only local improvements
+with a concrete comprehension, maintenance, or diagnostic benefit. Explain the
+trade-off: fewer lines are not automatically simpler, and typed decoding or a
+helper can add more scaffolding than it removes. Preserve behavior and useful
+test coverage. Avoid cosmetic preferences, speculative abstractions, unrelated
+refactors, and suggestion quotas.
 
 ## 2. Prepare independent reviewers
 
@@ -106,6 +122,7 @@ Review target: <repository/snapshot, base/head, diff path>.
 Intent: <what changes and why>.
 Constraints/deferred scope: <explicit boundaries>.
 Your questions: <concrete invariants and failure modes to investigate>.
+Simplicity coverage: <assigned questions, or named owner handling this elsewhere>.
 
 Applicable repository conventions and validation guidance: <supply explicitly>.
 Read the relevant implementation, callers, tests, and configuration. Inspect
@@ -125,6 +142,12 @@ and deferred features. Don't invent findings to fill a quota. For each finding:
 - file:line and the affected behavior;
 - a specific failure scenario and supporting evidence;
 - the smallest safe fix and a meaningful regression test.
+
+If assigned simplicity coverage, report useful suggestions separately as
+non-blocking improvements. For each, give file:line, the specific maintenance or
+clarity problem, the smallest behavior-preserving change, its benefit/trade-off,
+and how to preserve coverage. Do not label preferences as defects. It is fine to
+find no worthwhile simplifications.
 
 List checks run and limitations. Say explicitly if there are no blockers in your
 assigned scope. Unavailable tooling or incomplete investigation is not approval.
@@ -185,6 +208,11 @@ Rex servers, arrange accessible artifacts and collect them explicitly.
   evidence; reviewer output is advisory, not authority to change scope.
 - Report genuine blockers, including inconvenient operational findings. Explain
   rejected findings briefly; do not count agreement as proof of correctness.
+- Confirm the assigned simplicity pass completed. Evaluate its suggestions against
+  the actual diff: does each improve understanding or maintenance without moving
+  complexity elsewhere or weakening coverage? Keep accepted non-blocking
+  improvements separate from defects; a clean defect review does not imply there
+  is nothing worth simplifying. If this pass was omitted or incomplete, say so.
 - For a review-only request, report findings without changing files. If the user
   authorized implementation/fixes, apply focused corrections and regression tests.
   Discuss material design/scope changes before implementing them.
@@ -211,6 +239,8 @@ cancellation—not on ordinary polling timeouts:
 Finish concisely with:
 - reviewed revision/scope, specialist charters, and models used (including fallbacks);
 - confirmed findings, fixes made, or “no blockers found” with scope limitations;
+- worthwhile non-blocking simplifications, or that the simplicity pass found none
+  (or was explicitly out of scope/incomplete);
 - checks passed/failed/not run, distinguishing rendering from live runtime proof;
 - incomplete reviews and remaining risks;
 - cleanup outcome and retained report location when useful.
