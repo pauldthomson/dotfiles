@@ -65,17 +65,14 @@ alias lg='lazygit'
 alias gsp='gcloud-set-project'
 
 export FZF_DEFAULT_COMMAND='rg --no-ignore --files --hidden --follow --glob "!.git/*"'
-export PATH="$PATH:$HOME/go/bin"
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PATH="/Applications/IntelliJ IDEA.app/Contents/MacOS:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
+path=("/Applications/IntelliJ IDEA.app/Contents/MacOS" "${KREW_ROOT:-$HOME/.krew}/bin" $path "$HOME/go/bin")
 
 # ptmux uses Bash completion; prex uses native Zsh completion.
 if [[ -f "$dotfiles_root/ptmux_completion" ]]; then
   autoload -U +X bashcompinit && bashcompinit
   source "$dotfiles_root/ptmux_completion"
 fi
-[[ ! -f "$dotfiles_root/prex/completion.zsh" ]] || source "$dotfiles_root/prex/completion.zsh"
+[[ -r "$dotfiles_root/prex/completion.zsh" ]] && source "$dotfiles_root/prex/completion.zsh"
 
 # Terminal pinentry for GPG signing.
 if [[ -t 0 ]]; then
@@ -85,13 +82,9 @@ fi
 # Private Go modules.
 export GOPRIVATE="github.com/tyro-private"
 
-if command -v kubectl >/dev/null 2>&1; then
-  KUBECTL_COMPLETION_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh"
-  if [[ ! -s "$KUBECTL_COMPLETION_CACHE" ]]; then
-    mkdir -p "${KUBECTL_COMPLETION_CACHE:h}"
-    kubectl completion zsh >| "$KUBECTL_COMPLETION_CACHE" 2>/dev/null
-  fi
-  [[ -s "$KUBECTL_COMPLETION_CACHE" ]] && source "$KUBECTL_COMPLETION_CACHE"
+brew_prefix="${HOMEBREW_PREFIX:-}"
+if [[ -z "$brew_prefix" ]] && (( $+commands[brew] )); then
+  brew_prefix="$(brew --prefix)"
 fi
 
 # Java (Homebrew) - keep JAVA_HOME on newest installed JDK.
@@ -100,8 +93,7 @@ if [[ -x /usr/libexec/java_home ]]; then
 fi
 
 if [[ -z "$JAVA_HOME" ]]; then
-  if command -v brew >/dev/null 2>&1; then
-    brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+  if [[ -n "$brew_prefix" ]]; then
     if [[ -d "$brew_prefix/opt/openjdk" ]]; then
       JAVA_HOME="$brew_prefix/opt/openjdk"
     else
@@ -124,23 +116,38 @@ if [[ -f /Library/Certificates/allcerts.pem ]]; then
   export NODE_EXTRA_CA_CERTS=/Library/Certificates/allcerts.pem
 fi
 
-if command -v brew >/dev/null 2>&1; then
-  brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix)}"
-  [[ ! -f "$brew_prefix/share/google-cloud-sdk/path.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/path.zsh.inc"
-  [[ ! -f "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc" ]] || source "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc"
+if [[ -n "$brew_prefix" ]]; then
+  [[ -r "$brew_prefix/share/google-cloud-sdk/path.zsh.inc" ]] && source "$brew_prefix/share/google-cloud-sdk/path.zsh.inc"
+  [[ -r "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc" ]] && source "$brew_prefix/share/google-cloud-sdk/completion.zsh.inc"
 fi
 
 export BUN_INSTALL="$HOME/.bun"
-[[ ! -d "$BUN_INSTALL/bin" ]] || export PATH="$BUN_INSTALL/bin:$PATH"
-[[ ! -s "$BUN_INSTALL/_bun" ]] || source "$BUN_INSTALL/_bun"
+[[ -d "$BUN_INSTALL/bin" ]] && path=("$BUN_INSTALL/bin" $path)
+[[ -r "$BUN_INSTALL/_bun" ]] && source "$BUN_INSTALL/_bun"
+path=("$HOME/.local/bin" $path)
+
+if (( $+commands[kubectl] )); then
+  KUBECTL_COMPLETION_CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/kubectl-completion.zsh"
+  if [[ ! -s "$KUBECTL_COMPLETION_CACHE" || ${commands[kubectl]} -nt "$KUBECTL_COMPLETION_CACHE" ]]; then
+    mkdir -p "${KUBECTL_COMPLETION_CACHE:h}"
+    if cache_tmp=$(mktemp "${KUBECTL_COMPLETION_CACHE}.XXXXXX"); then
+      if kubectl completion zsh >| "$cache_tmp" 2>/dev/null && [[ -s "$cache_tmp" ]]; then
+        mv -f "$cache_tmp" "$KUBECTL_COMPLETION_CACHE"
+      else
+        rm -f "$cache_tmp"
+      fi
+      unset cache_tmp
+    fi
+  fi
+  [[ -s "$KUBECTL_COMPLETION_CACHE" ]] && source "$KUBECTL_COMPLETION_CACHE"
+fi
 
 # To customize the prompt, run `p10k configure` or edit zsh/p10k.zsh.
-[[ ! -f "$dotfiles_root/zsh/p10k.zsh" ]] || source "$dotfiles_root/zsh/p10k.zsh"
+[[ -r "$dotfiles_root/zsh/p10k.zsh" ]] && source "$dotfiles_root/zsh/p10k.zsh"
 unset dotfiles_root
 
 # Load last so highlighting wraps widgets installed by plugins/completions.
-if [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [[ -f /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -n "$brew_prefix" && -r "$brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+unset brew_prefix
