@@ -1,6 +1,6 @@
 ---
 name: targeted-review
-description: Classify a change and run independent, focused review agents through Rex for each relevant risk area. Use when asked for multi-agent review, specialist/persona reviews, or parallel review before a PR. Collect and validate findings, fix them when authorized, and clean up the agents.
+description: Use when asked to review code changes or a pull request, including "review the changes, then open a PR if there are no issues." The user need not ask for multiple agents. Select independent reviewers by risk, run them through Rex, validate findings, and fix issues only when authorized. A request just to show a diff is not a code review.
 compatibility: Requires the rex CLI and an available coding-agent CLI such as pi.
 ---
 

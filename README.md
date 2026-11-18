@@ -92,7 +92,7 @@ brew bundle --file="$PWD/Brewfile.optional"
 - Stores shared Pi resources in `pi-agent/` (instead of project `.pi/`) to avoid duplicate extension loading when symlinked into `~/.pi/agent/`.
 - Local agent skills are kept in `skills/` (for example `git-clone`, `hunk-review`, `chrome-devtools-mcp`, and `pr-description`).
 - `hunk-review` reuses an existing Hunk session for the repository, or opens `hunk diff` in a new Rex tab when running inside Rex, with a tmux window fallback otherwise.
-- [`targeted-review`](skills/targeted-review/SKILL.md) classifies changes, selects available models to suit each review charter and its constraints, and runs focused review agents through Rex, collects findings, and cleans up the agents.
+- [`targeted-review`](skills/targeted-review/SKILL.md) handles requests to review code changes or PRs, including reviews before opening a PR. It runs independent reviewers through Rex for the relevant risks and validates their findings.
 - Adds a `web_fetch` extension for fetching URLs with truncation and temp file fallback.
 - Adds a Codex account extension whose `/usage daily` view renders a responsive, color-graded 52-week token activity calendar; `/usage` also retains account totals, limit inspection, and usage-limit reset actions.
 - Adds a `review` extension (based on mitsuhiko/agent-stuff) for interactive code review flows (`/review`, `/review bookmark <name>`, `/end-review`) using `jj` workflows.
