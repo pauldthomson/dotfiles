@@ -94,7 +94,11 @@ func openProjectPicker(r *rexClient, s *stateStore, repos []repo) error {
 	query, notice := "", ""
 	for {
 		choices, warnings := projectChoices(r, s, repos, sessions, lookup)
-		selected, err := chooseProject(choices, warnings, query, notice)
+		choose := chooseProject
+		if r.Palette {
+			choose = r.paletteProject
+		}
+		selected, err := choose(choices, warnings, query, notice)
 		if err != nil {
 			return err
 		}
@@ -153,7 +157,11 @@ func openProjectPicker(r *rexClient, s *stateStore, repos []repo) error {
 }
 
 func cloneAndLaunch(r *rexClient, s *stateStore, source repo, sessions []session) error {
-	cloned, err := cloneRepo(source)
+	ask := terminalSuffix
+	if r.Palette {
+		ask = r.paletteSuffix
+	}
+	cloned, err := cloneRepoWithSuffix(source, ask)
 	if err != nil {
 		return err
 	}

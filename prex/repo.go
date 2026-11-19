@@ -63,6 +63,14 @@ func findRepos(projectName string) ([]repo, error) {
 // have written valuable data, so failures deliberately leave that directory in
 // place. The caller must capture ownership only after this function succeeds.
 func cloneRepo(source repo) (repo, error) {
+	return cloneRepoWithSuffix(source, terminalSuffix)
+}
+
+func terminalSuffix(value string) (string, error) {
+	return promptLine(fmt.Sprintf("Suffix for cloned repo [%s]: ", value))
+}
+
+func cloneRepoWithSuffix(source repo, ask func(string) (string, error)) (repo, error) {
 	source, err := repoFromPath(source.Path)
 	if err != nil {
 		return repo{}, err
@@ -91,7 +99,7 @@ func cloneRepo(source repo) (repo, error) {
 	}
 	var destPath string
 	for {
-		suffix, err := promptLine(fmt.Sprintf("Suffix for cloned repo [%s]: ", defaultSuffix))
+		suffix, err := ask(defaultSuffix)
 		if err != nil {
 			return repo{}, err
 		}

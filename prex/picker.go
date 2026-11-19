@@ -33,6 +33,13 @@ func paintPicker() {
 // Temporary picker tabs use the styled fzf UI. Ordinary terminal invocation
 // retains the existing Go picker.
 func chooseOne[T any](r *rexClient, items []T, label func(int) string, prompt, title string) (int, error) {
+	if r.Palette {
+		rows := make([]paletteItem, len(items))
+		for i := range rows {
+			rows[i].Title = pickerText(label(i))
+		}
+		return r.palettePick(title, "", rows)
+	}
 	if !r.Picker {
 		return fuzzyfinder.Find(items, label, fuzzyfinder.WithPromptString(prompt), fuzzyfinder.WithHeader(title))
 	}

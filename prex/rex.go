@@ -24,8 +24,9 @@ type identity struct {
 }
 type rexClient struct {
 	identity
-	Client string
-	Picker bool
+	Client  string
+	Picker  bool
+	Palette bool
 }
 type session struct {
 	ID    string `json:"session_id"`

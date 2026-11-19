@@ -71,5 +71,48 @@ rex.action{
   run = function(ctx) return picker(ctx, true) end,
 }
 
-rex.bind("cmd+alt+p", "prex_projects")
+rex.action{
+  name = "prex_palette",
+  title = "Open Project…",
+  description = "Choose a project in the Rex command palette (single app)",
+  run = function(ctx)
+    -- Only the Rex prompt needs a UI. Run the coordinator unplaced and
+    -- without --_picker so it never paints a layer or takes terminal focus.
+    local result, err = rex.call("session.new_block", {
+      session_id = ctx.session_id,
+      label = "prex palette",
+      flavor = "com.superlogical.terminal.shell",
+      options = {command = {binary, "--palette"}, cwd = os.getenv("HOME")},
+    })
+    if err then error(err, 0) end
+    return result
+  end,
+}
+
+rex.action{
+ name="prex_prompt", title="Project prompt", args={spec="object", app="string"},
+ run=function(ctx, args)
+   local function single_app()
+     local result, err = rex.call("client.list", {})
+     if err then error(err, 0) end
+     local count = 0
+     for _, c in ipairs(result.clients) do
+       if c.info and c.info.kind == "app" and c.connection_state ~= "lost" then
+         if c.client_id ~= args.app then return false end
+         count = count + 1
+       end
+     end
+     return count == 1
+   end
+   if not rex.ui or not rex.ui.pick or not rex.ui.input then error("Rex prompt support required; use prex picker",0) end
+   if not single_app() then error("Palette requires one connected app; use prex picker",0) end
+   local value, reason
+   if args.spec.items then value, reason = rex.ui.pick(args.spec)
+   else value, reason = rex.ui.input(args.spec) end
+   if value ~= nil and not single_app() then error("Connected apps changed; selection discarded",0) end
+   return {value=value, reason=reason}
+ end
+}
+
+rex.bind("cmd+alt+p", "prex_palette")
 rex.bind("cmd+alt+x", "prex_close")

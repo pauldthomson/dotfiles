@@ -10,6 +10,7 @@ _prex() {
     return
   fi
   _arguments \
+    '--palette[choose a project in the Rex app palette]' \
     '--client[connected Rex app ID or label]:client:' \
     '--server[local Rex Unix socket endpoint]:endpoint:' \
     '--help[show usage]' \

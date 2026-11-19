@@ -15,6 +15,7 @@ import (
 const usage = `prex — project sessions with one Pi agent in Rex
 
 Usage: prex [--client CLIENT] [--server LOCAL-ENDPOINT] [PROJECT]
+       prex --palette                    (Rex app palette, single app only)
        prex [options] kill
        prex [options] picker [tab|kill]   (popup is a compatibility alias)
        prex [options] recover
@@ -44,6 +45,7 @@ func run(args []string) error {
 	flags := flag.NewFlagSet("prex", flag.ContinueOnError)
 	client := flags.String("client", "", "Rex app client ID or label")
 	endpoint := flags.String("server", "", "local Rex Unix socket endpoint")
+	palette := flags.Bool("palette", false, "choose a project in the Rex app palette")
 	picker := flags.Bool("_picker", false, "internal picker tab")
 	returnWindow := flags.String("_return-window", "", "internal originating tab ID")
 	flags.Usage = func() { fmt.Print(usage) }
@@ -54,6 +56,9 @@ func run(args []string) error {
 		return err
 	}
 	args = flags.Args()
+	if *palette && (len(args) != 0 || *client != "" || os.Getenv("REX_CLIENT") != "") {
+		return fmt.Errorf("--palette takes no project, command, or client target; use prex picker for targeted workflows")
+	}
 	if *picker {
 		paintPicker()
 	}
@@ -71,6 +76,7 @@ func run(args []string) error {
 		return err
 	}
 	r.Picker = *picker
+	r.Palette = *palette
 	if *picker {
 		defer restorePickerWindow(r, *returnWindow)
 	}
@@ -182,7 +188,7 @@ func openCommand(r *rexClient, s *stateStore, name string) error {
 	if len(repos) == 0 {
 		return fmt.Errorf("no repositories match %q under %s (prex does not create placeholder projects)", name, reposRoot())
 	}
-	if r.Picker {
+	if r.Picker || r.Palette {
 		return openProjectPicker(r, s, repos)
 	}
 	selected := repos[0]
